@@ -1,0 +1,12 @@
+{
+  "log-level": "debug",
+  "api-admin-enabled": true,
+  "api-auth-required": false,
+  "api-auth-password": false,
+  "api-health-enabled": true,
+  "api-info-enabled": true,
+  "http-host": "",
+  "network-id": "local",
+  "network-allow-private-ips": true,
+  "db-dir": "/usr/share/.avalanchego/db"
+}

@@ -1,0 +1,69 @@
+{
+  "name": "monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./build/cli.js",
+  "bin": {
+    "ava": "./build/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "start": "node dist/cli.js",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "files": [
+    "dist/*.js",
+    "README.md"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bn.js": "^5.1.0",
+    "@types/chai": "^4.3.0",
+    "@types/chai-as-promised": "^7.1.4",
+    "@types/chai-spies": "^1.0.3",
+    "@types/chalk": "^2.2.0",
+    "@types/clear": "^0.1.2",
+    "@types/cli-table": "^0.3.0",
+    "@types/elliptic": "^6.4.14",
+    "@types/figlet": "^1.5.4",
+    "@types/jest": "^27.4.0",
+    "@types/node": "^17.0.8",
+    "@types/uuid": "^8.3.3",
+    "@types/yargs": "^17.0.8",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-spies": "^1.0.0",
+    "jest": "^27.4.5",
+    "ts-jest": "^27.1.2",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.16.1",
+    "avalanche": "^3.10.2",
+    "chalk": "^4.1.2",
+    "clear": "^0.1.0",
+    "cli-table": "^0.3.11",
+    "clui": "^0.3.6",
+    "configstore": "^6.0.0",
+    "figlet": "^1.5.2",
+    "ink": "^3.2.0",
+    "ink-big-text": "^1.2.0",
+    "ink-link": "^2.0.0",
+    "ink-spinner": "^4.0.3",
+    "ink-text-input": "^4.0.2",
+    "inquirer": "^8.2.0",
+    "lodash": "^4.17.21",
+    "minimist": "^1.2.5",
+    "node-fetch": "^3.1.0",
+    "shelljs": "^0.8.4",
+    "simple-git": "^2.48.0",
+    "touch": "^3.1.0",
+    "uuid": "^8.3.2",
+    "yargs": "^17.3.1"
+  }
+}
