@@ -27,6 +27,7 @@ export class MyChart extends Chart {
         "/usr/share/.avalanchego": dataVolume,
       },
     });
+  }
 }
 
 const app = new App();
