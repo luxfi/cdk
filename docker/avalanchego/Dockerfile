@@ -8,4 +8,7 @@ RUN apt-get update -yq && \
 COPY ./list_nodes.py /tmp
 COPY ./avalanche-config.json /etc/ava/ava.json
 
-ENTRYPOINT [ "/avalanchego/build/avalanchego", "--config-file=/etc/ava/ava.json", "--bootstrap-ips=", "python3 /tmp/list_nodes.py" ]
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

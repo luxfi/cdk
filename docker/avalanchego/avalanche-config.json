@@ -1,5 +1,5 @@
 {
-  "log-level": "debug",
+  "log-level": "verbo",
   "api-admin-enabled": true,
   "api-auth-required": false,
   "api-auth-password": false,
@@ -7,6 +7,8 @@
   "api-info-enabled": true,
   "http-host": "",
   "network-id": "local",
+  "bootstrap-beacon-connection-timeout": "5m",
+  "bootstrap-retry-enabled": true,
   "network-allow-private-ips": true,
   "db-dir": "/usr/share/.avalanchego/db"
 }

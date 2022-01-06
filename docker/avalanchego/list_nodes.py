@@ -19,17 +19,21 @@ def get_ip():
 def main():
     try:
         config.load_incluster_config()
-    except:
-        config.load_kube_config()
 
-    v1 = client.CoreV1Api()
-    ret = v1.list_namedspaced_pod("default")
-    # Since we only need one, take the first one if there is one
-    if len(ret.items) > 0:
-        local_ip = get_ip()
-        # First one
-        pod_ip = next(i.status.pod_ip for i in ret.items if i.status.pod_ip != local_ip)
-        print("%s:9650" % pod_ip)
+        v1 = client.CoreV1Api()
+        ret = v1.list_namespaced_pod("default")
+        # Since we only need one, take the first one if there is one
+        if len(ret.items) > 0:
+            local_ip = get_ip()
+            # First one
+            pod_ip = next(
+                i.status.pod_ip
+                for i in ret.items
+                if i.status.pod_ip != local_ip and i.status.phase == "Running"
+            )
+            print("%s:9651" % pod_ip)
+    except:
+        pass
 
 
 if __name__ == "__main__":
