@@ -6,7 +6,7 @@
   "api-health-enabled": true,
   "api-info-enabled": true,
   "http-host": "",
-  "network-id": "local",
+  "network-id": "network-4200",
   "bootstrap-beacon-connection-timeout": "5m",
   "bootstrap-retry-enabled": true,
   "network-allow-private-ips": true,
