@@ -2,10 +2,7 @@
 import yargs, { Arguments } from "yargs";
 import fs from "fs";
 import path from "path";
-
-export const npmPackage = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, "./../package.json")).toString()
-);
+import { VERSION } from "./lib/constants";
 
 export interface UniversalArgs {
   apiUrl: string;
@@ -48,17 +45,13 @@ yargs
       description: "Protocol of avalanche",
       default: "http",
     },
-    networkId: {
-      description: "Network ID of avalanche",
-      default: 4200,
-    },
   })
   .commandDir("./cmd")
   .usage("Usage: <cmd> [args]")
   .wrap(Math.min(yargs.terminalWidth(), 160))
   .help("help")
   .alias("help", "h")
-  .version(npmPackage.version)
+  .version(VERSION)
   .alias("version", "v")
   .hide("help")
   .hide("version")

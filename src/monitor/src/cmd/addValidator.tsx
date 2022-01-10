@@ -1,5 +1,5 @@
 import { Argv } from "yargs";
-import { ArgShape } from "../cli";
+import { ArgShape } from "@cli";
 import { V1Pod, V1Status } from "@kubernetes/client-node";
 import { Avalanche } from "avalanche";
 import { api } from "../lib/kube";

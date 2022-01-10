@@ -17,6 +17,12 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types"],
-    "jsx": "react"
+    "jsx": "react",
+    "rootDir": "./src",
+    "baseUrl": "src",
+    "paths": {
+      "@cli": ["cli.tsx"],
+      "@lib/*": ["lib/*"]
+    }
   }
 }

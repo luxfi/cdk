@@ -4,27 +4,9 @@ import { ReadableStreamBuffer, WritableStreamBuffer } from "stream-buffers";
 import { Transform } from "stream";
 import * as util from "util";
 import { Exec } from "@kubernetes/client-node";
-import { kc, api } from "./kube";
+import { kc, api } from "../kube";
 import * as uuid from "uuid";
 import * as stream from "stream";
-
-export const info = {
-  getBlockchainID: exec("/ext/info", "info.getBlockchainID"),
-  peers: exec("/ext/info", "info.peers"),
-  networkName: exec("/ext/info", "info.getNetworkName"),
-  isBootstrapped: exec("/ext/info", "info.isBootstrapped", { chain: "X" }),
-  uptime: exec("/ext/info", "info.uptime"),
-};
-
-export const platform = {
-  addDelegator: exec("/ext/P", "platform.addDelegator"),
-  addValidator: exec("/ext/P", "platform.addValidator"),
-  createAddress: exec("/ext/P", "platform.createAddress"),
-};
-
-export const admin = {
-  alias: exec("/ext/admin", "admin.alias"),
-};
 
 class WritableStream extends Transform {
   private _string: string = "";
@@ -56,7 +38,7 @@ export interface ExecResponse {
   streams: any;
 }
 
-function exec(
+export function exec(
   path: string,
   method: string,
   params: any = { alias: "X" },

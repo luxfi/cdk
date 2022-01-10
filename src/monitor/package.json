@@ -2,19 +2,19 @@
   "name": "monitor",
   "version": "1.0.0",
   "description": "",
-  "main": "./build/cli.js",
+  "main": "build/cli.js",
   "bin": {
-    "ava": "./build/cli.js"
+    "ava": "build/cli.js"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w",
-    "start": "node dist/cli.js",
+    "build": "tsc -p .",
+    "dev": "tsc -p . -w",
+    "start": "node build/bin/cli.js",
     "prepare": "npm run build",
     "test": "jest"
   },
   "files": [
-    "dist/*.js",
+    "build/*.js",
     "README.md"
   ],
   "keywords": [],
@@ -40,6 +40,7 @@
     "jest": "^27.4.5",
     "ts-jest": "^27.1.2",
     "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.12.0",
     "typescript": "^4.5.4"
   },
   "dependencies": {
