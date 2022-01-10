@@ -48,6 +48,22 @@ export class AvaNode extends Construct {
         name: `node-ctl`,
         port: 9651,
       },
+      {
+        name: `node-cli-1`,
+        port: 9652,
+      },
+      {
+        name: `node-cli-2`,
+        port: 9654,
+      },
+      {
+        name: `node-cli-3`,
+        port: 9656,
+      },
+      {
+        name: `node-cli-4`,
+        port: 9658,
+      },
     ];
 
     new kplus.ServiceAccount(this, `service-account`, {

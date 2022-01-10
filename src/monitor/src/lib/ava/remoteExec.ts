@@ -107,10 +107,17 @@ export function exec(
         });
         resp.on("close", (code: number) => {
           body = osStream.body().trim();
-          data = JSON.parse(body);
+          try {
+            data = JSON.parse(body);
+          } catch (e) {
+            console.error(`Error occurred while parsing the response`);
+            console.log(body);
+            process.exit(1);
+          }
           if (data.result) {
             data = data.result;
           }
+
           let ret = {
             body,
             data,
@@ -124,7 +131,7 @@ export function exec(
           return resolve(ret);
         });
       } catch (e) {
-        console.error("Error", e);
+        console.error("Error", e, body);
         reject(e);
       }
     });

@@ -14,6 +14,8 @@ export const platform = {
   addValidator: exec("/ext/P", "platform.addValidator"),
   createAddress: exec("/ext/P", "platform.createAddress"),
   createBlockchain: exec("/ext/P", "platform.createBlockchain"),
+  getBlockchains: exec("/ext/P", "platform.getBlockchains"),
+  getSubnets: exec("/ext/P", "platform.getSubnets"),
 };
 
 export const admin = {
