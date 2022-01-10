@@ -5,8 +5,8 @@ import {
   // Quantity,
   // ContainerPort,
   // ServicePort,
-  KubeClusterRole,
-  KubeClusterRoleBinding,
+  // KubeClusterRole,
+  // KubeClusterRoleBinding,
   EnvVar,
   // VolumeMount,
   // IntOrString,
@@ -26,10 +26,10 @@ export interface SubstrateNodeProps {
 // const defaultArgs = ["--config-file=/etc/ava/ava.conf"];
 
 export class SubstrateNode extends Construct {
-  public readonly deployment: kplus.Deployment;
-  public readonly container: kplus.Container;
+  // public readonly deployment: kplus.Deployment;
+  // public readonly container: kplus.Container;
 
-  constructor(scope: Construct, id: string, props: SubstrateNodeProps) {
+  constructor(scope: Construct, id: string, _props: SubstrateNodeProps) {
     super(scope, id, {});
 
     // const image = props.image || `avaplatform/avalanchego:3163be79`;

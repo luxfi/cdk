@@ -5,9 +5,11 @@
 
 ANOTHER_NODE=$(python3 /tmp/list_nodes.py)
 CONFIG_FILE=/etc/ava/ava.json
+GENESIS_FILE=/etc/ava/genesis.json
 
-FLAGS="--config-file=$CONFIG_FILE"
+FLAGS="--config-file=$CONFIG_FILE --genesis $GENESIS_FILE"
 
+echo "Another node: ${ANOTHER_NODE}"
 if [[ ! -z "${ANOTHER_NODE}" ]]; then
   FLAGS="$FLAGS --bootstrap-ips=$ANOTHER_NODE"
 fi

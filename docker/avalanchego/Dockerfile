@@ -7,6 +7,7 @@ RUN apt-get update -yq && \
 
 COPY ./list_nodes.py /tmp
 COPY ./avalanche-config.json /etc/ava/ava.json
+COPY ./genesis.json /etc/ava/genesis.json
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

@@ -5,13 +5,7 @@ const path = require("path");
 const chalk = require("chalk");
 let cfg = require("./default-config.json");
 
-const SAVE_CONFIG_PATH = path.join(
-  __dirname,
-  "..",
-  "docker",
-  "avalanchego",
-  "avalanche-config.json"
-);
+const AVALANCHEGO_DIR = path.join(__dirname, "..", "docker", "avalanchego");
 
 interface Schedule {
   amount: number;
@@ -43,20 +37,21 @@ interface GenesisConfig {
 }
 
 const yargs = require("yargs");
+const myYarg = yargs.parserConfiguration({
+  "short-option-groups": true,
+  "camel-case-expansion": false,
+  "dot-notation": true,
+  "parse-numbers": true,
+  "parse-positional-numbers": true,
+  "boolean-negation": true,
+  "deep-merge-config": false,
+  "strip-aliased": true,
+  "strip-dashed": false,
+});
 
 const generateGenesisCommand = generateGenesis();
 const generateConfigCommand = generateConfig();
-let argv = yargs
-  .parserConfiguration({
-    "short-option-groups": true,
-    "dot-notation": true,
-    "parse-numbers": true,
-    "parse-positional-numbers": true,
-    "boolean-negation": true,
-    "deep-merge-config": true,
-    "strip-aliased": true,
-    "strip-dashed": false,
-  })
+let argv = myYarg
   .usage("Usage: [args]")
   .command(
     "generate-genesis",
@@ -70,19 +65,6 @@ let argv = yargs
     generateConfigCommand.builder,
     generateConfigCommand.handler
   )
-  .options({
-    "network-id": {
-      default: 4200,
-      help: "Identity of the network the node should connect to",
-      // choices: ["mainnet", "fuji", "testnet", "local", `local-{id}`],
-      coerce: (opt: string | string) => {
-        if (typeof opt === "number") {
-          return `local-${opt}`;
-        }
-        return opt;
-      },
-    },
-  })
   .demandCommand()
   .usage("Usage: <cmd> [args]")
   .help("Create the default avalanche configuration").argv;
@@ -130,6 +112,7 @@ function generateConfig() {
         },
         genesis: {
           help: "path to a JSON file",
+          default: "/etc/ava/genesis.json",
         },
         "genesis-content": {
           help: "Base64 encoded genesis data to use",
@@ -143,6 +126,17 @@ function generateConfig() {
           help: "Highlight logs",
           choices: ["auto", "plain", "colors"],
           default: "auto",
+        },
+        "network-id": {
+          default: 4200,
+          help: "Identity of the network the node should connect to",
+          // choices: ["mainnet", "fuji", "testnet", "local", `local-{id}`],
+          coerce: (opt: string | string) => {
+            if (typeof opt === "number") {
+              return `network-${opt}`;
+            }
+            return opt;
+          },
         },
         "public-ip": {
           help: "Public facing address",
@@ -177,30 +171,25 @@ function generateConfig() {
         },
         "output-file": {
           help: "File to save the config",
-          default: path.join(
-            __dirname,
-            "..",
-            "docker",
-            "avalanchego",
-            "avalanche-config.json"
-          ),
+          default: path.join(AVALANCHEGO_DIR, "avalanche-config.json"),
           normalize: true,
         },
       })
       .help();
   const handler = (argv: any) => {
     console.log("Generating config");
-    const outputFile = argv.outputFile;
-
-    const genesisData = fs.readFileSync(
-      path.join(__dirname, "./genesis-config.json"),
-      "utf-8"
-    );
-
+    const outputFile = argv["output-file"];
+    delete argv["output-file"];
     delete argv["_"];
     delete argv["$0"];
 
-    argv["genesis"] = Buffer.from(genesisData).toString("base64");
+    // const genesisData = fs.readFileSync(
+    //   path.join(__dirname, "./genesis-config.json"),
+    //   "utf-8"
+    // );
+
+    // argv["genesis-content"] = Buffer.from(genesisData).toString("base64");
+    // delete argv["genesis"];
     const newConfig = Object.assign({}, cfg, argv);
 
     fs.writeFileSync(outputFile, JSON.stringify(newConfig, null, 2));
@@ -210,6 +199,10 @@ function generateConfig() {
 }
 
 function generateGenesis() {
+  const today = new Date();
+  console.log(today);
+  const yesterday = new Date(today.setDate(today.getDate() - 1));
+
   const builder = (yargs: any) =>
     yargs
       .options({
@@ -217,9 +210,14 @@ function generateGenesis() {
           help: "Set an allocation with allocation data in JSON format",
           array: true,
         },
+        "network-id": {
+          default: 4200,
+          type: "number",
+          help: "Identity of the network the node should connect to",
+        },
         "start-time": {
           type: "number",
-          default: Date.now(),
+          default: Math.floor(yesterday.getTime() / 1000),
         },
         "initial-stake-duration": {
           help: "Set the initial stake duration",
@@ -239,8 +237,7 @@ function generateGenesis() {
           array: true,
         },
         "output-file": {
-          help: "File to save the config",
-          default: path.join(__dirname, "genesis-config.json"),
+          default: path.join(AVALANCHEGO_DIR, "genesis.json"),
           normalize: true,
         },
       })
@@ -248,23 +245,26 @@ function generateGenesis() {
       .help();
 
   const handler = (argv: any) => {
-    const outputFile = argv.outputFile;
+    const outputFile = argv["output-file"];
+    delete argv["output-file"];
     console.log(
       chalk.blue("Creating genesis block based on arguments"),
       outputFile
     );
-    const initialGenesis = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "genesis-config.json"), "utf-8")
+    const initialGenesis = JSON.parse(fs.readFileSync(outputFile, "utf8"));
+    const cChainGenesis = fs.readFileSync(
+      path.join(AVALANCHEGO_DIR, "cChainGenesis.json"),
+      "utf8"
     );
-    const networkID = argv.networkId;
+    const networkID = argv["network-id"];
     const allocations = (argv.allocation || []).map((s: string) =>
       JSON.parse(s)
     );
-    const startTime = argv.startTime || Date.now();
-    const initialStakeDuration = argv.initialStakeDuration;
-    const initialStakeDurationOffset = argv.initialStakeDurationOffset;
-    const initialStakedFunds = argv.initialStakedFunds;
-    const initialStakers = (argv.initialStaker || []).map((s: string) =>
+    const startTime = argv["start-time"] || Date.now();
+    const initialStakeDuration = argv["initial-stake-duration"];
+    const initialStakeDurationOffset = argv["initial-stake-duration-offset"];
+    const initialStakedFunds = argv["initial-staked-funds"] || [];
+    const initialStakers = (argv["initial-staker"] || []).map((s: string) =>
       JSON.parse(s)
     );
 
@@ -276,6 +276,7 @@ function generateGenesis() {
       initialStakeDurationOffset,
       initialStakedFunds,
       initialStakers,
+      cChainGenesis,
     });
 
     fs.writeFileSync(outputFile, JSON.stringify(cfg, null, 2));
