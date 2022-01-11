@@ -15,24 +15,11 @@ export const command = "info [args]";
 export const desc = "Info";
 
 export const builder = (yargs: Argv) =>
-  yargs.options({
-    host: {
-      description: "Host of avalanche",
-      default: "localhost",
-    },
-    port: {
-      description: "Port of avalanche",
-      default: 9650,
-    },
-    protocol: {
-      description: "Protocol of avalanche",
-      default: "http",
-    },
-    networkId: {
-      description: "Network ID of avalanche",
-      default: 4200,
-    },
-  });
+  yargs
+    .commandDir("./info")
+    .usage("Usage: info <cmd> [args")
+    .help("help")
+    .alias("help", "h");
 
 export async function handler(args: ArgShape) {
   clear();

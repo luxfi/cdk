@@ -15,7 +15,7 @@ export const builder = (yargs: Argv) => yargs;
 
 export async function handler(args: ArgShape) {
   const username = args.username;
-  const password = args.password || generatePassword();
+  const password = args.password;
 
   console.log(
     `Listing users ${chalk.yellow(username)} with ${chalk.yellow(

@@ -75,6 +75,11 @@ export function exec(
       let exitStatus = {};
 
       let payloadParams = Object.assign({}, params, requestParams);
+
+      // Supply a function to manipulate the path if necessary
+      if (opts.path) {
+        path = opts.path(path);
+      }
       const requestData = {
         jsonrpc: "2.0",
         id: uuid.v4().toString(),
