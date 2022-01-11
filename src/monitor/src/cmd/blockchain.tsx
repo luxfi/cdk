@@ -12,6 +12,13 @@ export const desc = "Blockchain commands";
 
 export const builder = (yargs: Argv) =>
   yargs
+    .options({
+      chain: {
+        alias: "C",
+        description: "Chain to create the address on",
+        choices: ["X", "C", "P"],
+      },
+    })
     .commandDir("./blockchain")
     .usage("Usage: blockchain <cmd> [args")
     .help("help")

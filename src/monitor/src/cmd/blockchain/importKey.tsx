@@ -2,7 +2,7 @@ import { Argv } from "yargs";
 import { ArgShape } from "@cli";
 import { V1Pod } from "@kubernetes/client-node";
 import { api } from "../../lib/kube";
-import { platform } from "../../lib/ava";
+import { platform, avm, avax } from "../../lib/ava";
 import chalk from "chalk";
 import clear from "clear";
 import figlet from "figlet";
@@ -30,10 +30,34 @@ export const builder = (yargs: Argv) =>
       description: "Private key",
       required: true,
     },
+    chain: {
+      alias: "C",
+      description: "Chain to create the address on",
+      choices: ["X", "C", "P"],
+    },
   });
 
 export async function handler(args: ArgShape) {
-  const resp = await platform.importKey(args);
+  const { chain, assetID } = args;
+
+  const path = (orig: string) => {
+    if (chain === "X") {
+      return `/ext/bc/${chain}`;
+    } else if (chain === "C") {
+      return `/ext/bc/${chain}/avax`;
+    } else {
+      return `/ext/bc/P`;
+    }
+  };
+  const opts = { ...args, path };
+  const func =
+    chain === "X"
+      ? avm.importKey
+      : chain === "C"
+      ? avax.importKey
+      : platform.importKey;
+
+  const resp = await func(opts);
   if (resp.data.address) {
     console.log(`${chalk.green("Imported key")}: ${resp.data.address}`);
   } else {

@@ -140,7 +140,6 @@ function generateConfig() {
         "public-ip": {
           help: "Public facing address",
           description: "Set the ip to be public",
-          default: "127.0.0.1",
         },
         "dynamic-public-ip": {
           help: "poll for public ip for the node",
@@ -155,6 +154,25 @@ function generateConfig() {
           type: "boolean",
           help: "Set PoS",
           default: false,
+        },
+        "snow-sample-size": {
+          type: "number",
+          default: 1,
+          help: "Set the snow sample size",
+        },
+        "snow-quorum-size": {
+          type: "number",
+          default: 1,
+          help: "set the quorum size for snow",
+        },
+        "signature-verification-enabled": {
+          type: "boolean",
+          default: true,
+        },
+        "chain-config-dir": {
+          type: "string",
+          help: "The chain configuration root directory",
+          default: "/etc/ava/chains/",
         },
         "network-require-validator-to-connect": {
           type: "boolean",

@@ -23,11 +23,18 @@ export const platform = {
   getSubnets: exec("/ext/P", "platform.getSubnets"),
   getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
   importKey: exec("/ext/P", "platform.importKey"),
-  getBalance: exec("/ext/P", "platform.getBalance"),
+  getBalance: exec("/ext/bc/P", "platform.getBalance"),
 };
 
 export const avm = {
   createAddress: exec("/ext/bc", "avm.createAddress"),
+  importKey: exec("/ext/bc", "avm.importKey"),
+  getBalance: exec("/ext/bc", "avm.getBalance"),
+};
+
+export const avax = {
+  importKey: exec("/ext/bc/C/avax", "avax.importKey"),
+  getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
 };
 
 export const admin = {

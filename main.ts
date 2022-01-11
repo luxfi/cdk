@@ -22,7 +22,7 @@ export class MyChart extends Chart {
 
     new AvaNode(this, `ava-node`, {
       image: `docker.io/auser/ava-node:latest`,
-      replicas: 2,
+      replicas: 5,
       volumes: {
         "/usr/share/.avalanchego": dataVolume,
       },

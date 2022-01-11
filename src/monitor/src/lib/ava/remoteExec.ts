@@ -7,6 +7,7 @@ import { Exec } from "@kubernetes/client-node";
 import { kc, api } from "../kube";
 import * as uuid from "uuid";
 import * as stream from "stream";
+import { createDebug } from "../log";
 
 class WritableStream extends Transform {
   private _string: string = "";
@@ -38,8 +39,10 @@ export interface ExecResponse {
   streams: any;
 }
 
+const debug = createDebug("remoteExec");
+
 export function exec(
-  path: string,
+  rawPath: string,
   method: string,
   params: any = { alias: "X" },
   options = { host: "127.0.0.1", port: 9650 }
@@ -77,9 +80,11 @@ export function exec(
       let payloadParams = Object.assign({}, params, requestParams);
 
       // Supply a function to manipulate the path if necessary
+      let path = rawPath;
       if (opts.path) {
-        path = opts.path(path);
+        path = typeof opts.path === "function" ? opts.path(path) : opts.path;
       }
+
       let headers: any = {
         accept: "application/json",
         "content-type": "application/json",
@@ -106,6 +111,11 @@ export function exec(
         return acc;
       }, {});
 
+      if (opts.params) {
+        // Ultimate override
+        payload = opts.params;
+      }
+
       const requestData = {
         jsonrpc: "2.0",
         id: uuid.v4().toString(),
@@ -127,7 +137,7 @@ export function exec(
           requestData
         )}' http://${opts.host}:${opts.port}${path}`,
       ];
-      console.log(cmd);
+      debug(`Sending command: ${cmd}`);
 
       try {
         const resp = await exec.exec(
@@ -153,7 +163,8 @@ export function exec(
           } catch (e) {
             console.error(`Error occurred while parsing the response`);
             console.error(e);
-            console.log(body);
+            console.log(code);
+            console.log("Body close", body);
             process.exit(1);
           }
           if (data.result) {
@@ -180,7 +191,7 @@ export function exec(
   };
 }
 
-const getRunningPod = async (namespace: string = "default") => {
+export const getRunningPod = async (namespace: string = "default") => {
   const { body: pods } = await api.listNamespacedPod(namespace);
   if (!pods || !pods.items || pods.items.length < 1) {
     console.log("No pods");
