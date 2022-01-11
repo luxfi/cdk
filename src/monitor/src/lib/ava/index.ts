@@ -21,3 +21,11 @@ export const platform = {
 export const admin = {
   alias: exec("/ext/admin", "admin.alias"),
 };
+
+export const keystore = {
+  createUser: exec("/ext/keystore", "keystore.createUser"),
+  deleteUser: exec("/ext/keystore", "keystore.deleteUser"),
+  exportUser: exec("/ext/keystore", "keystore.exportUser"),
+  importUser: exec("/ext/keystore", "keystore.exportUser"),
+  listUsers: exec("/ext/keystore", "keystore.listUsers"),
+};

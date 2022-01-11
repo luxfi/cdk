@@ -6,14 +6,14 @@ import chalk from "chalk";
 import clear from "clear";
 import figlet from "figlet";
 
-export const command = "address <cmd> [args]";
+export const command = "user <cmd> [args]";
 
-export const desc = "Address commands";
+export const desc = "user commands";
 
 export const builder = (yargs: Argv) =>
   yargs
-    .commandDir("./address")
-    .usage("Usage: address <cmd> [args")
+    .commandDir("./user")
+    .usage("Usage: user <cmd> [args]")
     .help("help")
     .alias("help", "h");
 

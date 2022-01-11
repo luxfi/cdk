@@ -204,7 +204,6 @@ function generateConfig() {
 
 function generateGenesis() {
   const today = new Date();
-  console.log(today);
   const yesterday = new Date(today.setDate(today.getDate() - 1));
 
   const builder = (yargs: any) =>
