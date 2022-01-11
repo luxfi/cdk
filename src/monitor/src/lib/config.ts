@@ -1,6 +1,6 @@
 const pkg = require("../../package.json");
-const Configstore = require("configstore");
-export const conf = new Configstore(pkg.name);
+// const Configstore = require("configstore");
+// export const conf = new Configstore(pkg.name);
 
 export const today = new Date();
 export const yesterday = new Date(today.setDate(today.getDate() - 1));

@@ -22,6 +22,10 @@ export const admin = {
   alias: exec("/ext/admin", "admin.alias"),
 };
 
+export const health = {
+  health: exec("/ext/health", "health.health"),
+};
+
 export const keystore = {
   createUser: exec("/ext/keystore", "keystore.createUser"),
   deleteUser: exec("/ext/keystore", "keystore.deleteUser"),
