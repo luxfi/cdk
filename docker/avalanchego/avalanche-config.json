@@ -18,7 +18,8 @@
   "log-display-highlight": "auto",
   "public-ip": "127.0.0.1",
   "staking-port": 9651,
-  "staking-enabled": true,
+  "staking-enabled": false,
+  "network-require-validator-to-connect": false,
   "eth-apis": [
     "public-eth",
     "public-eth-filter",

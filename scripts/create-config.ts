@@ -155,7 +155,11 @@ function generateConfig() {
         "staking-enabled": {
           type: "boolean",
           help: "Set PoS",
-          default: true,
+          default: false,
+        },
+        "network-require-validator-to-connect": {
+          type: "boolean",
+          default: false,
         },
         "eth-apis": {
           default: [

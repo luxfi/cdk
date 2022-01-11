@@ -61,6 +61,7 @@ export function exec(
         containerName = pod.spec!.containers[0].name;
         podName = pod.metadata!.name;
       }
+      let opts = { ...options, ...requestParams };
       const exec = new Exec(kc);
       const osStream = new WritableStream();
       const errStream = new WritableStream();
@@ -85,7 +86,7 @@ export function exec(
         "-c",
         `/usr/bin/curl -s -q -H 'accept:application/json' -H 'content-type:application/json;' -XPOST --data '${JSON.stringify(
           requestData
-        )}' http://${options.host}:${options.port}${path}`,
+        )}' http://${opts.host}:${opts.port}${path}`,
       ];
 
       try {

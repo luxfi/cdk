@@ -1,8 +1,3 @@
-#!/usr/bin/env ts-node
-import yargs, { Arguments } from "yargs";
-import fs from "fs";
-import path from "path";
-
 import { Argv } from "yargs";
 import { ArgShape } from "@cli";
 import { V1Pod } from "@kubernetes/client-node";
