@@ -11,17 +11,24 @@ export const command = "list [args]";
 
 export const desc = "List users";
 
-export const builder = (yargs: Argv) => yargs;
+export const builder = (yargs: Argv) =>
+  yargs.options({
+    username: {
+      alias: "u",
+      description: "Username for the key",
+      help: "Username for the key",
+    },
+    password: {
+      alias: "p",
+      description: "Password for the key",
+    },
+  });
 
 export async function handler(args: ArgShape) {
   const username = args.username;
   const password = args.password;
 
-  console.log(
-    `Listing users ${chalk.yellow(username)} with ${chalk.yellow(
-      password
-    )} to the blockchain`
-  );
+  console.log(`Listing users of the blockchain`);
 
   const resp = await keystore.listUsers();
   if (resp.data.users) {
@@ -29,6 +36,6 @@ export async function handler(args: ArgShape) {
       console.log(`- ${username}`);
     });
   } else {
-    console.log(`${chalk.red("Error listing users")}: ${resp.data}`);
+    console.log(`${chalk.red("Error listing users")}: ${resp.data}`, resp);
   }
 }

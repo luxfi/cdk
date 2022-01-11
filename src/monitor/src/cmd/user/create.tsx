@@ -14,14 +14,14 @@ export const desc = "Create a new user";
 
 export const builder = (yargs: Argv) =>
   yargs.options({
-    u: {
-      alias: "username",
+    username: {
+      alias: "u",
       description: "Username for the key",
       required: true,
       help: "Username for the key",
     },
-    p: {
-      alias: "password",
+    password: {
+      alias: "p",
       description: "Password for the key",
     },
     g: {

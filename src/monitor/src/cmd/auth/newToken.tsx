@@ -13,19 +13,23 @@ export const desc = "Get a new token";
 
 export const builder = (yargs: Argv) =>
   yargs.options({
-    p: {
-      alias: "password",
+    password: {
+      alias: "p",
       description: "node authorization token password",
       required: true,
     },
-    e: {
+    endpoints: {
       array: true,
-      alias: "endpoints",
+      alias: "e",
       default: "*",
     },
   });
 
 export async function handler(args: ArgShape) {
   const resp = await auth.newToken(args);
-  console.log(resp);
+  if (resp.data.token) {
+    console.log(`${chalk.blue("New token")}: ${resp.data.token}`);
+  } else {
+    console.error(`${chalk.red("Error fetching a new token")}`, resp);
+  }
 }

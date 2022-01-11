@@ -1,15 +1,16 @@
 import { Argv } from "yargs";
-import { ArgShape } from "../../cli";
+import { ArgShape } from "@cli";
 import { V1Pod } from "@kubernetes/client-node";
 import { api } from "../../lib/kube";
-import { avm } from "../../lib/ava";
+import { platform } from "../../lib/ava";
 import chalk from "chalk";
 import clear from "clear";
 import figlet from "figlet";
+import { next_year } from "../../lib/date";
 
-export const command = "create [args]";
+export const command = "importKey [args]";
 
-export const desc = "Create an address on the avm chain";
+export const desc = "Import a private key";
 
 export const builder = (yargs: Argv) =>
   yargs.options({
@@ -24,24 +25,18 @@ export const builder = (yargs: Argv) =>
       description: "Password for the key",
       required: true,
     },
-    chain: {
-      alias: "c",
-      description: "chain to create address in",
-      default: "X",
+    privateKey: {
+      alias: "k",
+      description: "Private key",
+      required: true,
     },
   });
 
 export async function handler(args: ArgShape) {
-  const chain = args.chain;
-  const opts = Object.assign({}, args, {
-    path: (originalPath: string) => `${originalPath}/${chain}`,
-  });
-  delete args["chain"];
-
-  const resp = await avm.createAddress(opts);
+  const resp = await platform.importKey(args);
   if (resp.data.address) {
-    console.log(`Created address: ${resp.data.address}`);
+    console.log(`${chalk.green("Imported key")}: ${resp.data.address}`);
   } else {
-    console.error(`Error creating new address`, resp);
+    console.error("There was an error importing key", resp);
   }
 }

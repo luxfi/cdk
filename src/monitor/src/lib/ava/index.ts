@@ -11,16 +11,23 @@ export const info = {
   getNodeIP: exec("/ext/info", "info.getNodeIP"),
   getNodeVersion: exec("/ext/info", "info.getNodeVersion"),
   getTxFee: exec("/ext/info", "info.getTxFee"),
-  uptime: exec("/ext/info", "info.uptime"),
 };
 
 export const platform = {
   addDelegator: exec("/ext/P", "platform.addDelegator"),
   addValidator: exec("/ext/P", "platform.addValidator"),
   createAddress: exec("/ext/P", "platform.createAddress"),
+  createSubnet: exec("/ext/P", "platform.createSubnet"),
   createBlockchain: exec("/ext/P", "platform.createBlockchain"),
   getBlockchains: exec("/ext/P", "platform.getBlockchains"),
   getSubnets: exec("/ext/P", "platform.getSubnets"),
+  getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
+  importKey: exec("/ext/P", "platform.importKey"),
+  getBalance: exec("/ext/P", "platform.getBalance"),
+};
+
+export const avm = {
+  createAddress: exec("/ext/bc", "avm.createAddress"),
 };
 
 export const admin = {

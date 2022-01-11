@@ -2,7 +2,7 @@
   "log-level": "verbo",
   "api-admin-enabled": true,
   "api-auth-required": false,
-  "api-auth-password": false,
+  "api-auth-password": "b0b12345nine10elevenAndUP",
   "api-health-enabled": true,
   "api-info-enabled": true,
   "http-host": "",

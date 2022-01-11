@@ -80,19 +80,54 @@ export function exec(
       if (opts.path) {
         path = opts.path(path);
       }
+      let headers: any = {
+        accept: "application/json",
+        "content-type": "application/json",
+      };
+      if (opts.headers) {
+        Object.keys(opts.headers).forEach((key: string) => {
+          headers[key] = opts.headers[key];
+        });
+      }
+      if (opts.token || process.env.MONITOR_TOKEN) {
+        const token = opts.token || process.env.MONITOR_TOKEN;
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      // Filter payload params
+      let payload = Object.keys(payloadParams).reduce((acc: any, key: any) => {
+        if (key === "_" || key === "$0") {
+          return acc;
+        }
+        const val: any = payloadParams[key];
+        if (val != "") {
+          acc[key] = val;
+        }
+        return acc;
+      }, {});
+
       const requestData = {
         jsonrpc: "2.0",
         id: uuid.v4().toString(),
         method,
-        params: payloadParams,
+        params: payload,
       };
+
+      const headerStr = Object.keys(headers).reduce(
+        (acc: string, key: string) => {
+          return `${acc} -H '${key}:${headers[key]}'`;
+        },
+        ""
+      );
+      // -H 'accept:application/json' -H 'content-type:application/json;'
       let cmd = [
         "/bin/bash",
         "-c",
-        `/usr/bin/curl -s -q -H 'accept:application/json' -H 'content-type:application/json;' -XPOST --data '${JSON.stringify(
+        `/usr/bin/curl -s -q ${headerStr} -XPOST --data '${JSON.stringify(
           requestData
         )}' http://${opts.host}:${opts.port}${path}`,
       ];
+      console.log(cmd);
 
       try {
         const resp = await exec.exec(
@@ -117,6 +152,7 @@ export function exec(
             data = JSON.parse(body);
           } catch (e) {
             console.error(`Error occurred while parsing the response`);
+            console.error(e);
             console.log(body);
             process.exit(1);
           }

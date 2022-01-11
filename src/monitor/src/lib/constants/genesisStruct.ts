@@ -39,3 +39,7 @@ export const DEFAULT_GENESIS_STRUCT = {
   parentHash:
     "0x0000000000000000000000000000000000000000000000000000000000000000",
 };
+
+export interface GenesisInput {}
+
+export const createGenesis = ({}: GenesisInput) => {};

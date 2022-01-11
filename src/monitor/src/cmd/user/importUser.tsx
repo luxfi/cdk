@@ -13,19 +13,19 @@ export const desc = "Import a existing user";
 
 export const builder = (yargs: Argv) =>
   yargs.options({
-    u: {
-      alias: "username",
+    username: {
+      alias: "u",
       description: "Username for the key",
       required: true,
       help: "Username for the key",
     },
-    p: {
-      alias: "password",
+    password: {
+      alias: "p",
       description: "Password for the key",
       required: true,
     },
-    e: {
-      alias: "encoding",
+    encoding: {
+      alias: "e",
       description: "Encoding",
       choices: ["cb58", "hex"],
       default: "cb58",

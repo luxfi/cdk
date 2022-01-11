@@ -1,15 +1,16 @@
 import { Argv } from "yargs";
-import { ArgShape } from "../../cli";
+import { ArgShape } from "@cli";
 import { V1Pod } from "@kubernetes/client-node";
 import { api } from "../../lib/kube";
-import { avm } from "../../lib/ava";
+import { platform } from "../../lib/ava";
 import chalk from "chalk";
 import clear from "clear";
 import figlet from "figlet";
+import { next_year } from "../../lib/date";
 
-export const command = "create [args]";
+export const command = "createAddress [args]";
 
-export const desc = "Create an address on the avm chain";
+export const desc = "Create a P-chain address";
 
 export const builder = (yargs: Argv) =>
   yargs.options({
@@ -22,26 +23,22 @@ export const builder = (yargs: Argv) =>
     password: {
       alias: "p",
       description: "Password for the key",
-      required: true,
     },
     chain: {
       alias: "c",
-      description: "chain to create address in",
-      default: "X",
+      description: "Chain",
+      choices: ["P", "C"],
+      default: "P",
     },
   });
 
 export async function handler(args: ArgShape) {
-  const chain = args.chain;
-  const opts = Object.assign({}, args, {
-    path: (originalPath: string) => `${originalPath}/${chain}`,
-  });
+  delete args["node-i-d"];
   delete args["chain"];
-
-  const resp = await avm.createAddress(opts);
+  const resp = await platform.createAddress(args);
   if (resp.data.address) {
-    console.log(`Created address: ${resp.data.address}`);
+    console.log(`${chalk.green("Created address")}: ${resp.data.address}`);
   } else {
-    console.error(`Error creating new address`, resp);
+    console.error("There was an error creating address", resp);
   }
 }

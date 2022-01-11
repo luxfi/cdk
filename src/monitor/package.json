@@ -53,6 +53,7 @@
     "clui": "^0.3.6",
     "configstore": "^6.0.0",
     "figlet": "^1.5.2",
+    "gdate": "^1.1.5",
     "ink": "^3.2.0",
     "ink-big-text": "^1.2.0",
     "ink-link": "^2.0.0",

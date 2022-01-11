@@ -15,7 +15,7 @@ export const builder = (yargs: Argv) => yargs;
 export async function handler(args: ArgShape) {
   const { data } = await info.getNodeID(args);
   if (data.nodeID) {
-    console.log(`NodeID: ${chalk.blue(data.nodeID)}`);
+    console.log(`${chalk.blue("NodeID")}: ${data.nodeID}`);
   } else {
     console.error(`Error fetching nodeID`, data);
   }

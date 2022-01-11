@@ -79,11 +79,10 @@ function generateConfig() {
         },
         "api-auth-required": {
           type: "boolean",
-          default: false,
+          default: true,
         },
         "api-auth-password": {
           help: "Authorization token required",
-          type: "boolean",
           default: false,
         },
         "api-health-enabled": {

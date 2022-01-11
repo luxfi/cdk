@@ -17,6 +17,16 @@ export type ArgShape<Additional = AdditionalArgs> = Arguments<
 >;
 
 yargs
+  .parserConfiguration({
+    "short-option-groups": true,
+    "camel-case-expansion": false,
+    "dot-notation": true,
+    "parse-numbers": true,
+    "parse-positional-numbers": true,
+    "boolean-negation": true,
+    "strip-aliased": true,
+    "strip-dashed": false,
+  })
   .options({
     apiUrl: {
       alias: "h",
@@ -44,6 +54,9 @@ yargs
     protocol: {
       description: "Protocol of avalanche",
       default: "http",
+    },
+    token: {
+      description: "AUTH token",
     },
   })
   .commandDir("./cmd")
