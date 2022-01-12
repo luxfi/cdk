@@ -1,8 +1,10 @@
 import { Construct } from "constructs";
 // import { Names } from "cdk8s";
+import * as c from "cdk8s";
+import * as k from "../imports/k8s";
 import { EnvVar } from "../imports/k8s";
 import * as kplus from "cdk8s-plus-22";
-import { createServiceAccount } from "./create-service-account";
+// import { createServiceAccount } from "./create-service-account";
 
 export interface MonitorNodeProps {
   readonly image?: string;
@@ -22,7 +24,7 @@ export class MonitorNode extends Construct {
     // const label = { app: Names.toDnsLabel(this) };
     const replicas = props.replicas ?? 1;
     const env = props.env || {};
-    const volumes = props.volumes || {};
+    // const volumes = props.volumes || {};
     const servicePorts: kplus.ServicePort[] = props.servicePorts || [
       {
         port: 3000,
@@ -46,7 +48,7 @@ export class MonitorNode extends Construct {
       // },
     ];
 
-    createServiceAccount(this, { name: `monitor` });
+    // createServiceAccount(this, { name: `monitor` });
 
     // const service =
     new kplus.Service(this, `monitor-service`, {
@@ -68,9 +70,10 @@ export class MonitorNode extends Construct {
       replicas,
       // port: 9090,
     });
-    deployment.selectByLabel("run", "monitor-node");
+    // deployment.selectByLabel("run", "monitor-node");
 
-    const container = deployment.addContainer({
+    // const container =
+    deployment.addContainer({
       image,
       // Uncomment this for local testing purposes
       // In order to test local docker images
@@ -80,10 +83,51 @@ export class MonitorNode extends Construct {
       env,
     });
 
-    Object.keys(volumes).forEach((containerPath) => {
-      deployment.addVolume(volumes[containerPath]);
-      container.mount(containerPath, volumes[containerPath]);
-    });
+    const envs = Object.keys(env).reduce((acc: any[], key: string) => {
+      acc.push({ key, name: env[key] });
+      return acc;
+    }, []);
+    const kubeDeployment = c.ApiObject.of(deployment);
+    kubeDeployment.addJsonPatch(
+      c.JsonPatch.replace("/spec/selector/matchLabels", {
+        run: "monitor-node",
+      })
+    );
+    kubeDeployment.addJsonPatch(
+      c.JsonPatch.add("/spec/template", {
+        metadata: {
+          labels: {
+            "cdk8s.deployment": deployment.name,
+            run: "monitor-node",
+          },
+        },
+        spec: {
+          containers: [
+            {
+              env: envs,
+              image,
+              imagePullPolicy: kplus.ImagePullPolicy.NEVER,
+              name: `main`,
+              resources: {
+                requests: {
+                  cpu: k.Quantity.fromString("100m"),
+                  memory: k.Quantity.fromString("128Mi"),
+                },
+                limits: {
+                  cpu: k.Quantity.fromString("100m"),
+                  memory: k.Quantity.fromString("128Mi"),
+                },
+              },
+            },
+          ],
+        },
+      })
+    );
+
+    // Object.keys(volumes).forEach((containerPath) => {
+    //   deployment.addVolume(volumes[containerPath]);
+    //   container.mount(containerPath, volumes[containerPath]);
+    // });
 
     // servicePorts.forEach((port: kplus.ServicePort) => service.serve(port.port));
 
