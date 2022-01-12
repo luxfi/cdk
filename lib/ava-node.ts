@@ -53,6 +53,7 @@ export class AvaNode extends Construct {
       metadata: {
         labels: {
           run: "ava-node",
+          role: "ava-node",
         },
       },
     });
@@ -115,10 +116,10 @@ export class AvaNode extends Construct {
       metadata: { name: "ava-nodeset", labels: { role: "ava-node" } },
       spec: {
         // serviceName: `ava-nodestatefulset`,
-        selector: { matchLabels: { run: "ava-node", role: "ava-node" } },
+        selector: { matchLabels: { role: "ava-node" } },
         replicas,
         template: {
-          metadata: { labels: { run: "ava-node", role: "ava-node" } },
+          metadata: { labels: { role: "ava-node" } },
           spec: {
             serviceAccountName: serviceAccount.name,
             containers: [
@@ -141,9 +142,9 @@ export class AvaNode extends Construct {
               },
             ],
             volumes: volumesForSet,
-            nodeSelector: {
-              run: "ava-node",
-            },
+            // nodeSelector: {
+            //   role: "ava-node",
+            // },
             // affinity: {
             //   podAntiAffinity: {
             //     requiredDuringSchedulingIgnoredDuringExecution: [

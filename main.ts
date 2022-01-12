@@ -28,14 +28,14 @@ export class MyChart extends Chart {
     let vol = new k.KubePersistentVolume(this, `ava-data`, {
       metadata: { name: "ava-data" },
       spec: {
-        accessModes: [`ReadWriteMany`, `ReadWriteOnce`],
+        accessModes: [`ReadWriteOnce`, `ReadWriteMany`],
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("3Gi") },
-        local: {
-          path: "/mnt/dev/vol1",
+        hostPath: {
+          path: "/mnt/disk/vol1",
         },
-        volumeMode: "Filesystem",
-        persistentVolumeReclaimPolicy: "Recycle",
+        // volumeMode: "Filesystem",
+        persistentVolumeReclaimPolicy: "Delete",
         nodeAffinity: {
           required: {
             nodeSelectorTerms: [
@@ -56,7 +56,7 @@ export class MyChart extends Chart {
 
     new AvaNode(this, `ava-node`, {
       image: `docker.io/auser/ava-node:latest`,
-      replicas: 5,
+      replicas: 1,
       volumes: {
         "/usr/share/.avalanchego": vol,
       },
