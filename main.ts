@@ -9,15 +9,16 @@ import { App, Chart, ChartProps } from "cdk8s";
 import * as k from "./imports/k8s";
 // import { WebService } from "./lib/web-service";
 import { AvaNode } from "./lib/ava-node";
-// import { MonitorNode } from "./lib/monitor-node";
+import { MonitorNode } from "./lib/monitor-node";
 
 export class MyChart extends Chart {
   constructor(scope: Construct, id: string, props: ChartProps = {}) {
     super(scope, id, props);
 
-    // const avaData = new kplus.ConfigMap(this, "avaData");
     // avaData.addDirectory(path.join(__dirname, "docker/avalanchego/db"));
     // const avaVolume = kplus.Volume.fromConfigMap(avaData, {});
+    // const monitorData = new kplus.ConfigMap(this, "monitorData");
+    // const monitorVolume = kplus.Volume.fromConfigMap(monitorData);
 
     new k.KubeStorageClass(this, `fast-storage-class`, {
       metadata: { name: "fast" },
@@ -56,19 +57,19 @@ export class MyChart extends Chart {
 
     new AvaNode(this, `ava-node`, {
       image: `docker.io/auser/ava-node:latest`,
-      replicas: 6,
+      replicas: 3,
       volumes: {
-        "/usr/share/.avalanchego": vol,
+        "/usr/local/.avalanchego": vol,
       },
     });
 
-    // new MonitorNode(this, `monitoring-node`, {
-    //   image: `docker.io/auser/monitor-node`,
-    //   replicas: 2,
-    //   volumes: {
-    //     "/var/lib/prometheus": monitorVolume,
-    //   },
-    // });
+    new MonitorNode(this, `monitoring-node`, {
+      image: `docker.io/auser/monitor-node:latest`,
+      replicas: 1,
+      // volumes: {
+      //   "/root": monitorVolume,
+      // },
+    });
   }
 }
 
