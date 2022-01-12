@@ -1,8 +1,8 @@
 {
   "log-level": "verbo",
   "api-admin-enabled": true,
-  "api-auth-required": false,
-  "api-auth-password": "b0b12345nine10elevenAndUP",
+  "api-auth-required": true,
+  "api-auth-password": false,
   "api-health-enabled": true,
   "api-info-enabled": true,
   "http-host": "",
@@ -11,7 +11,7 @@
   "bootstrap-retry-enabled": true,
   "network-allow-private-ips": true,
   "db-dir": "/usr/share/.avalanchego/db",
-  "signature-verification-enabled": false,
+  "h": true,
   "index-enabled": false,
   "api-metrics-enabled": true,
   "genesis": "/etc/ava/genesis.json",
@@ -21,6 +21,7 @@
   "staking-enabled": false,
   "snow-sample-size": 1,
   "snow-quorum-size": 1,
+  "signature-verification-enabled": true,
   "chain-config-dir": "/etc/ava/chains/",
   "network-require-validator-to-connect": false,
   "eth-apis": [
