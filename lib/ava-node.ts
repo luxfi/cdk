@@ -32,7 +32,7 @@ export class AvaNode extends Construct {
     // const command = props.command || `/avalanchego/build/avalanchego`;
     // const args = props.args || defaultArgs;
     // const label = { app: Names.toDnsLabel(this) };
-    const replicas = props.replicas ?? 1;
+    const replicas = props.replicas || 5;
     // const env = props.env || {};
     const volumes = props.volumes || {};
     const servicePorts: kplus.ServicePort[] = props.servicePorts || [
@@ -95,6 +95,13 @@ export class AvaNode extends Construct {
         };
       }
     );
+    const volumeMounts = Object.keys(volumes).map((mountPath: string) => {
+      const volume = volumes[mountPath];
+      return {
+        name: volume.name,
+        mountPath,
+      };
+    });
     // const set =
     new KubeStatefulSet(this, `avanodeset`, {
       metadata: { name: "ava-nodeset", labels: { role: "ava-node" } },
@@ -111,6 +118,7 @@ export class AvaNode extends Construct {
                 name: `ava-node`,
                 image,
                 imagePullPolicy: kplus.ImagePullPolicy.NEVER,
+                volumeMounts,
                 // env: [env],
               },
             ],
@@ -118,16 +126,17 @@ export class AvaNode extends Construct {
               role: "ava-node",
             },
             affinity: {
-              nodeAffinity: {
-                requiredDuringSchedulingIgnoredDuringExecution: {
-                  nodeSelectorTerms: [
-                    {
+              podAntiAffinity: {
+                requiredDuringSchedulingIgnoredDuringExecution: [
+                  {
+                    labelSelector: {
                       matchExpressions: [
                         { key: "role", operator: "In", values: ["ava-node"] },
                       ],
                     },
-                  ],
-                },
+                    topologyKey: "kubernetes.io/hostname",
+                  },
+                ],
               },
             },
           },

@@ -19,11 +19,11 @@ export class MyChart extends Chart {
     // avaData.addDirectory(path.join(__dirname, "docker/avalanchego/db"));
     // const avaVolume = kplus.Volume.fromConfigMap(avaData, {});
 
-    // new KubeStorageClass(this, `fast-storage-class`, {
-    //   metadata: { name: "standard" },
-    //   provisioner: "kubernetes.io/no-provisioner",
-    //   volumeBindingMode: "WaitForFirstConsumer",
-    // });
+    new k.KubeStorageClass(this, `fast-storage-class`, {
+      metadata: { name: "fast" },
+      provisioner: "kubernetes.io/no-provisioner",
+      volumeBindingMode: "WaitForFirstConsumer",
+    });
 
     let vol = new k.KubePersistentVolume(this, `ava-data`, {
       metadata: { name: "ava-data" },
@@ -56,7 +56,7 @@ export class MyChart extends Chart {
 
     new AvaNode(this, `ava-node`, {
       image: `docker.io/auser/ava-node:latest`,
-      replicas: 2,
+      replicas: 5,
       volumes: {
         "/usr/share/.avalanchego": vol,
       },
