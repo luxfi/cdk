@@ -1,8 +1,9 @@
 import { Construct } from "constructs";
 // import { Names } from "cdk8s";
 
+import * as k from "../imports/k8s";
 import {
-  KubeStatefulSet,
+  // KubeStatefulSet,
   EnvVar,
   Quantity,
   KubePersistentVolume,
@@ -67,34 +68,34 @@ export class AvaNode extends Construct {
     //   service,
     //   replicas,
     // });
-    const volumeClaimTemplates = Object.keys(volumes).map(
-      (mountPath: string) => {
-        const volume = volumes[mountPath];
-        return {
-          metadata: {
-            name: `ava-nodevolumeclaim`,
-            labels: { run: "ava-node", role: "ava-node" },
-          },
-          spec: {
-            accessModes: ["ReadWriteMany", "ReadWriteOnce"],
-            resources: {
-              requests: {
-                storage: Quantity.fromString("50M"),
-              },
+    const claimName = `ava-nodeclaim`;
+    // const volumeClaims =
+    Object.keys(volumes).map((mountPath: string) => {
+      const volume = volumes[mountPath];
+      return new k.KubePersistentVolumeClaim(this, claimName, {
+        metadata: {
+          name: claimName,
+          labels: { run: "ava-node", role: "ava-node" },
+        },
+        spec: {
+          accessModes: ["ReadWriteOnce"],
+          resources: {
+            requests: {
+              storage: Quantity.fromString("100M"),
             },
-            storageClassName: "fast",
-            selector: {
-              matchLabels: { role: "ava-node" },
-              matchExpressions: [
-                { key: "role", operator: "In", values: ["ava-node"] },
-              ],
-            },
-            volumeMode: "Filesystem",
-            volumeName: volume.name,
           },
-        };
-      }
-    );
+          storageClassName: "fast",
+          // selector: {
+          //   matchLabels: { role: "ava-node" },
+          //   matchExpressions: [
+          //     { key: "role", operator: "In", values: ["ava-node"] },
+          //   ],
+          // },
+          // volumeMode: "Filesystem",
+          volumeName: volume.name,
+        },
+      });
+    });
     const volumeMounts = Object.keys(volumes).map((mountPath: string) => {
       const volume = volumes[mountPath];
       return {
@@ -102,11 +103,18 @@ export class AvaNode extends Construct {
         mountPath,
       };
     });
+    const volumesForSet = Object.keys(volumes).map((mountPath: string) => {
+      const volume = volumes[mountPath];
+      return {
+        name: volume.name,
+        persistentVolumeClaim: { claimName },
+      };
+    });
     // const set =
-    new KubeStatefulSet(this, `avanodeset`, {
+    new k.KubeDeployment(this, `avanodeset`, {
       metadata: { name: "ava-nodeset", labels: { role: "ava-node" } },
       spec: {
-        serviceName: `ava-nodestatefulset`,
+        // serviceName: `ava-nodestatefulset`,
         selector: { matchLabels: { run: "ava-node", role: "ava-node" } },
         replicas,
         template: {
@@ -119,30 +127,39 @@ export class AvaNode extends Construct {
                 image,
                 imagePullPolicy: kplus.ImagePullPolicy.NEVER,
                 volumeMounts,
+                resources: {
+                  requests: {
+                    cpu: k.Quantity.fromString("100m"),
+                    memory: k.Quantity.fromString("128Mi"),
+                  },
+                  limits: {
+                    cpu: k.Quantity.fromString("100m"),
+                    memory: k.Quantity.fromString("128Mi"),
+                  },
+                },
                 // env: [env],
               },
             ],
+            volumes: volumesForSet,
             nodeSelector: {
-              role: "ava-node",
+              run: "ava-node",
             },
-            affinity: {
-              podAntiAffinity: {
-                requiredDuringSchedulingIgnoredDuringExecution: [
-                  {
-                    labelSelector: {
-                      matchExpressions: [
-                        { key: "role", operator: "In", values: ["ava-node"] },
-                      ],
-                    },
-                    topologyKey: "kubernetes.io/hostname",
-                  },
-                ],
-              },
-            },
+            // affinity: {
+            //   podAntiAffinity: {
+            //     requiredDuringSchedulingIgnoredDuringExecution: [
+            //       {
+            //         labelSelector: {
+            //           matchExpressions: [
+            //             { key: "role", operator: "In", values: ["ava-node"] },
+            //           ],
+            //         },
+            //         topologyKey: "kubernetes.io/hostname",
+            //       },
+            //     ],
+            //   },
+            // },
           },
         },
-
-        volumeClaimTemplates,
       },
     });
     // createStatefulSetWithPersistentVolumes(this, {
