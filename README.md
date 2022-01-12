@@ -74,6 +74,8 @@ In one-line:
 docker build -t auser/ava-node ./docker/avalanchego && npm run compile && npm run synth && kubectl apply -f dist/cdk.k8s.yaml
 ```
 
+> Alternatively, you can use the `npm run deploy` command.
+
 ## Structure of the code
 
 We're using kubernetes to run all of the nodes in the cluster behind the security of kubernetes. In order to execute APIs securely (at least, somewhat) we execute commands on the kubernetes pod using the `@kubernetes/client-node`. In order to go fast, we don't have any tests (this is medium priority) and make the `lib/ava/remoteExec.ts` file sane.

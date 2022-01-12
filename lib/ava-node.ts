@@ -160,48 +160,5 @@ export class AvaNode extends Construct {
         },
       },
     });
-    // createStatefulSetWithPersistentVolumes(this, {
-    //   selector: {
-    //     matchLabels: { run: "ava-node" },
-    //   },
-    //   serviceName: service.name,
-    //   template: {
-    //     metadata: { labels: { run: "ava-node" } },
-    //     spec: {
-    //       serviceAccount: serviceAccount.name,
-    //       containers: [
-    //         {
-    //           name: `ava-node`,
-    //           replicas,
-    //           image,
-    //           imagePullPolicy: kplus.ImagePullPolicy.NEVER,
-    //         },
-    //       ],
-    //     },
-    //   },
-    //   volumeClaimTemplates,
-    // });
-
-    // ====== Or create a deployment
-    // const deployment = new kplus.Deployment(this, `ava-node-deployment`, {
-    //   metadata: {
-    //     labels: {
-    //       run: "ava-node",
-    //     },
-    //   },
-    //   replicas,
-    //   serviceAccount,
-    // });
-
-    // servicePorts.forEach((port: kplus.ServicePort) => {
-    //   deployment.expose({ port: port.port });
-    // });
-    // Object.keys(volumes).map((mountPath: string) => {
-    //   const volume = volumes[mountPath];
-    //   set.addVolume(volume);
-    //   // container.mount(mountPath, volume, {
-    //   //   readOnly: false,
-    //   // });
-    // });
   }
 }

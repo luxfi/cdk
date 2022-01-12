@@ -26,6 +26,7 @@ RUN sudo chown -R root:root /etc/grafana && \
   sudo chmod -R a+r /etc/grafana && \
   sudo chown -R grafana:grafana /var/lib/grafana && \
   sudo chown -R grafana:grafana /usr/share/grafana && \
+  sudo mkdir -p /run/grafana && sudo chown -R grafana:grafana /run/grafana && \
   sudo mkdir -p /var/lib/prometheus && sudo chown prometheus:prometheus /var/lib/prometheus && \
   sudo chown -R prometheus:prometheus /etc/prometheus/
 
@@ -34,6 +35,6 @@ RUN sudo systemctl enable grafana-server.service && sudo systemctl start grafana
   sudo systemctl enable prometheus.service && sudo systemctl start prometheus.service
 
 COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sudo chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

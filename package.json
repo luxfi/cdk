@@ -8,9 +8,13 @@
   "scripts": {
     "import": "cdk8s import",
     "synth": "cdk8s synth",
-    "deploy": "npm run synth && kubectl apply -f dist/cdk.k8s.yaml",
-    "compile": "tsc",
-    "watch": "tsc -w",
+    "docker:ava": "docker build -t auser/ava-node ./docker/avalanchego",
+    "docker:monitor": "docker build -t auser/ava-node ./docker/monitor",
+    "clean": "rimraf dist/cdk.k8s.yaml && tsc --build --clean",
+    "predeploy": "npm run docker:ava && npm run docker:monitor && rm dist/cdk.k8s.yaml",
+    "deploy": "npm run compile && npm run synth && kubectl apply -f dist/cdk.k8s.yaml",
+    "compile": "tsc -p .",
+    "watch": "tsc -p . -w",
     "test": "jest",
     "build": "npm run compile && npm run test && npm run synth",
     "upgrade": "npm i cdk8s@latest cdk8s-cli@latest",
@@ -28,6 +32,7 @@
     "@types/node": "^14.18.4",
     "cdk8s-cli": "^1.0.70",
     "jest": "^26.6.3",
+    "rimraf": "^3.0.2",
     "ts-jest": "^26.5.6",
     "typescript": "^4.5.4"
   }
