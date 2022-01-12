@@ -56,7 +56,7 @@ export class MyChart extends Chart {
 
     new AvaNode(this, `ava-node`, {
       image: `docker.io/auser/ava-node:latest`,
-      replicas: 1,
+      replicas: 21,
       volumes: {
         "/usr/share/.avalanchego": vol,
       },
