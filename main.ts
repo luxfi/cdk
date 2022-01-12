@@ -32,7 +32,7 @@ export class MyChart extends Chart {
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("3Gi") },
         hostPath: {
-          path: "/mnt/disk/vol1",
+          path: "/data/vol1",
         },
         // volumeMode: "Filesystem",
         persistentVolumeReclaimPolicy: "Delete",

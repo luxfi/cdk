@@ -142,9 +142,6 @@ export class AvaNode extends Construct {
               },
             ],
             volumes: volumesForSet,
-            // nodeSelector: {
-            //   role: "ava-node",
-            // },
             // affinity: {
             //   podAntiAffinity: {
             //     requiredDuringSchedulingIgnoredDuringExecution: [
