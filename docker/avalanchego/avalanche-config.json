@@ -2,7 +2,11 @@
   "log-level": "verbo",
   "api-admin-enabled": true,
   "api-auth-required": true,
+<<<<<<< HEAD
   "api-auth-password": false,
+=======
+  "api-auth-password": "Please-change-me-to-1234!",
+>>>>>>> 0d7088d5dd702e7448dcafe0468d59b4cd225670
   "api-health-enabled": true,
   "api-info-enabled": true,
   "http-host": "",
@@ -11,14 +15,19 @@
   "bootstrap-retry-enabled": true,
   "network-allow-private-ips": true,
   "db-dir": "/usr/share/.avalanchego/db",
+<<<<<<< HEAD
   "h": true,
+=======
+>>>>>>> 0d7088d5dd702e7448dcafe0468d59b4cd225670
   "index-enabled": false,
   "api-metrics-enabled": true,
   "genesis": "/etc/ava/genesis.json",
   "log-display-level": "Verbo",
   "log-display-highlight": "auto",
   "staking-port": 9651,
-  "staking-enabled": false,
+  "staking-enabled": true,
+  "staking-tls-cert-file": "/etc/ava/staking.crt",
+  "staking-tls-key-file": "/etc/ava/staking.key",
   "snow-sample-size": 1,
   "snow-quorum-size": 1,
   "signature-verification-enabled": true,

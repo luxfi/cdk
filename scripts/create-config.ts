@@ -83,7 +83,7 @@ function generateConfig() {
         },
         "api-auth-password": {
           help: "Authorization token required",
-          default: false,
+          default: "Please-change-me-to-1234!",
         },
         "api-health-enabled": {
           help: "Enable health api",
@@ -152,8 +152,20 @@ function generateConfig() {
         },
         "staking-enabled": {
           type: "boolean",
-          help: "Set PoS",
-          default: false,
+          help: "Avalanche uses Proof of Stake (PoS) as Sybil resistance to make it prohibitively expensive to attack the network. If false, sybil resistance is disabled and all peers will be sampled during consensus. Defaults to true.",
+          default: true,
+        },
+        "staking-tls-cert-file": {
+          type: "string",
+          default: "/etc/ava/staking.crt",
+          help: "Avalanche uses two-way authenticated TLS connections to securely connect nodes. This argument specifies the location of the TLS certificate used by the node.",
+          normalize: true,
+        },
+        "staking-tls-key-file": {
+          type: "string",
+          default: "/etc/ava/staking.key",
+          help: "Avalanche uses two-way authenticated TLS connections to securely connect nodes. This argument specifies the location of the TLS private key used by the node.",
+          normalize: true,
         },
         "snow-sample-size": {
           type: "number",
