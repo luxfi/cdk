@@ -1,17 +1,16 @@
 import { Construct } from "constructs";
 // import { Names } from "cdk8s";
+
 import {
-  // KubeDeployment,
-  // Quantity,
-  // ContainerPort,
-  // ServicePort,
-  KubeClusterRole,
-  KubeClusterRoleBinding,
+  KubeStatefulSet,
   EnvVar,
-  // VolumeMount,
-  // IntOrString,
+  Quantity,
+  KubePersistentVolume,
 } from "../imports/k8s";
+// import * as k from "cdk8s";
 import * as kplus from "cdk8s-plus-22";
+import { createServiceAccount } from "./create-service-account";
+// import { createStatefulSetWithPersistentVolumes } from "./stateful-set-with-persistent-volumes";
 
 export interface AvaNodeProps {
   readonly image?: string;
@@ -20,15 +19,12 @@ export interface AvaNodeProps {
   readonly replicas?: number;
   readonly servicePorts?: kplus.ServicePort[];
   readonly env?: { [key: string]: EnvVar };
-  readonly volumes?: { [key: string]: kplus.Volume };
+  readonly volumes?: { [key: string]: KubePersistentVolume };
 }
 
 // const defaultArgs = ["--config-file=/etc/ava/ava.conf"];
 
 export class AvaNode extends Construct {
-  public readonly deployment: kplus.Deployment;
-  public readonly container: kplus.Container;
-
   constructor(scope: Construct, id: string, props: AvaNodeProps) {
     super(scope, id, {});
 
@@ -37,151 +33,151 @@ export class AvaNode extends Construct {
     // const args = props.args || defaultArgs;
     // const label = { app: Names.toDnsLabel(this) };
     const replicas = props.replicas ?? 1;
-    const env = props.env || {};
+    // const env = props.env || {};
     const volumes = props.volumes || {};
     const servicePorts: kplus.ServicePort[] = props.servicePorts || [
-      // {
-      //   name: `node-port`,
-      //   port: 9650,
-      // },
       {
-        name: `node-ctl`,
-        port: 9651,
-      },
-      {
-        name: `node-cli-1`,
-        port: 9652,
-      },
-      {
-        name: `node-cli-2`,
-        port: 9654,
-      },
-      {
-        name: `node-cli-3`,
-        port: 9656,
-      },
-      {
-        name: `node-cli-4`,
-        port: 9658,
+        name: `node-port`,
+        port: 9650,
       },
     ];
 
-    new kplus.ServiceAccount(this, `service-account`, {
-      metadata: {
-        name: `pod-service-account`,
-        namespace: "default",
-      },
-    });
+    // const sa =
+    const serviceAccount = createServiceAccount(this, { name: `ava` });
 
-    new KubeClusterRole(this, `node-role`, {
-      metadata: {
-        name: "pod-service-account",
-      },
-      rules: [
-        {
-          apiGroups: [""],
-          resources: ["pods"],
-          verbs: ["get", "list"],
-        },
-        {
-          apiGroups: [""],
-          resources: ["nodes"],
-          verbs: ["get", "list"],
-        },
-      ],
-    });
-
-    new KubeClusterRoleBinding(this, "node-role-binding", {
-      metadata: { name: "pod-service-account" },
-      subjects: [
-        {
-          kind: "ServiceAccount",
-          name: "default",
-          namespace: "default",
-        },
-      ],
-      roleRef: {
-        kind: "ClusterRole",
-        name: "pod-service-account",
-        apiGroup: "rbac.authorization.k8s.io",
-      },
-    });
-
-    // const labels = { ...label, run: "node" };
-
-    const service = new kplus.Service(this, `node-service`, {
+    // const service =
+    new kplus.Service(this, `ava-service`, {
       ports: servicePorts,
-      type: kplus.ServiceType.NODE_PORT,
+      type: kplus.ServiceType.CLUSTER_IP,
       metadata: {
         labels: {
           run: "ava-node",
         },
       },
-      // selector: {
-      //   run: "ava-node",
-      // },
-    });
-    this.deployment = new kplus.Deployment(this, `node-deployment`, {
-      metadata: {
-        labels: {
-          run: "ava-node",
-        },
-      },
-      replicas,
-      // port: 9650,
     });
 
-    this.container = this.deployment.addContainer({
-      image,
-      // Uncomment this for local testing purposes
-      // In order to test local docker images
-      // eval $(minikube docker-env)
-      // then build your docker image
-      imagePullPolicy: kplus.ImagePullPolicy.NEVER,
-      env,
-    });
-
-    Object.keys(volumes).forEach((containerPath) => {
-      this.deployment.addVolume(volumes[containerPath]);
-    });
-
-    service.addDeployment(this.deployment, {
-      name: `node-port`,
-      port: 9560,
-    });
-
+    // ======= Create a stateful set
+    // const set = new kplus.KubeStatefulSet(this, `ava-stateful-servier`, {
     //   metadata: {
-    //     name: id,
-    //     labels,
-    //   },
-    //   spec: {
-    //     replicas,
-    //     selector: {
-    //       matchLabels: label,
-    //     },
-    //     template: {
-    //       metadata: { labels },
-    //       spec: {
-    //         containers: [
-    //           {
-    //             name: `ava-node`,
-    //             image,
-    //             command: [command],
-    //             args,
-    //             resources: {
-    //               limits: {
-    //                 memory: Quantity.fromString("512Mi"),
-    //                 cpu: Quantity.fromString("500m"),
-    //               },
-    //             },
-    //             env,
-    //             ports: containerPorts,
-    //             volumeMounts,
-    //           },
-    //         ],
-    //       },
+    //     labels: {
+    //       run: "ava-node",
     //     },
     //   },
+    //   serviceAccount,
+    //   service,
+    //   replicas,
+    // });
+    const volumeClaimTemplates = Object.keys(volumes).map(
+      (mountPath: string) => {
+        const volume = volumes[mountPath];
+        return {
+          metadata: {
+            name: `ava-nodevolumeclaim`,
+            labels: { run: "ava-node", role: "ava-node" },
+          },
+          spec: {
+            accessModes: ["ReadWriteMany", "ReadWriteOnce"],
+            resources: {
+              requests: {
+                storage: Quantity.fromString("50M"),
+              },
+            },
+            storageClassName: "fast",
+            selector: {
+              matchLabels: { role: "ava-node" },
+              matchExpressions: [
+                { key: "role", operator: "In", values: ["ava-node"] },
+              ],
+            },
+            volumeMode: "Filesystem",
+            volumeName: volume.name,
+          },
+        };
+      }
+    );
+    // const set =
+    new KubeStatefulSet(this, `avanodeset`, {
+      metadata: { name: "ava-nodeset", labels: { role: "ava-node" } },
+      spec: {
+        serviceName: `ava-nodestatefulset`,
+        selector: { matchLabels: { run: "ava-node", role: "ava-node" } },
+        replicas,
+        template: {
+          metadata: { labels: { run: "ava-node", role: "ava-node" } },
+          spec: {
+            serviceAccountName: serviceAccount.name,
+            containers: [
+              {
+                name: `ava-node`,
+                image,
+                imagePullPolicy: kplus.ImagePullPolicy.NEVER,
+                // env: [env],
+              },
+            ],
+            nodeSelector: {
+              role: "ava-node",
+            },
+            affinity: {
+              nodeAffinity: {
+                requiredDuringSchedulingIgnoredDuringExecution: {
+                  nodeSelectorTerms: [
+                    {
+                      matchExpressions: [
+                        { key: "role", operator: "In", values: ["ava-node"] },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+
+        volumeClaimTemplates,
+      },
+    });
+    // createStatefulSetWithPersistentVolumes(this, {
+    //   selector: {
+    //     matchLabels: { run: "ava-node" },
+    //   },
+    //   serviceName: service.name,
+    //   template: {
+    //     metadata: { labels: { run: "ava-node" } },
+    //     spec: {
+    //       serviceAccount: serviceAccount.name,
+    //       containers: [
+    //         {
+    //           name: `ava-node`,
+    //           replicas,
+    //           image,
+    //           imagePullPolicy: kplus.ImagePullPolicy.NEVER,
+    //         },
+    //       ],
+    //     },
+    //   },
+    //   volumeClaimTemplates,
+    // });
+
+    // ====== Or create a deployment
+    // const deployment = new kplus.Deployment(this, `ava-node-deployment`, {
+    //   metadata: {
+    //     labels: {
+    //       run: "ava-node",
+    //     },
+    //   },
+    //   replicas,
+    //   serviceAccount,
+    // });
+
+    // servicePorts.forEach((port: kplus.ServicePort) => {
+    //   deployment.expose({ port: port.port });
+    // });
+    // Object.keys(volumes).map((mountPath: string) => {
+    //   const volume = volumes[mountPath];
+    //   set.addVolume(volume);
+    //   // container.mount(mountPath, volume, {
+    //   //   readOnly: false,
+    //   // });
     // });
   }
 }
