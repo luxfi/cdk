@@ -98,7 +98,7 @@ export class MonitorNode extends Construct {
         namespace: "monitoring",
       },
       spec: {
-        accessModes: [`ReadWriteMany`],
+        accessModes: [`ReadWriteOnce`],
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("4Gi") },
         local: {
@@ -189,7 +189,7 @@ export class MonitorNode extends Construct {
         namespace: "monitoring",
       },
       spec: {
-        accessModes: ["ReadWriteMany"],
+        accessModes: ["ReadWriteOnce"],
         resources: {
           requests: {
             storage: k.Quantity.fromString("1Gi"),
@@ -212,6 +212,27 @@ export class MonitorNode extends Construct {
         template: {
           metadata: { labels: { app: "prometheus-server" } },
           spec: {
+            initContainers: [
+              {
+                name: "prometheus-data-permissions-setup",
+                image,
+                imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
+                command: ["/bin/chown", "-R", "65534:65534", "/prometheus"],
+                volumeMounts: [
+                  {
+                    name: prometheusStorageVolumeName,
+                    mountPath: `/prometheus/`,
+                  },
+                ],
+              },
+            ],
+            securityContext: {
+              fsGroup: 65534,
+              runAsGroup: 65534,
+              runAsNonRoot: true,
+              runAsUser: 65534,
+            },
+            terminationGracePeriodSeconds: 300,
             containers: [
               {
                 image,
