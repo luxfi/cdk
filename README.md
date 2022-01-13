@@ -18,6 +18,14 @@ $ minikube dashboard
 
 Edit `main.ts`, run `npm run compile`. With no errors: `kubectl apply -f dist/cdk.k8s.yaml`
 
+## Create a tls certificate
+
+Sounds complex, but there's a script for it!
+
+```bash
+./scripts/gen-certs.ts
+```
+
 ## After you edit the services typescript files and want to apply the new changes, run the following command:
 
 ```bash

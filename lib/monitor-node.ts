@@ -16,13 +16,12 @@ export interface MonitorNodeProps {
   readonly volumes?: { [key: string]: kplus.Volume };
 }
 
+const confDir = path.join(__dirname, "..", "conf");
+const prometheusDir = path.join(confDir, "prometheus");
+
 /// Use the scripts/gen-cert.ts to generate these
-const cert = fs.readFileSync(
-  path.join(__dirname, "..", "conf", "prometheus", "tls.cert")
-);
-const key = fs.readFileSync(
-  path.join(__dirname, "..", "conf", "prometheus", "tls.key")
-);
+const cert = fs.readFileSync(path.join(prometheusDir, "tls.cert"));
+const key = fs.readFileSync(path.join(prometheusDir, "tls.key"));
 
 export class MonitorNode extends Construct {
   constructor(scope: Construct, id: string, props: MonitorNodeProps) {
@@ -78,47 +77,128 @@ export class MonitorNode extends Construct {
       ],
     });
 
-    const prometheusConfigMap = new kplus.ConfigMap(
-      this,
-      `prometheus-config-map`
-    );
-    prometheusConfigMap.addDirectory(
-      path.join(__dirname, "..", "conf", "prometheus")
-    );
-    const prometheusConfigVolume = kplus.Volume.fromConfigMap(
-      prometheusConfigMap,
-      {}
-    );
-    const prometheusStorageVolume = kplus.Volume.fromEmptyDir(
-      `prometheus-storage-volume`,
-      {}
-    );
+    new k.KubeConfigMap(this, `prometheus-config-map`, {
+      metadata: {
+        name: "prometheus-config-map",
+        namespace: "monitoring",
+      },
+
+      data: {
+        "prometheus.rules": fs
+          .readFileSync(path.join(prometheusDir, "prometheus.rules"))
+          .toString("utf-8"),
+        "prometheus.yml": fs
+          .readFileSync(path.join(prometheusDir, "prometheus.yml"))
+          .toString("utf-8"),
+      },
+    });
+
+    const prometheusStorageVolumeName = "prometheus-storage-volume";
+    new k.KubePersistentVolume(this, prometheusStorageVolumeName, {
+      metadata: { name: prometheusStorageVolumeName, namespace: "monitoring" },
+      spec: {
+        accessModes: [`ReadWriteMany`],
+        storageClassName: "fast",
+        capacity: { storage: k.Quantity.fromString("4Gi") },
+        local: {
+          path: "/prometheus",
+        },
+        volumeMode: "Filesystem",
+        persistentVolumeReclaimPolicy: "Delete",
+        nodeAffinity: {
+          required: {
+            nodeSelectorTerms: [
+              {
+                matchExpressions: [
+                  {
+                    key: "namespace",
+                    operator: "In",
+                    values: ["monitoring"],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    });
+    const prometheusConfigVolumeName = "prometheus-config-volume";
+    new k.KubePersistentVolume(this, prometheusConfigVolumeName, {
+      metadata: { name: prometheusConfigVolumeName },
+      spec: {
+        accessModes: [`ReadWriteMany`],
+        storageClassName: "fast",
+        capacity: { storage: k.Quantity.fromString("500Mi") },
+        local: {
+          path: "/etc/prometheus",
+        },
+        volumeMode: "Filesystem",
+        persistentVolumeReclaimPolicy: "Delete",
+        nodeAffinity: {
+          required: {
+            nodeSelectorTerms: [
+              {
+                matchExpressions: [
+                  {
+                    key: "namespace",
+                    operator: "In",
+                    values: ["monitoring"],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    });
+    // const prometheusConfigVolume = kplus.Volume.fromConfigMap(
+    //   prometheusConfigMap,
+    //   {}
+    // );
+    // const prometheusStorageVolume = kplus.Volume.fromEmptyDir(
+    //   `prometheus-storage-volume`,
+    //   {}
+    // );
     const prometheusVolumeMounts = [
-      { name: prometheusConfigVolume.name, mountPath: `/etc/prometheus` },
-      { name: prometheusStorageVolume.name, mountPath: `/prometheus/` },
+      { name: prometheusConfigVolumeName, mountPath: `/etc/prometheus` },
+      { name: prometheusStorageVolumeName, mountPath: `/prometheus/` },
     ];
 
-    const prometheusConfigVolumeClaim = new k.KubePersistentVolumeClaim(
-      this,
-      `prometheus-conf-volume-claim`,
-      {
-        metadata: {
-          name: "prometheus-conf-volume-claim",
-          namespace: "monitoring",
-          labels: { run: "promethesus-conf-volume" },
-        },
-        spec: {
-          accessModes: ["ReadWriteOnce"],
-          resources: {
-            requests: {
-              storage: k.Quantity.fromString("20M"),
-            },
+    const prometheusConfigVolumeClaimName = "prometheus-conf-volume-claim";
+    new k.KubePersistentVolumeClaim(this, prometheusConfigVolumeClaimName, {
+      metadata: {
+        name: prometheusConfigVolumeClaimName,
+        namespace: "monitoring",
+      },
+      spec: {
+        accessModes: ["ReadWriteOnce"],
+        resources: {
+          requests: {
+            storage: k.Quantity.fromString("20Mi"),
           },
-          storageClassName: "standard",
-          volumeName: prometheusConfigVolume.name,
         },
-      }
-    );
+        storageClassName: "fast",
+        volumeName: prometheusConfigVolumeName,
+      },
+    });
+
+    const prometheusStorageVolumeClaimName = "prometheus-storage-volume-claim";
+    new k.KubePersistentVolumeClaim(this, prometheusStorageVolumeClaimName, {
+      metadata: {
+        name: prometheusStorageVolumeClaimName,
+        namespace: "monitoring",
+      },
+      spec: {
+        accessModes: ["ReadWriteMany"],
+        resources: {
+          requests: {
+            storage: k.Quantity.fromString("100Mi"),
+          },
+        },
+        storageClassName: "fast",
+        volumeName: prometheusStorageVolumeName,
+      },
+    });
 
     new k.KubeDeployment(this, `prometheus-deployment`, {
       metadata: {
@@ -157,12 +237,17 @@ export class MonitorNode extends Construct {
             ],
             volumes: [
               {
-                name: prometheusConfigVolume.name,
+                name: prometheusConfigVolumeName,
                 persistentVolumeClaim: {
-                  claimName: prometheusConfigVolumeClaim.name,
+                  claimName: prometheusConfigVolumeClaimName,
                 },
               },
-              { name: prometheusStorageVolume.name },
+              {
+                name: prometheusStorageVolumeName,
+                persistentVolumeClaim: {
+                  claimName: prometheusStorageVolumeClaimName,
+                },
+              },
             ],
           },
         },
