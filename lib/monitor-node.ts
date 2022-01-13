@@ -80,6 +80,7 @@ export class MonitorNode extends Construct {
     new k.KubeConfigMap(this, `prometheus-config-map`, {
       metadata: {
         name: "prometheus-config-map",
+        labels: { app: "prometheus-server" },
         namespace: "monitoring",
       },
 
@@ -95,9 +96,13 @@ export class MonitorNode extends Construct {
 
     const prometheusStorageVolumeName = "prometheus-storage-volume";
     new k.KubePersistentVolume(this, prometheusStorageVolumeName, {
-      metadata: { name: prometheusStorageVolumeName, namespace: "monitoring" },
+      metadata: {
+        name: prometheusStorageVolumeName,
+        labels: { app: "prometheus-server" },
+        namespace: "monitoring",
+      },
       spec: {
-        accessModes: [`ReadWriteMany`],
+        accessModes: [`ReadWriteOnce`],
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("4Gi") },
         local: {
@@ -111,9 +116,9 @@ export class MonitorNode extends Construct {
               {
                 matchExpressions: [
                   {
-                    key: "namespace",
+                    key: "app",
                     operator: "In",
-                    values: ["monitoring"],
+                    values: ["prometheus-server"],
                   },
                 ],
               },
@@ -124,11 +129,14 @@ export class MonitorNode extends Construct {
     });
     const prometheusConfigVolumeName = "prometheus-config-volume";
     new k.KubePersistentVolume(this, prometheusConfigVolumeName, {
-      metadata: { name: prometheusConfigVolumeName },
+      metadata: {
+        name: prometheusConfigVolumeName,
+        labels: { app: "prometheus-server" },
+      },
       spec: {
-        accessModes: [`ReadWriteMany`],
+        accessModes: [`ReadWriteOnce`],
         storageClassName: "fast",
-        capacity: { storage: k.Quantity.fromString("500Mi") },
+        capacity: { storage: k.Quantity.fromString("4Gi") },
         local: {
           path: "/etc/prometheus",
         },
@@ -140,9 +148,9 @@ export class MonitorNode extends Construct {
               {
                 matchExpressions: [
                   {
-                    key: "namespace",
+                    key: "app",
                     operator: "In",
-                    values: ["monitoring"],
+                    values: ["prometheus-server"],
                   },
                 ],
               },
@@ -151,14 +159,8 @@ export class MonitorNode extends Construct {
         },
       },
     });
-    // const prometheusConfigVolume = kplus.Volume.fromConfigMap(
-    //   prometheusConfigMap,
-    //   {}
-    // );
-    // const prometheusStorageVolume = kplus.Volume.fromEmptyDir(
-    //   `prometheus-storage-volume`,
-    //   {}
-    // );
+
+    // ============= Volumes
     const prometheusVolumeMounts = [
       { name: prometheusConfigVolumeName, mountPath: `/etc/prometheus` },
       { name: prometheusStorageVolumeName, mountPath: `/prometheus/` },
@@ -168,13 +170,14 @@ export class MonitorNode extends Construct {
     new k.KubePersistentVolumeClaim(this, prometheusConfigVolumeClaimName, {
       metadata: {
         name: prometheusConfigVolumeClaimName,
+        labels: { app: "prometheus-server" },
         namespace: "monitoring",
       },
       spec: {
         accessModes: ["ReadWriteOnce"],
         resources: {
           requests: {
-            storage: k.Quantity.fromString("20Mi"),
+            storage: k.Quantity.fromString("500Mi"),
           },
         },
         storageClassName: "fast",
@@ -186,13 +189,14 @@ export class MonitorNode extends Construct {
     new k.KubePersistentVolumeClaim(this, prometheusStorageVolumeClaimName, {
       metadata: {
         name: prometheusStorageVolumeClaimName,
+        labels: { app: "prometheus-server" },
         namespace: "monitoring",
       },
       spec: {
-        accessModes: ["ReadWriteMany"],
+        accessModes: ["ReadWriteOnce"],
         resources: {
           requests: {
-            storage: k.Quantity.fromString("100Mi"),
+            storage: k.Quantity.fromString("500Mi"),
           },
         },
         storageClassName: "fast",
