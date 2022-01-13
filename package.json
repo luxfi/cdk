@@ -11,7 +11,6 @@
     "docker:ava": "docker build -t auser/ava-node ./docker/avalanchego",
     "docker:monitor": "docker build -t auser/ava-node ./docker/monitor",
     "clean": "tsc --build --clean",
-    "predeploy": "npm run docker:ava && npm run docker:monitor && rimraf dist/cdk.k8s.yaml",
     "deploy": "npm run compile && npm run synth && kubectl apply -f dist/cdk.k8s.yaml",
     "compile": "tsc -p .",
     "watch": "tsc -p . -w",

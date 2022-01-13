@@ -18,7 +18,7 @@ export class MonitorNode extends Construct {
   constructor(scope: Construct, id: string, props: MonitorNodeProps) {
     super(scope, id, {});
 
-    const image = props.image || `auser/monitor-node:latest`;
+    const image = props.image || `auser/mon-node:latest`;
     // const command = props.command || `/avalanchego/build/avalanchego`;
     // const args = props.args || defaultArgs;
     // const label = { app: Names.toDnsLabel(this) };
@@ -110,12 +110,12 @@ export class MonitorNode extends Construct {
               name: `main`,
               resources: {
                 requests: {
-                  cpu: k.Quantity.fromString("100m"),
-                  memory: k.Quantity.fromString("128Mi"),
+                  cpu: k.Quantity.fromString("50m"),
+                  memory: k.Quantity.fromString("512Mi"),
                 },
                 limits: {
-                  cpu: k.Quantity.fromString("100m"),
-                  memory: k.Quantity.fromString("128Mi"),
+                  cpu: k.Quantity.fromString("50m"),
+                  memory: k.Quantity.fromString("512Mi"),
                 },
               },
             },
@@ -123,17 +123,5 @@ export class MonitorNode extends Construct {
         },
       })
     );
-
-    // Object.keys(volumes).forEach((containerPath) => {
-    //   deployment.addVolume(volumes[containerPath]);
-    //   container.mount(containerPath, volumes[containerPath]);
-    // });
-
-    // servicePorts.forEach((port: kplus.ServicePort) => service.serve(port.port));
-
-    // service.addDeployment(deployment, {
-    //   name: `monitoring-port`,
-    //   port: 9090,
-    // });
   }
 }

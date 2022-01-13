@@ -19,18 +19,23 @@ export const builder = (yargs: Argv) =>
     port: {
       alias: "p",
       type: "number",
-      default: 9650,
+      default: 8080,
     },
     deploymentName: {
       alias: "d",
       help: "deploymentName",
       type: "string",
     },
+    hostAddress: {
+      alias: "a",
+      help: "Host address to listen for the server",
+      default: "127.0.0.1",
+    },
   });
 
 export async function handler(args: ArgShape) {
   clear();
-  let { namespace, deploymentName, port } = args;
+  let { namespace, deploymentName, port, hostAddress } = args;
 
   console.log(
     chalk.yellow(figlet.textSync("Forward port", { horizontalLayout: "full" }))
@@ -61,5 +66,7 @@ export async function handler(args: ArgShape) {
     );
   });
 
-  server.listen(port, "127.0.0.1");
+  console.log(`${chalk.blue("Listening on")}: http://${hostAddress}:${port}`);
+
+  server.listen(port, hostAddress);
 }

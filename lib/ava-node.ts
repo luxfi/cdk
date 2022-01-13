@@ -79,10 +79,10 @@ export class AvaNode extends Construct {
           labels: { run: "ava-node", role: "ava-node" },
         },
         spec: {
-          accessModes: ["ReadWriteOnce"],
+          accessModes: ["ReadWriteMany"],
           resources: {
             requests: {
-              storage: Quantity.fromString("100M"),
+              storage: Quantity.fromString("500M"),
             },
           },
           storageClassName: "fast",
@@ -113,13 +113,13 @@ export class AvaNode extends Construct {
     });
     // const set =
     new k.KubeDeployment(this, `avanodeset`, {
-      metadata: { name: "ava-nodeset", labels: { role: "ava-node" } },
+      metadata: { name: "ava-nodeset", labels: { run: "ava-node" } },
       spec: {
         // serviceName: `ava-nodestatefulset`,
-        selector: { matchLabels: { role: "ava-node" } },
+        selector: { matchLabels: { run: "ava-node" } },
         replicas,
         template: {
-          metadata: { labels: { role: "ava-node" } },
+          metadata: { labels: { run: "ava-node" } },
           spec: {
             serviceAccountName: serviceAccount.name,
             containers: [
