@@ -15,5 +15,5 @@ RUN rc-update add prometheus default && \
 
 USER auser
 
-ENTRYPOINT ["/bin/sh", "/home/auser/entrypoint.sh"]
+# ENTRYPOINT ["/bin/sh", "/home/auser/entrypoint.sh"]
 

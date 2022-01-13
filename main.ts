@@ -23,7 +23,7 @@ export class MyChart extends Chart {
     new k.KubeStorageClass(this, `fast-storage-class`, {
       metadata: { name: "fast" },
       provisioner: "kubernetes.io/no-provisioner",
-      volumeBindingMode: "WaitForFirstConsumer",
+      // volumeBindingMode: "WaitForFirstConsumer",
     });
 
     let vol = new k.KubePersistentVolume(this, `ava-data`, {

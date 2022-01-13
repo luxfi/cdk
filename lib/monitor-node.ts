@@ -28,11 +28,7 @@ export class MonitorNode extends Construct {
     super(scope, id, {});
 
     const image = props.image || `docker.io/auser/mon-node:latest`;
-    // const command = props.command || `/avalanchego/build/avalanchego`;
-    // const args = props.args || defaultArgs;
-    // const label = { app: Names.toDnsLabel(this) };
     const replicas = props.replicas || 1;
-    // const env = props.env || {};
 
     new k.KubeNamespace(this, `monitoring`, {
       metadata: {
@@ -102,7 +98,7 @@ export class MonitorNode extends Construct {
         namespace: "monitoring",
       },
       spec: {
-        accessModes: [`ReadWriteOnce`],
+        accessModes: [`ReadWriteMany`],
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("4Gi") },
         local: {
@@ -193,10 +189,10 @@ export class MonitorNode extends Construct {
         namespace: "monitoring",
       },
       spec: {
-        accessModes: ["ReadWriteOnce"],
+        accessModes: ["ReadWriteMany"],
         resources: {
           requests: {
-            storage: k.Quantity.fromString("500Mi"),
+            storage: k.Quantity.fromString("1Gi"),
           },
         },
         storageClassName: "fast",
@@ -220,8 +216,9 @@ export class MonitorNode extends Construct {
               {
                 image,
                 name: "prometheus-server",
-                imagePullPolicy: kplus.ImagePullPolicy.NEVER,
+                imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
                 args: [
+                  "/usr/bin/prometheus",
                   "--config.file=/etc/prometheus/prometheus.yml",
                   "--storage.tsdb.path=/prometheus/",
                 ],
@@ -271,9 +268,9 @@ export class MonitorNode extends Construct {
         selector: { app: "prometheus-server" },
         ports: [
           {
-            port: 8080,
+            port: 9090,
             targetPort: k.IntOrString.fromNumber(9090),
-            nodePort: 30000,
+            // nodePort: 30000,
           },
         ],
         type: `NodePort`,
@@ -295,7 +292,7 @@ export class MonitorNode extends Construct {
             http: {
               paths: [
                 {
-                  path: "/dashboard",
+                  path: "/",
                   pathType: "Prefix",
                   backend: {
                     service: {

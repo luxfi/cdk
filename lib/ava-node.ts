@@ -126,7 +126,7 @@ export class AvaNode extends Construct {
               {
                 name: `ava-node`,
                 image,
-                imagePullPolicy: kplus.ImagePullPolicy.NEVER,
+                imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
                 volumeMounts,
                 resources: {
                   requests: {
