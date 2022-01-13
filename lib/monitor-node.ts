@@ -28,12 +28,19 @@ export class MonitorNode extends Construct {
   constructor(scope: Construct, id: string, props: MonitorNodeProps) {
     super(scope, id, {});
 
-    const image = props.image || `auser/mon-node:latest`;
+    const image = props.image || `docker.io/auser/mon-node:latest`;
     // const command = props.command || `/avalanchego/build/avalanchego`;
     // const args = props.args || defaultArgs;
     // const label = { app: Names.toDnsLabel(this) };
-    const replicas = props.replicas ?? 1;
+    const replicas = props.replicas || 1;
     // const env = props.env || {};
+
+    new k.KubeNamespace(this, `monitoring`, {
+      metadata: {
+        name: `monitoring`,
+      },
+      spec: {},
+    });
 
     // ============= Prometheus
     new k.KubeClusterRole(this, `prometheus-role`, {
@@ -78,15 +85,40 @@ export class MonitorNode extends Construct {
     prometheusConfigMap.addDirectory(
       path.join(__dirname, "..", "conf", "prometheus")
     );
-    const prometheusConfigVolume =
-      kplus.Volume.fromConfigMap(prometheusConfigMap);
+    const prometheusConfigVolume = kplus.Volume.fromConfigMap(
+      prometheusConfigMap,
+      {}
+    );
     const prometheusStorageVolume = kplus.Volume.fromEmptyDir(
-      `prometheus-storage-volume`
+      `prometheus-storage-volume`,
+      {}
     );
     const prometheusVolumeMounts = [
       { name: prometheusConfigVolume.name, mountPath: `/etc/prometheus` },
       { name: prometheusStorageVolume.name, mountPath: `/prometheus/` },
     ];
+
+    const prometheusConfigVolumeClaim = new k.KubePersistentVolumeClaim(
+      this,
+      `prometheus-conf-volume-claim`,
+      {
+        metadata: {
+          name: "prometheus-conf-volume-claim",
+          namespace: "monitoring",
+          labels: { run: "promethesus-conf-volume" },
+        },
+        spec: {
+          accessModes: ["ReadWriteOnce"],
+          resources: {
+            requests: {
+              storage: k.Quantity.fromString("20M"),
+            },
+          },
+          storageClassName: "standard",
+          volumeName: prometheusConfigVolume.name,
+        },
+      }
+    );
 
     new k.KubeDeployment(this, `prometheus-deployment`, {
       metadata: {
@@ -103,7 +135,7 @@ export class MonitorNode extends Construct {
             containers: [
               {
                 image,
-                name: "prometheus",
+                name: "prometheus-server",
                 imagePullPolicy: kplus.ImagePullPolicy.NEVER,
                 args: [
                   "--config.file=/etc/prometheus/prometheus.yml",
@@ -111,12 +143,24 @@ export class MonitorNode extends Construct {
                 ],
                 ports: [{ containerPort: 9090 }],
                 volumeMounts: prometheusVolumeMounts,
+                resources: {
+                  requests: {
+                    cpu: k.Quantity.fromString("100m"),
+                    memory: k.Quantity.fromString("128Mi"),
+                  },
+                  limits: {
+                    cpu: k.Quantity.fromString("100m"),
+                    memory: k.Quantity.fromString("128Mi"),
+                  },
+                },
               },
             ],
             volumes: [
               {
                 name: prometheusConfigVolume.name,
-                configMap: { defaultMode: 420, name: `prometheus-server-conf` },
+                persistentVolumeClaim: {
+                  claimName: prometheusConfigVolumeClaim.name,
+                },
               },
               { name: prometheusStorageVolume.name },
             ],
@@ -190,8 +234,16 @@ export class MonitorNode extends Construct {
         namespace: "monitoring",
       },
       data: {
-        "tls.crt": Buffer.from(cert).toString("base64"),
-        "tls.key": Buffer.from(key).toString("base64"),
+        "tls.crt": cert
+          .toString("base64")
+          .split("\n")
+          .slice(1, cert.length - 2)
+          .join(""),
+        "tls.key": key
+          .toString("base64")
+          .split("\n")
+          .slice(1, cert.length - 2)
+          .join(""),
       },
     });
 
