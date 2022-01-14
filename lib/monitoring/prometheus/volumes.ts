@@ -4,6 +4,8 @@ import * as k from "../../../imports/k8s";
 
 export const volumes = (c: Construct, opts: PrometheusOptions) => {
   const storageVolumeName = "prometheus-storage-volume";
+  const storageVolumeClaimName = "prometheus-storage-volume-claim";
+
   const storageVolume = new k.KubePersistentVolume(c, storageVolumeName, {
     metadata: {
       name: storageVolumeName,
@@ -39,16 +41,25 @@ export const volumes = (c: Construct, opts: PrometheusOptions) => {
 
   // ============= Volumes
   const prometheusVolumeMounts = [
-    { name: storageVolumeName, mountPath: "/prometheus" },
+    {
+      name: storageVolumeName,
+      mountPath: "/prometheus",
+      hostPath: {
+        path: "/data/prometheus",
+        type: "DirectoryOrCreate",
+      },
+      // persistentVolumeClaim: {
+      //   claimName: storageVolumeClaimName,
+      // },
+    },
   ];
 
-  const prometheusStorageVolumeClaimName = "prometheus-storage-volume-claim";
   const storageVolumeClaim = new k.KubePersistentVolumeClaim(
     c,
-    prometheusStorageVolumeClaimName,
+    storageVolumeClaimName,
     {
       metadata: {
-        name: prometheusStorageVolumeClaimName,
+        name: storageVolumeClaimName,
         labels: { app: "prometheus-server" },
         namespace: opts.namespace,
       },
@@ -68,6 +79,7 @@ export const volumes = (c: Construct, opts: PrometheusOptions) => {
   return {
     storageVolume,
     storageVolumeClaim,
+    storageVolumeClaimName,
     prometheusVolumeMounts,
   };
 };
