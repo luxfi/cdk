@@ -18,6 +18,7 @@ export interface MonitorNodeProps {
 
 const confDir = path.join(__dirname, "..", "conf");
 const prometheusDir = path.join(confDir, "prometheus");
+const grafanaDir = path.join(confDir, "grafana");
 
 /// Use the scripts/gen-cert.ts to generate these
 const cert = fs.readFileSync(path.join(prometheusDir, "tls.cert"));
@@ -28,6 +29,7 @@ export class MonitorNode extends Construct {
     super(scope, id, {});
 
     const image = props.image || `docker.io/auser/mon-node:latest`;
+    // const image = "prom/prometheus";
     const replicas = props.replicas || 1;
 
     new k.KubeNamespace(this, `monitoring`, {
@@ -40,7 +42,7 @@ export class MonitorNode extends Construct {
     // ============= Prometheus
     new k.KubeClusterRole(this, `prometheus-role`, {
       metadata: {
-        name: `prometheus-role`,
+        name: `prometheus`,
       },
       rules: [
         {
@@ -124,62 +126,64 @@ export class MonitorNode extends Construct {
       },
     });
     const prometheusConfigVolumeName = "prometheus-config-volume";
-    new k.KubePersistentVolume(this, prometheusConfigVolumeName, {
-      metadata: {
-        name: prometheusConfigVolumeName,
-        labels: { app: "prometheus-server" },
-      },
-      spec: {
-        accessModes: [`ReadWriteOnce`],
-        storageClassName: "fast",
-        capacity: { storage: k.Quantity.fromString("4Gi") },
-        local: {
-          path: "/etc/prometheus",
-        },
-        volumeMode: "Filesystem",
-        persistentVolumeReclaimPolicy: "Delete",
-        nodeAffinity: {
-          required: {
-            nodeSelectorTerms: [
-              {
-                matchExpressions: [
-                  {
-                    key: "app",
-                    operator: "In",
-                    values: ["prometheus-server"],
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      },
-    });
+    // new k.KubePersistentVolume(this, prometheusConfigVolumeName, {
+    //   metadata: {
+    //     name: prometheusConfigVolumeName,
+    //     labels: { app: "prometheus-server" },
+    //   },
+    //   spec: {
+    //     accessModes: [`ReadWriteOnce`],
+    //     storageClassName: "fast",
+    //     capacity: { storage: k.Quantity.fromString("4Gi") },
+    //     local: {
+    //       path: "/etc/prometheus",
+    //     },
+    //     volumeMode: "Filesystem",
+    //     persistentVolumeReclaimPolicy: "Delete",
+    //     nodeAffinity: {
+    //       required: {
+    //         nodeSelectorTerms: [
+    //           {
+    //             matchExpressions: [
+    //               {
+    //                 key: "app",
+    //                 operator: "In",
+    //                 values: ["prometheus-server"],
+    //               },
+    //             ],
+    //           },
+    //         ],
+    //       },
+    //     },
+    //   },
+    // });
 
     // ============= Volumes
     const prometheusVolumeMounts = [
-      { name: prometheusConfigVolumeName, mountPath: `/etc/prometheus` },
-      { name: prometheusStorageVolumeName, mountPath: `/prometheus/` },
+      { name: prometheusConfigVolumeName, mountPath: "/etc/prometheus" },
+      { name: prometheusStorageVolumeName, mountPath: "/prometheus" },
+      // { name: prometheusConfigVolumeName, mountPath: `/etc/prometheus` },
+      // { name: prometheusStorageVolumeName, mountPath: `/prometheus/` },
     ];
 
-    const prometheusConfigVolumeClaimName = "prometheus-conf-volume-claim";
-    new k.KubePersistentVolumeClaim(this, prometheusConfigVolumeClaimName, {
-      metadata: {
-        name: prometheusConfigVolumeClaimName,
-        labels: { app: "prometheus-server" },
-        namespace: "monitoring",
-      },
-      spec: {
-        accessModes: ["ReadWriteOnce"],
-        resources: {
-          requests: {
-            storage: k.Quantity.fromString("500Mi"),
-          },
-        },
-        storageClassName: "fast",
-        volumeName: prometheusConfigVolumeName,
-      },
-    });
+    // const prometheusConfigVolumeClaimName = "prometheus-conf-volume-claim";
+    // new k.KubePersistentVolumeClaim(this, prometheusConfigVolumeClaimName, {
+    //   metadata: {
+    //     name: prometheusConfigVolumeClaimName,
+    //     labels: { app: "prometheus-server" },
+    //     namespace: "monitoring",
+    //   },
+    //   spec: {
+    //     accessModes: ["ReadWriteOnce"],
+    //     resources: {
+    //       requests: {
+    //         storage: k.Quantity.fromString("500Mi"),
+    //       },
+    //     },
+    //     storageClassName: "fast",
+    //     volumeName: prometheusConfigVolumeName,
+    //   },
+    // });
 
     const prometheusStorageVolumeClaimName = "prometheus-storage-volume-claim";
     new k.KubePersistentVolumeClaim(this, prometheusStorageVolumeClaimName, {
@@ -208,29 +212,37 @@ export class MonitorNode extends Construct {
       },
       spec: {
         replicas,
+        strategy: {
+          rollingUpdate: {
+            maxSurge: k.IntOrString.fromNumber(1),
+            maxUnavailable: k.IntOrString.fromNumber(1),
+          },
+          type: "RollingUpdate",
+        },
         selector: { matchLabels: { app: "prometheus-server" } },
         template: {
-          metadata: { labels: { app: "prometheus-server" } },
+          metadata: {
+            labels: { app: "prometheus-server" },
+            annotations: {
+              "prometheus.io/scrape": "true",
+              "prometheus.io/port": "9090",
+            },
+          },
           spec: {
             initContainers: [
               {
                 name: "prometheus-data-permissions-setup",
-                image,
+                image: "busybox",
                 imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
-                command: ["/bin/chown", "-R", "65534:65534", "/prometheus"],
-                volumeMounts: [
-                  {
-                    name: prometheusStorageVolumeName,
-                    mountPath: `/prometheus/`,
-                  },
-                ],
+                command: ["/bin/chmod", "-R", "777", "/prometheus"],
+                volumeMounts: prometheusVolumeMounts,
               },
             ],
             securityContext: {
-              fsGroup: 65534,
-              runAsGroup: 65534,
-              runAsNonRoot: true,
-              runAsUser: 65534,
+              // fsGroup: 2000,
+              // runAsGroup: 2000,
+              // runAsNonRoot: true,
+              // runAsUser: 1000,
             },
             terminationGracePeriodSeconds: 300,
             containers: [
@@ -238,8 +250,8 @@ export class MonitorNode extends Construct {
                 image,
                 name: "prometheus-server",
                 imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
+                command: ["/usr/bin/prometheus"],
                 args: [
-                  "/usr/bin/prometheus",
                   "--config.file=/etc/prometheus/prometheus.yml",
                   "--storage.tsdb.path=/prometheus/",
                 ],
@@ -247,12 +259,12 @@ export class MonitorNode extends Construct {
                 volumeMounts: prometheusVolumeMounts,
                 resources: {
                   requests: {
-                    cpu: k.Quantity.fromString("100m"),
-                    memory: k.Quantity.fromString("128Mi"),
+                    cpu: k.Quantity.fromString("250m"),
+                    memory: k.Quantity.fromString("256Mi"),
                   },
                   limits: {
-                    cpu: k.Quantity.fromString("100m"),
-                    memory: k.Quantity.fromString("128Mi"),
+                    cpu: k.Quantity.fromString("500m"),
+                    memory: k.Quantity.fromString("1Gi"),
                   },
                 },
               },
@@ -260,15 +272,21 @@ export class MonitorNode extends Construct {
             volumes: [
               {
                 name: prometheusConfigVolumeName,
-                persistentVolumeClaim: {
-                  claimName: prometheusConfigVolumeClaimName,
+                configMap: {
+                  name: "prometheus-config-map",
                 },
+                // persistentVolumeClaim: { claimName: prometheusConfigVolumeClaimName}
               },
               {
                 name: prometheusStorageVolumeName,
-                persistentVolumeClaim: {
-                  claimName: prometheusStorageVolumeClaimName,
+                hostPath: {
+                  path: "/data/prometheus",
+                  // type: "",
+                  type: "DirectoryOrCreate",
                 },
+                // persistentVolumeClaim: {
+                //   claimName: prometheusStorageVolumeClaimName,
+                // },
               },
             ],
           },
@@ -291,7 +309,116 @@ export class MonitorNode extends Construct {
           {
             port: 9090,
             targetPort: k.IntOrString.fromNumber(9090),
-            // nodePort: 30000,
+            nodePort: 30000,
+          },
+        ],
+        type: `NodePort`,
+      },
+    });
+
+    // ======= /prometheus
+
+    // ======= grafana
+    new k.KubeConfigMap(this, "grafana-server-config-map", {
+      metadata: {
+        name: "grafana-datasources",
+        namespace: "monitoring",
+      },
+      data: {
+        "prometheus.yml": fs
+          .readFileSync(path.join(grafanaDir, "datasources", "prometheus.yml"))
+          .toString("utf-8"),
+      },
+    });
+
+    new k.KubeDeployment(this, `grafana-deployment`, {
+      metadata: {
+        namespace: "monitoring",
+        name: "grafana-deployment",
+        labels: { app: "grafana-server" },
+      },
+      spec: {
+        replicas,
+        strategy: {
+          rollingUpdate: {
+            maxSurge: k.IntOrString.fromNumber(1),
+            maxUnavailable: k.IntOrString.fromNumber(1),
+          },
+          type: "RollingUpdate",
+        },
+        selector: { matchLabels: { app: "grafana-server" } },
+        template: {
+          metadata: {
+            labels: { app: "grafana-server" },
+            annotations: {
+              "prometheus.io/scrape": "true",
+              "prometheus.io/port": "9090",
+            },
+          },
+          spec: {
+            securityContext: {
+              // fsGroup: 2000,
+              // runAsGroup: 2000,
+              // runAsNonRoot: true,
+              // runAsUser: 1000,
+            },
+            terminationGracePeriodSeconds: 300,
+            containers: [
+              {
+                image,
+                name: "grafana-server",
+                imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
+                command: ["/usr/sbin/grafana-server"],
+                args: [],
+                ports: [{ containerPort: 3000 }],
+                volumeMounts: [
+                  { name: "grafana-storage", mountPath: "/var/lib/grafana" },
+                  {
+                    name: "grafana-datasources",
+                    mountPath: "/etc/grafana/provisioning/datasources",
+                    readOnly: false,
+                  },
+                ],
+                resources: {
+                  requests: {
+                    cpu: k.Quantity.fromString("500m"),
+                    memory: k.Quantity.fromString("500Mi"),
+                  },
+                  limits: {
+                    cpu: k.Quantity.fromString("500m"),
+                    memory: k.Quantity.fromString("1Gi"),
+                  },
+                },
+              },
+            ],
+            volumes: [
+              { name: "grafana-storage", emptyDir: {} },
+              {
+                name: "grafana-datasources",
+                configMap: { name: "grafana-datasources", defaultMode: 420 },
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    new k.KubeService(this, `grafana-service`, {
+      metadata: {
+        name: "grafana-service",
+        namespace: "monitoring",
+        annotations: {
+          "prometheus.io/scrape": "true",
+          "prometheus.io/port": "9090",
+        },
+      },
+      spec: {
+        selector: { app: "grafana-server" },
+        ports: [
+          {
+            port: 3000,
+            targetPort: k.IntOrString.fromNumber(3000),
+            nodePort: 32000,
           },
         ],
         type: `NodePort`,
