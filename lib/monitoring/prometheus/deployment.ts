@@ -15,7 +15,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       mountPath: "/etc/prometheus-rules",
     },
     {
-      name: "prometheus-storage-volume",
+      name: "prometheus-data-volume",
       mountPath: "/prometheus",
       // claim: { claimName: storageVolumeClaimName },
     },
@@ -25,8 +25,13 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       name: "prometheus-data-permissions-setup",
       image: "busybox",
       imagePullPolicy: "IfNotPresent",
-      command: ["/bin/chmod", "-R", "777", "/prometheus"],
-      volumeMounts,
+      command: ["/bin/chmod", "-R", "777", "/data"],
+      volumeMounts: [
+        {
+          name: "prometheus-data-volume",
+          mountPath: "/data",
+        },
+      ],
     },
   ];
 
@@ -40,6 +45,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         "--storage.tsdb.retention.time=12h",
         "--storage.tsdb.retention.size=5MB",
         "--config.file=/etc/prometheus/prometheus.yaml",
+        "--storage.tsdb.path=/prometheus/",
       ],
       ports: [{ containerPort: 9090 }],
       resources: {
@@ -89,7 +95,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
             configMap: { name: "prometheus-rules" },
           },
           {
-            name: "prometheus-storage-volume",
+            name: "prometheus-data-volume",
             mountPath: "/prometheus",
             // claim: { claimName: storageVolumeClaimName },
           },
