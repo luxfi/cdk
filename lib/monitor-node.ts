@@ -316,115 +316,6 @@ export class MonitorNode extends Construct {
       },
     });
 
-    // ======= /prometheus
-
-    // ======= grafana
-    new k.KubeConfigMap(this, "grafana-server-config-map", {
-      metadata: {
-        name: "grafana-datasources",
-        namespace: "monitoring",
-      },
-      data: {
-        "prometheus.yml": fs
-          .readFileSync(path.join(grafanaDir, "datasources", "prometheus.yml"))
-          .toString("utf-8"),
-      },
-    });
-
-    new k.KubeDeployment(this, `grafana-deployment`, {
-      metadata: {
-        namespace: "monitoring",
-        name: "grafana-deployment",
-        labels: { app: "grafana-server" },
-      },
-      spec: {
-        replicas,
-        strategy: {
-          rollingUpdate: {
-            maxSurge: k.IntOrString.fromNumber(1),
-            maxUnavailable: k.IntOrString.fromNumber(1),
-          },
-          type: "RollingUpdate",
-        },
-        selector: { matchLabels: { app: "grafana-server" } },
-        template: {
-          metadata: {
-            labels: { app: "grafana-server" },
-            annotations: {
-              "prometheus.io/scrape": "true",
-              "prometheus.io/port": "9090",
-            },
-          },
-          spec: {
-            securityContext: {
-              // fsGroup: 2000,
-              // runAsGroup: 2000,
-              // runAsNonRoot: true,
-              // runAsUser: 1000,
-            },
-            terminationGracePeriodSeconds: 300,
-            containers: [
-              {
-                image,
-                name: "grafana-server",
-                imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
-                command: ["/usr/sbin/grafana-server"],
-                args: [],
-                ports: [{ containerPort: 3000 }],
-                volumeMounts: [
-                  { name: "grafana-storage", mountPath: "/var/lib/grafana" },
-                  {
-                    name: "grafana-datasources",
-                    mountPath: "/etc/grafana/provisioning/datasources",
-                    readOnly: false,
-                  },
-                ],
-                resources: {
-                  requests: {
-                    cpu: k.Quantity.fromString("500m"),
-                    memory: k.Quantity.fromString("500Mi"),
-                  },
-                  limits: {
-                    cpu: k.Quantity.fromString("500m"),
-                    memory: k.Quantity.fromString("1Gi"),
-                  },
-                },
-              },
-            ],
-            volumes: [
-              { name: "grafana-storage", emptyDir: {} },
-              {
-                name: "grafana-datasources",
-                configMap: { name: "grafana-datasources", defaultMode: 420 },
-              },
-            ],
-          },
-        },
-      },
-    });
-
-    new k.KubeService(this, `grafana-service`, {
-      metadata: {
-        name: "grafana-service",
-        namespace: "monitoring",
-        annotations: {
-          "prometheus.io/scrape": "true",
-          "prometheus.io/port": "9090",
-        },
-      },
-      spec: {
-        selector: { app: "grafana-server" },
-        ports: [
-          {
-            port: 3000,
-            targetPort: k.IntOrString.fromNumber(3000),
-            nodePort: 32000,
-          },
-        ],
-        type: `NodePort`,
-      },
-    });
-
     new k.KubeIngress(this, `prometheus-ui`, {
       metadata: {
         namespace: "monitoring",
@@ -481,7 +372,126 @@ export class MonitorNode extends Construct {
       },
     });
 
-    /// =============== /Prometheus
+    // ======= /prometheus
+
+    // ======= grafana
+    new k.KubeServiceAccount(this, "grafana", {
+      metadata: { name: "grafana", namespace: "monitoring" },
+    });
+
+    new k.KubeConfigMap(this, "grafana-server-config-map", {
+      metadata: {
+        name: "grafana-datasources",
+        namespace: "monitoring",
+      },
+      data: {
+        "prometheus.yml": fs
+          .readFileSync(path.join(grafanaDir, "datasources", "prometheus.yml"))
+          .toString("utf-8"),
+      },
+    });
+
+    new k.KubeDeployment(this, `grafana-deployment`, {
+      metadata: {
+        namespace: "monitoring",
+        name: "grafana-deployment",
+        labels: { app: "grafana-server" },
+      },
+      spec: {
+        replicas,
+        strategy: {
+          rollingUpdate: {
+            maxSurge: k.IntOrString.fromNumber(1),
+            maxUnavailable: k.IntOrString.fromNumber(1),
+          },
+          type: "RollingUpdate",
+        },
+        selector: { matchLabels: { app: "grafana-server" } },
+        template: {
+          metadata: {
+            labels: { app: "grafana-server" },
+            annotations: {
+              "prometheus.io/scrape": "true",
+              "prometheus.io/port": "9090",
+            },
+          },
+          spec: {
+            securityContext: {
+              fsGroup: 472,
+              runAsUser: 65534,
+              // runAsGroup: 2000,
+              runAsNonRoot: true,
+              // runAsUser: 1000,
+            },
+            serviceAccountName: "grafana",
+            terminationGracePeriodSeconds: 300,
+            containers: [
+              {
+                image,
+                name: "grafana-server",
+                imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
+                command: ["/usr/sbin/grafana-server"],
+                args: [],
+                ports: [{ containerPort: 3000 }],
+                volumeMounts: [
+                  {
+                    name: "grafana-storage",
+                    subPath: "grafana",
+                    mountPath: "/var/lib/grafana",
+                    readOnly: false,
+                  },
+                  {
+                    name: "grafana-datasources",
+                    mountPath: "/etc/grafana/provisioning/datasources",
+                    readOnly: false,
+                  },
+                ],
+                resources: {
+                  requests: {
+                    cpu: k.Quantity.fromString("500m"),
+                    memory: k.Quantity.fromString("500Mi"),
+                  },
+                  limits: {
+                    cpu: k.Quantity.fromString("500m"),
+                    memory: k.Quantity.fromString("1Gi"),
+                  },
+                },
+              },
+            ],
+            volumes: [
+              { name: "grafana-storage", emptyDir: {} },
+              {
+                name: "grafana-datasources",
+                configMap: { name: "grafana-datasources", defaultMode: 420 },
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    new k.KubeService(this, `grafana-service`, {
+      metadata: {
+        name: "grafana-service",
+        namespace: "monitoring",
+        annotations: {
+          "prometheus.io/scrape": "true",
+          "prometheus.io/port": "9090",
+        },
+      },
+      spec: {
+        selector: { app: "grafana-server" },
+        ports: [
+          {
+            port: 3000,
+            targetPort: k.IntOrString.fromNumber(3000),
+            protocol: "TCP",
+            nodePort: 32000,
+          },
+        ],
+        type: `NodePort`,
+      },
+    });
 
     // const volumes = props.volumes || {};
     // const servicePorts: kplus.ServicePort[] = props.servicePorts || [
