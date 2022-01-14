@@ -35,7 +35,15 @@ const args = require("yargs")
       help: "email address",
     },
     outDir: {
-      default: path.join(__dirname, "..", "conf", "prometheus"),
+      default: path.join(
+        __dirname,
+        "..",
+        "lib",
+        "monitoring",
+        "configs",
+        "prometheus",
+        "cert"
+      ),
       help: "directory to save the certs",
     },
   })
