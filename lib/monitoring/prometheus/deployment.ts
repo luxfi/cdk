@@ -1,8 +1,10 @@
 import { Construct } from "constructs";
 import { PrometheusOptions } from "../types";
 import * as k from "../../../imports/k8s";
+import volumes from "./volumes";
 
 export const deployment = (c: Construct, opts: PrometheusOptions) => {
+  const { storageVolumeClaim } = volumes(c, opts);
   const volumeMounts = [
     {
       name: "prometheus-config-volume",
@@ -11,6 +13,10 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     {
       name: "prometheus-rules-volume",
       mountPath: "/etc/prometheus-rules",
+    },
+    {
+      name: "prometheus-storage-volume",
+      claim: { claimName: storageVolumeClaim },
     },
   ];
   const initContainers = [
