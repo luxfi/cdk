@@ -37,7 +37,7 @@ export class MonitorNode extends Construct {
       deployment: {
         image,
         replicas,
-        useVolumes: true,
+        useVolumes: false,
       },
     };
     prometheus(this, prometheusOptions);
