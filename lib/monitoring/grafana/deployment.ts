@@ -3,16 +3,39 @@ import { GrafanaOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
 export const deployment = (c: Construct, opts: GrafanaOptions) => {
-  const initContainers: any[] = [];
+  const initContainers: any[] = [
+    {
+      name: "grafana-data-permissions-setup",
+      image: "busybox",
+      imagePullPolicy: "IfNotPresent",
+      command: ["/bin/chmod", "-R", "777", "/var/lib/grafana"],
+      volumeMounts: [
+        {
+          name: "grafana-data-storage",
+          mountPath: "/var/lib/grafana",
+        },
+      ],
+      securityContext: {
+        runAsNonRoot: false,
+        privileged: true,
+      },
+      terminationMessagePath: "/dev/termination-log",
+      terminationMessagePolicy: "File",
+    },
+  ];
 
   const containers: any[] = [
     {
       image: opts.deployment.image,
       name: "grafana",
       imagePullPolicy: "IfNotPresent",
+      workingDir: "/usr/share/grafana/",
       command: ["/usr/sbin/grafana-server"],
-      args: [],
-      ports: [{ containerPort: 9090 }],
+      args: [
+        "-homepath='/usr/share/grafana'",
+        "-config='/usr/share/grafana/conf/defaults.ini'",
+      ],
+      ports: [{ containerPort: 3000 }],
       resources: {
         requests: {
           cpu: k.Quantity.fromString("100m"),

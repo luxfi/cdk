@@ -44,8 +44,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
               workingDir: "/opt/grafana-import-dashboards",
               args: [
                 `
-                ls -la && pwd &&
-                        for file in *-datasource.json ; do
+            for file in *-datasource.json ; do
               if [ -e "$file" ] ; then
                 echo "importing $file" &&
                 curl --silent --fail --show-error \
