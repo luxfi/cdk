@@ -6,8 +6,8 @@ export const secret = (c: Construct, opts: GrafanaOptions) => {
   const data = Object.assign(
     {},
     {
-      admin: "YWRtaW4=",
-      password: "YWRtaW4=",
+      "admin-username": "YWRtaW4=",
+      "admin-password": "YWRtaW4=",
     }
   );
   return new k.KubeSecret(c, `grafana-secret`, {

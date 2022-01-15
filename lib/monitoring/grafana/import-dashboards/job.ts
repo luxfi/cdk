@@ -39,12 +39,14 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
             {
               name: "grafana-import-dashboards",
               image: opts.deployment.image,
+              imagePullPolicy: "IfNotPresent",
               command: ["/bin/sh", "-c"],
               workingDir: "/opt/grafana-import-dashboards",
               args: [
                 `
             for file in *-datasource.json; do
-              if [ -e "$file" ]; &&
+              if [ -e "$file" ]; then
+              echo "Importing $file" &&
               curl --silent --fail --show-error \
                 --request POST http://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@grafana:3000/api/datasources \
                 --header "Content-Type: application/json" \
