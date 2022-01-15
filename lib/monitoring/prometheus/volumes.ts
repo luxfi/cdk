@@ -3,8 +3,8 @@ import { PrometheusOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
 export const volumes = (c: Construct, opts: PrometheusOptions) => {
-  const storageVolumeName = "prometheus-storage-volume";
-  const storageVolumeClaimName = "prometheus-storage-volume-claim";
+  const storageVolumeName = "prometheus-data-volume";
+  const storageVolumeClaimName = "prometheus-data-volume-claim";
 
   const storageVolume = new k.KubePersistentVolume(c, storageVolumeName, {
     metadata: {

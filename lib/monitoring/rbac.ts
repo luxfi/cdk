@@ -3,9 +3,9 @@ import * as k from "../../imports/k8s";
 import { MonitoringOptions } from "./types";
 
 export const rbac = async (c: Construct, opts: MonitoringOptions) => {
-  const role = new k.KubeClusterRole(c, `prometheus-role`, {
+  const role = new k.KubeClusterRole(c, `monitoring-role`, {
     metadata: {
-      name: "prometheus",
+      name: "monitoring-role",
       namespace: opts.namespace,
     },
     rules: [
@@ -30,19 +30,27 @@ export const rbac = async (c: Construct, opts: MonitoringOptions) => {
       },
     ],
   });
-  const roleBinding = new k.KubeClusterRoleBinding(c, "prometheus", {
-    metadata: {
-      name: "prometheus",
-    },
-    roleRef: {
-      apiGroup: "rbac.authorization.k8s.io",
-      kind: `ClusterRole`,
-      name: "prometheus",
-    },
-    subjects: [
-      { kind: `ServiceAccount`, name: "monitoring", namespace: opts.namespace },
-    ],
-  });
+  const roleBinding = new k.KubeClusterRoleBinding(
+    c,
+    "monitoring-role-binding",
+    {
+      metadata: {
+        name: "prometheus",
+      },
+      roleRef: {
+        apiGroup: "rbac.authorization.k8s.io",
+        kind: `ClusterRole`,
+        name: "prometheus",
+      },
+      subjects: [
+        {
+          kind: `ServiceAccount`,
+          name: "prometheus",
+          namespace: opts.namespace,
+        },
+      ],
+    }
+  );
   return { role, roleBinding };
 };
 

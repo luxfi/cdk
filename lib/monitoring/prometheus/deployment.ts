@@ -4,7 +4,7 @@ import * as k from "../../../imports/k8s";
 import volumes from "./volumes";
 
 export const deployment = (c: Construct, opts: PrometheusOptions) => {
-  const {} = volumes(c, opts);
+  const { prometheusVolumeMounts } = volumes(c, opts);
   const volumeMounts = [
     {
       name: "prometheus-config-volume",
@@ -25,13 +25,14 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       name: "prometheus-data-permissions-setup",
       image: "busybox",
       imagePullPolicy: "IfNotPresent",
-      command: ["/bin/chmod", "-R", "777", "/data"],
-      volumeMounts: [
-        {
-          name: "prometheus-data-volume",
-          mountPath: "/data",
-        },
-      ],
+      command: ["/bin/chmod", "-R", "777", "/prometheus"],
+      volumeMounts: prometheusVolumeMounts,
+      securityContext: {
+        runAsNonRoot: false,
+        privileged: true,
+      },
+      terminationMessagePath: "/dev/termination-log",
+      terminationMessagePolicy: "File",
     },
   ];
 
@@ -83,6 +84,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         labels: { app: "prometheus" },
       },
       spec: {
+        serviceAccountName: "prometheus",
         initContainers,
         containers,
         volumes: [
