@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-// const path = require("path");
-// const fs = require("fs");
+const path = require("path");
+const fs = require("fs");
 const selfsigned = require("selfsigned");
 
 const args = require("yargs")

@@ -11,3 +11,5 @@ __snapshots__/
 docker/avalanchego/avalanche-config.json
 docker/avalanchego/genesis.json
 conf/prometheus/tls.*
+lib/monitoring/configs/prometheus/certs
+lib/monitoring/configs/prometheus/cert
