@@ -26,14 +26,14 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
 
   const containers: any[] = [
     {
-      image: opts.deployment.image,
+      image: "grafana/grafana-oss:latest",
       name: "grafana",
       imagePullPolicy: "IfNotPresent",
-      workingDir: "/usr/share/grafana/",
-      command: ["/usr/sbin/grafana-server"],
+      // workingDir: "/usr/share/grafana/",
+      // command: ["grafana-server"],
       args: [
-        "-homepath='/usr/share/grafana'",
-        "-config='/usr/share/grafana/conf/defaults.ini'",
+        // "-homepath='/usr/share/grafana'",
+        // "-config='/usr/share/grafana/conf/defaults.ini'",
       ],
       ports: [{ containerPort: 3000 }],
       resources: {
