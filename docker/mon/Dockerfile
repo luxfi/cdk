@@ -7,7 +7,7 @@ COPY ./entrypoint.sh /home/auser/entrypoint.sh
 RUN adduser --disabled-password auser
 
 RUN mkdir -p /usr/proc /usr/sys
-RUN apk update && apk add openrc prometheus prometheus-node-exporter grafana grafana-frontend
+RUN apk update && apk add openrc prometheus prometheus-node-exporter grafana grafana-frontend curl jq
 RUN rc-update add prometheus default && \
   rc-update add grafana default && \
   chmod +x /home/auser/entrypoint.sh && \
