@@ -6,8 +6,10 @@ import { EnvVar } from "../imports/k8s";
 import {
   MonitoringOptions,
   PrometheusOptions,
+  GrafanaOptions,
   monitoring,
   prometheus,
+  grafana,
 } from "./monitoring";
 
 export interface MonitorNodeProps {
@@ -41,5 +43,14 @@ export class MonitorNode extends Construct {
       },
     };
     prometheus(this, prometheusOptions);
+    // ============= Grafana
+    const grafanaOptions: GrafanaOptions = {
+      namespace: "monitoring",
+      deployment: {
+        image,
+        replicas,
+      },
+    };
+    grafana(this, grafanaOptions);
   }
 }

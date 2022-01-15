@@ -8,6 +8,7 @@ import prometheusComponent from "./prometheus";
 import namespace from "./namespace";
 import rbac from "./rbac";
 import serviceAccount from "./service-account";
+import grafanaComponent from "./grafana";
 
 export * from "./types";
 
@@ -28,4 +29,8 @@ export const monitoring = (c: Construct, opts: t.MonitoringOptions) => {
 
 export const prometheus = (c: Construct, options: t.PrometheusOptions) => {
   return prometheusComponent(c, options);
+};
+
+export const grafana = (c: Construct, options: t.GrafanaOptions) => {
+  return grafanaComponent(c, options);
 };

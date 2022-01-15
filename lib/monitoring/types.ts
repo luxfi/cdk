@@ -4,10 +4,16 @@ export interface BaseOptions {
 
 export interface MonitoringOptions extends BaseOptions {}
 
+export interface DeploymentOptions {
+  replicas: number;
+  useVolumes?: boolean;
+  image: string;
+}
+
 export interface PrometheusOptions extends BaseOptions {
-  deployment: {
-    replicas: number;
-    useVolumes: boolean;
-    image: string;
-  };
+  deployment: DeploymentOptions;
+}
+
+export interface GrafanaOptions extends BaseOptions {
+  deployment: DeploymentOptions;
 }

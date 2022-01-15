@@ -8,3 +8,4 @@ export const promethusConfigsDirectory = path.join(
   configsDirectory,
   "prometheus"
 );
+export const grafanaConfigsDirectory = path.join(configsDirectory, "grafana");

@@ -25,10 +25,22 @@ export const serviceAccount = (c: Construct, options: MonitoringOptions) => {
       },
     }
   );
+  const grafanaServiceAccount = new k.KubeServiceAccount(
+    c,
+    "grafana-service-account",
+    {
+      metadata: {
+        name: "grafana",
+        labels: { app: "grafana" },
+        namespace: options.namespace,
+      },
+    }
+  );
 
   return {
     monitoringServiceAccount,
     prometheusServiceAccount,
+    grafanaServiceAccount,
   };
 };
 
