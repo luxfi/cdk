@@ -19,3 +19,6 @@ export interface GrafanaOptions extends BaseOptions {
 }
 
 export interface NodeExporterOptions extends BaseOptions {}
+export interface AvalancheExporterOptions extends BaseOptions {
+  deployment: DeploymentOptions;
+}

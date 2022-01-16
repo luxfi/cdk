@@ -11,6 +11,7 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
         "prometheus.io/scrape": "true",
         "prometheus.io/port": "9090",
       },
+      labels: { app: "prometheus" },
     },
     spec: {
       selector: { app: "prometheus" },

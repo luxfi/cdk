@@ -11,10 +11,13 @@ export const service = (c: Construct, opts: NodeExporterOptions) => {
         "prometheus.io/scrape": "true",
         "prometheus.io/port": "9100",
       },
+      labels: {
+        app: "node-exporter",
+      },
     },
     spec: {
       selector: {
-        "app.kubernetes.io/name": "node-exporter",
+        app: "node-exporter",
       },
       ports: [
         {

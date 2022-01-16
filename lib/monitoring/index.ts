@@ -10,6 +10,7 @@ import serviceAccount from "./service-account";
 import prometheusComponent from "./prometheus";
 import grafanaComponent from "./grafana";
 import nodeExporterComponent from "./node-exporter";
+import avalancheExporterComponent from "./avalanche-exporter";
 
 export * from "./types";
 
@@ -38,4 +39,11 @@ export const grafana = (c: Construct, options: t.GrafanaOptions) => {
 
 export const nodeExporter = (c: Construct, options: t.NodeExporterOptions) => {
   return nodeExporterComponent(c, options);
+};
+
+export const avalancheExporter = (
+  c: Construct,
+  options: t.AvalancheExporterOptions
+) => {
+  return avalancheExporterComponent(c, options);
 };
