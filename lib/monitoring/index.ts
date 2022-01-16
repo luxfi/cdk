@@ -4,11 +4,12 @@ import { Construct } from "constructs";
 // import * as k from "../../imports/k8s";
 import * as t from "./types";
 
-import prometheusComponent from "./prometheus";
 import namespace from "./namespace";
 import rbac from "./rbac";
 import serviceAccount from "./service-account";
+import prometheusComponent from "./prometheus";
 import grafanaComponent from "./grafana";
+import nodeExporterComponent from "./node-exporter";
 
 export * from "./types";
 
@@ -33,4 +34,8 @@ export const prometheus = (c: Construct, options: t.PrometheusOptions) => {
 
 export const grafana = (c: Construct, options: t.GrafanaOptions) => {
   return grafanaComponent(c, options);
+};
+
+export const nodeExporter = (c: Construct, options: t.NodeExporterOptions) => {
+  return nodeExporterComponent(c, options);
 };

@@ -7,9 +7,11 @@ import {
   MonitoringOptions,
   PrometheusOptions,
   GrafanaOptions,
+  NodeExporterOptions,
   monitoring,
   prometheus,
   grafana,
+  nodeExporter,
 } from "./monitoring";
 
 export interface MonitorNodeProps {
@@ -52,5 +54,10 @@ export class MonitorNode extends Construct {
       },
     };
     grafana(this, grafanaOptions);
+    // ============= NodeExporter
+    const nodeExporterOptions: NodeExporterOptions = {
+      namespace: "monitoring",
+    };
+    nodeExporter(this, nodeExporterOptions);
   }
 }

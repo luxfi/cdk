@@ -17,3 +17,5 @@ export interface PrometheusOptions extends BaseOptions {
 export interface GrafanaOptions extends BaseOptions {
   deployment: DeploymentOptions;
 }
+
+export interface NodeExporterOptions extends BaseOptions {}
