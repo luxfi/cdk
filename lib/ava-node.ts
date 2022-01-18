@@ -50,7 +50,7 @@ export class AvaNode extends Construct {
     // const serviceAccount = createServiceAccount(this, { name: `ava` });
 
     // const service = new kplus.Service(this, `ava-service`, {
-    //   ports: servicePorts,
+    //   ports: [{ port: 9650 }],
     //   type: kplus.ServiceType.CLUSTER_IP,
     //   metadata: {
     //     labels: {
@@ -73,6 +73,7 @@ export class AvaNode extends Construct {
         spec: {
           accessModes: ["ReadWriteOnce"],
           storageClassName: "fast",
+          volumeName: "ava-storage",
           resources: {
             requests: {
               storage: k.Quantity.fromString("500M"),
@@ -86,7 +87,7 @@ export class AvaNode extends Construct {
     this.statefulSet = new k.KubeStatefulSet(this, `avanode-statefulset`, {
       metadata: {
         name: "avanode-statefulset",
-        labels: { app: "avanode-statefulset" },
+        labels: { app: "avanode" },
       },
       spec: {
         serviceName: "avanode",
@@ -96,12 +97,14 @@ export class AvaNode extends Construct {
             app: "avanode",
           },
         },
+        updateStrategy: {
+          type: "RollingUpdate",
+        },
         replicas,
         volumeClaimTemplates,
         template: {
           metadata: {
             labels: {
-              // deploymentId: c.Names.toLabelValue(this),
               app: "avanode",
             },
           },

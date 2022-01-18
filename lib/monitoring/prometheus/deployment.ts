@@ -45,7 +45,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       args: [
         "--storage.tsdb.retention.time=12h",
         "--storage.tsdb.retention.size=5MB",
-        "--config.file=/etc/prometheus/prometheus.yaml",
+        "--config.file=/etc/prometheus/prometheus.yml",
         "--storage.tsdb.path=/prometheus/",
       ],
       ports: [{ containerPort: 9090 }],

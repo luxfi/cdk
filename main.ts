@@ -24,32 +24,40 @@ export class MyChart extends Chart {
       metadata: {
         name: "fast",
         namespace: "default",
+        labels: {
+          app: "avanode",
+        },
       },
       provisioner: "kubernetes.io/no-provisioner",
       // provisioner: "k8s.io/minikube-hostpath",
       volumeBindingMode: "WaitForFirstConsumer",
+      // volumeBindingMode: "Immediate",
     });
 
     let vol = new k.KubePersistentVolume(this, `ava-data`, {
-      metadata: { name: "ava-storage" },
+      metadata: { name: "ava-storage", labels: { app: "avanode" } },
       spec: {
         accessModes: [`ReadWriteOnce`],
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("4Gi") },
-        hostPath: {
+        local: {
           path: "/data/vol1",
         },
-        // volumeMode: "Filesystem",
-        persistentVolumeReclaimPolicy: "Delete",
+        // claimRef: {
+        //   namespace: "default",
+        //   name: "ava-storage-ref",
+        // },
+        volumeMode: "Filesystem",
+        persistentVolumeReclaimPolicy: "Retain",
         nodeAffinity: {
           required: {
             nodeSelectorTerms: [
               {
                 matchExpressions: [
                   {
-                    key: "app",
+                    key: "kubernetes.io/hostname",
                     operator: "In",
-                    values: ["avanode"],
+                    values: ["minikube"],
                   },
                 ],
               },
@@ -61,15 +69,15 @@ export class MyChart extends Chart {
 
     new AvaNode(this, `avanode`, {
       image: `docker.io/auser/ava-node:latest`,
-      replicas: 3,
+      replicas: 1,
       volumes: {
-        "/usr/share/avastorage": vol,
+        "/usr/share/.avalanchego": vol,
       },
     });
 
     new MonitorNode(this, `monitoring-node`, {
       image: `docker.io/auser/mon-node:latest`,
-      replicas: 1,
+      replicas: 2,
       // volumes: {
       //   "/root": monitorVolume,
       // },
