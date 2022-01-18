@@ -58,7 +58,7 @@ export class MonitorNode extends Construct {
     grafana(this, grafanaOptions);
     // ============= NodeExporter
     const nodeExporterOptions: NodeExporterOptions = {
-      namespace: "default",
+      namespace: "monitoring",
       daemonset: {
         matchLabels: {
           app: "avanode",
@@ -69,9 +69,10 @@ export class MonitorNode extends Construct {
     // ============= Avalanche exporter
     const avalancheExporterOptions: AvalancheExporterOptions = {
       namespace: "monitoring",
-      deployment: {
-        image,
-        replicas,
+      daemonset: {
+        matchLabels: {
+          app: "avanode",
+        },
       },
     };
     avalancheExporter(this, avalancheExporterOptions);

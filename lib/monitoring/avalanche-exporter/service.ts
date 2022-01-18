@@ -19,7 +19,6 @@ export const service = (c: Construct, opts: AvalancheExporterOptions) => {
       ports: [
         {
           port: 9001,
-          nodePort: 31230,
           targetPort: k.IntOrString.fromNumber(9001),
           name: "http-ava-exporter",
         },

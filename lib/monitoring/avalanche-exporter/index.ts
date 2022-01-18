@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import deployment from "./deployment";
+import daemonset from "./daemonset";
 import service from "./service";
 import { AvalancheExporterOptions } from "../types";
 
@@ -8,7 +8,7 @@ export const avalancheExporter = (
   opts: AvalancheExporterOptions
 ) => {
   return {
-    deployment: deployment(c, opts),
+    daemonset: daemonset(c, opts),
     service: service(c, opts),
   };
 };

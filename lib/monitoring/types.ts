@@ -2,6 +2,11 @@ export interface BaseOptions {
   namespace: string;
 }
 
+export interface DaemonsetOptions {
+  matchLabels?: any;
+  matchExpressions?: any;
+}
+
 export interface MonitoringOptions extends BaseOptions {}
 
 export interface DeploymentOptions {
@@ -19,11 +24,8 @@ export interface GrafanaOptions extends BaseOptions {
 }
 
 export interface NodeExporterOptions extends BaseOptions {
-  daemonset?: {
-    matchLabels?: any;
-    matchExpressions?: any;
-  };
+  daemonset?: DaemonsetOptions;
 }
 export interface AvalancheExporterOptions extends BaseOptions {
-  deployment: DeploymentOptions;
+  daemonset?: DaemonsetOptions;
 }
