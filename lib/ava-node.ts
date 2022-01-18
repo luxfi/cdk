@@ -5,12 +5,12 @@ import * as k from "../imports/k8s";
 import {
   // KubeStatefulSet,
   EnvVar,
-  Quantity,
+  // Quantity,
   KubePersistentVolume,
 } from "../imports/k8s";
-import * as c from "cdk8s";
+// import * as c from "cdk8s";
 import * as kplus from "cdk8s-plus-22";
-import { createServiceAccount } from "./create-service-account";
+// import { createServiceAccount } from "./create-service-account";
 
 // import { createStatefulSetWithPersistentVolumes } from "./stateful-set-with-persistent-volumes";
 
@@ -19,7 +19,7 @@ export interface AvaNodeProps {
   readonly command?: string;
   readonly args?: string[];
   readonly replicas?: number;
-  readonly servicePorts?: kplus.ServicePort[];
+  readonly servicePorts?: k.ContainerPort[];
   readonly env?: { [key: string]: EnvVar };
   readonly volumes?: { [key: string]: KubePersistentVolume };
 }
@@ -27,7 +27,7 @@ export interface AvaNodeProps {
 // const defaultArgs = ["--config-file=/etc/ava/ava.conf"];
 
 export class AvaNode extends Construct {
-  readonly deployment: k.KubeDeployment;
+  readonly statefulSet: k.KubeStatefulSet;
 
   constructor(scope: Construct, id: string, props: AvaNodeProps) {
     super(scope, id, {});
@@ -39,107 +39,81 @@ export class AvaNode extends Construct {
     const replicas = props.replicas || 5;
     // const env = props.env || {};
     const volumes = props.volumes || {};
-    const servicePorts: kplus.ServicePort[] = props.servicePorts || [
+    const servicePorts: k.ContainerPort[] = props.servicePorts || [
       {
         name: `node-port`,
-        port: 9650,
+        containerPort: 9650,
       },
     ];
 
     // const sa =
-    const serviceAccount = createServiceAccount(this, { name: `ava` });
+    // const serviceAccount = createServiceAccount(this, { name: `ava` });
 
-    // const service =
-    new kplus.Service(this, `ava-service`, {
-      ports: servicePorts,
-      type: kplus.ServiceType.CLUSTER_IP,
-      metadata: {
-        labels: {
-          app: "avanode-service",
-        },
-      },
-    });
-
-    // ======= Create a stateful set
-    // const set = new kplus.KubeStatefulSet(this, `ava-stateful-servier`, {
+    // const service = new kplus.Service(this, `ava-service`, {
+    //   ports: servicePorts,
+    //   type: kplus.ServiceType.CLUSTER_IP,
     //   metadata: {
     //     labels: {
-    //       app: "ava-node",
+    //       app: "avanode-service",
     //     },
     //   },
-    //   serviceAccount,
-    //   service,
-    //   replicas,
     // });
-    const claimName = `ava-nodeclaim`;
-    // const volumeClaims =
-    Object.keys(volumes).map((mountPath: string) => {
-      const volume = volumes[mountPath];
-      return new k.KubePersistentVolumeClaim(this, claimName, {
-        metadata: {
-          name: claimName,
-          labels: { app: "avanode-storage" },
-        },
+
+    const volumeMounts = Object.keys(volumes).map((key: string) => {
+      const volume = volumes[key];
+      return {
+        name: volume.name,
+        mountPath: key,
+      };
+    });
+    const volumeClaimTemplates = Object.keys(volumes).map((key: string) => {
+      const volume = volumes[key];
+      return {
+        metadata: { name: volume.name },
         spec: {
           accessModes: ["ReadWriteOnce"],
+          storageClassName: "fast",
           resources: {
             requests: {
-              storage: Quantity.fromString("500M"),
+              storage: k.Quantity.fromString("500M"),
             },
           },
-          storageClassName: "fast",
-          // selector: {
-          //   matchLabels: { role: "avanode" },
-          //   matchExpressions: [
-          //     { key: "role", operator: "In", values: ["avanode"] },
-          //   ],
-          // },
-          // volumeMode: "Filesystem",
-          volumeName: volume.name,
         },
-      });
+      };
     });
-    // const volumeMounts = Object.keys(volumes).map((mountPath: string) => {
-    //   const volume = volumes[mountPath];
-    //   return {
-    //     name: volume.name,
-    //     mountPath,
-    //   };
-    // });
-    // const volumesForSet = Object.keys(volumes).map((mountPath: string) => {
-    //   const volume = volumes[mountPath];
-    //   return {
-    //     name: volume.name,
-    //     persistentVolumeClaim: { claimName },
-    //   };
-    // });
+
     // // const set =
-    this.deployment = new k.KubeDeployment(this, `avanode`, {
-      metadata: { name: "avanode", labels: { app: "avanode" } },
+    this.statefulSet = new k.KubeStatefulSet(this, `avanode-statefulset`, {
+      metadata: {
+        name: "avanode-statefulset",
+        labels: { app: "avanode-statefulset" },
+      },
       spec: {
-        // serviceName: `ava-nodestatefulset`,
+        serviceName: "avanode",
         selector: {
           matchLabels: {
-            deploymentId: c.Names.toLabelValue(this),
+            // deploymentId: c.Names.toLabelValue(this),
             app: "avanode",
           },
         },
         replicas,
+        volumeClaimTemplates,
         template: {
           metadata: {
             labels: {
-              deploymentId: c.Names.toLabelValue(this),
+              // deploymentId: c.Names.toLabelValue(this),
               app: "avanode",
             },
           },
           spec: {
-            serviceAccountName: serviceAccount.name,
+            // serviceAccountName: serviceAccount.name,
             containers: [
               {
                 name: `avanode`,
                 image,
                 imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
-                // volumeMounts,
+                ports: servicePorts,
+                volumeMounts,
                 resources: {
                   requests: {
                     cpu: k.Quantity.fromString("100m"),
@@ -153,21 +127,6 @@ export class AvaNode extends Construct {
                 // env: [env],
               },
             ],
-            // volumes: volumesForSet,
-            // affinity: {
-            //   podAntiAffinity: {
-            //     requiredDuringSchedulingIgnoredDuringExecution: [
-            //       {
-            //         labelSelector: {
-            //           matchExpressions: [
-            //             { key: "role", operator: "In", values: ["avanode"] },
-            //           ],
-            //         },
-            //         topologyKey: "kubernetes.io/hostname",
-            //       },
-            //     ],
-            //   },
-            // },
           },
         },
       },

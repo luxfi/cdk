@@ -24,20 +24,14 @@ export class MyChart extends Chart {
       metadata: {
         name: "fast",
         namespace: "default",
-        annotations: {
-          "storageclass.beta.kubernetes.io/is-default-class": "true",
-        },
-        labels: {
-          "addonmanager.kubernetes.io/mode": "Reconcile",
-        },
       },
-      // provisioner: "kubernetes.io/no-provisioner",
-      provisioner: "k8s.io/minikube-hostpath",
-      // volumeBindingMode: "WaitForFirstConsumer",
+      provisioner: "kubernetes.io/no-provisioner",
+      // provisioner: "k8s.io/minikube-hostpath",
+      volumeBindingMode: "WaitForFirstConsumer",
     });
 
     let vol = new k.KubePersistentVolume(this, `ava-data`, {
-      metadata: { name: "ava-data" },
+      metadata: { name: "ava-storage" },
       spec: {
         accessModes: [`ReadWriteOnce`],
         storageClassName: "fast",
@@ -45,7 +39,7 @@ export class MyChart extends Chart {
         hostPath: {
           path: "/data/vol1",
         },
-        volumeMode: "Filesystem",
+        // volumeMode: "Filesystem",
         persistentVolumeReclaimPolicy: "Delete",
         nodeAffinity: {
           required: {
@@ -69,7 +63,7 @@ export class MyChart extends Chart {
       image: `docker.io/auser/ava-node:latest`,
       replicas: 3,
       volumes: {
-        "/ava": vol,
+        "/usr/share/avastorage": vol,
       },
     });
 

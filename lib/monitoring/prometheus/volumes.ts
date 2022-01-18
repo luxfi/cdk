@@ -67,7 +67,7 @@ export const volumes = (c: Construct, opts: PrometheusOptions) => {
         accessModes: ["ReadWriteOnce"],
         resources: {
           requests: {
-            storage: k.Quantity.fromString("1Gi"),
+            storage: k.Quantity.fromString("500Mi"),
           },
         },
         storageClassName: "fast",
