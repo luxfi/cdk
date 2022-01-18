@@ -106,7 +106,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     },
   };
 
-  return new k.KubeDeployment(c, `prometheus-deployment`, {
+  const deployment = new k.KubeDeployment(c, `prometheus-deployment`, {
     metadata: {
       namespace: opts.namespace,
       name: "prometheus-deployment",
@@ -114,6 +114,11 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     },
     spec,
   });
+
+  return {
+    deployment,
+    containers,
+  };
 };
 
 export default deployment;

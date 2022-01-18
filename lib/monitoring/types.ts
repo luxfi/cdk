@@ -18,7 +18,12 @@ export interface GrafanaOptions extends BaseOptions {
   deployment: DeploymentOptions;
 }
 
-export interface NodeExporterOptions extends BaseOptions {}
+export interface NodeExporterOptions extends BaseOptions {
+  daemonset?: {
+    matchLabels?: any;
+    matchExpressions?: any;
+  };
+}
 export interface AvalancheExporterOptions extends BaseOptions {
   deployment: DeploymentOptions;
 }

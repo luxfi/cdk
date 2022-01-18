@@ -3,14 +3,14 @@ import { AvalancheExporterOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
 export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
-  return new k.KubeDeployment(c, `ava-exporter-deployment`, {
+  return new k.KubeDaemonSet(c, `ava-exporter-daemon`, {
     metadata: {
       namespace: opts.namespace,
-      name: "ava-exporter",
-      labels: { app: "ava-exporter" },
+      name: "ava",
+      labels: { app: "avanode" },
     },
     spec: {
-      selector: { matchLabels: { app: "ava-exporter" } },
+      selector: { matchLabels: { app: "avanode" } },
       replicas: opts.deployment.replicas,
       strategy: {
         rollingUpdate: {
@@ -22,7 +22,7 @@ export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
       template: {
         metadata: {
           labels: {
-            app: "ava-exporter",
+            app: "avanode",
           },
         },
         spec: {

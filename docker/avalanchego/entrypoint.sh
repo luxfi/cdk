@@ -3,7 +3,7 @@
 # set -eo pipefail
 # shopt -s nullglob
 
-ANOTHER_NODE=$(python3 /tmp/list_nodes.py)
+ANOTHER_NODE=$(python3 /tmp/list_nodes.py 2>/dev/null)
 CONFIG_FILE=/etc/ava/ava.json
 GENESIS_FILE=/etc/ava/genesis.json
 

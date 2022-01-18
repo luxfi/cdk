@@ -21,15 +21,25 @@ export class MyChart extends Chart {
     // const monitorVolume = kplus.Volume.fromConfigMap(monitorData);
 
     new k.KubeStorageClass(this, `fast-storage-class`, {
-      metadata: { name: "fast" },
-      provisioner: "kubernetes.io/no-provisioner",
+      metadata: {
+        name: "fast",
+        namespace: "default",
+        annotations: {
+          "storageclass.beta.kubernetes.io/is-default-class": "true",
+        },
+        labels: {
+          "addonmanager.kubernetes.io/mode": "Reconcile",
+        },
+      },
+      // provisioner: "kubernetes.io/no-provisioner",
+      provisioner: "k8s.io/minikube-hostpath",
       // volumeBindingMode: "WaitForFirstConsumer",
     });
 
     let vol = new k.KubePersistentVolume(this, `ava-data`, {
       metadata: { name: "ava-data" },
       spec: {
-        accessModes: [`ReadWriteMany`],
+        accessModes: [`ReadWriteOnce`],
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("4Gi") },
         hostPath: {
@@ -43,9 +53,9 @@ export class MyChart extends Chart {
               {
                 matchExpressions: [
                   {
-                    key: "run",
+                    key: "app",
                     operator: "In",
-                    values: ["ava-node"],
+                    values: ["avanode"],
                   },
                 ],
               },
@@ -55,11 +65,11 @@ export class MyChart extends Chart {
       },
     });
 
-    new AvaNode(this, `ava-node`, {
+    new AvaNode(this, `avanode`, {
       image: `docker.io/auser/ava-node:latest`,
       replicas: 3,
       volumes: {
-        "/root": vol,
+        "/ava": vol,
       },
     });
 

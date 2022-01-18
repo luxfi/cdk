@@ -1,4 +1,4 @@
-FROM avaplatform/avalanchego:3163be79
+FROM avaplatform/avalanchego:v1.7.3
 
 RUN apt-get update -yq && \
   apt-get install python3-pip curl -yq && \

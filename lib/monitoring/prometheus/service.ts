@@ -20,9 +20,11 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
           port: 9090,
           protocol: "TCP",
           name: "webui",
+          nodePort: 30909,
+          targetPort: k.IntOrString.fromNumber(9090),
         },
       ],
-      type: `NodePort`,
+      type: `LoadBalancer`,
     },
   });
 };

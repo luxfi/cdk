@@ -3,10 +3,13 @@ import { NodeExporterOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
 export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
-  return new k.KubeDaemonSet(c, "node-exporter-daemon", {
+  const daemonset = opts.daemonset || {};
+  const matchLabels = daemonset.matchLabels || {};
+  // const matchExpressions = daemonset.matchExpressions || {};
+  return new k.KubeDaemonSet(c, "node-exporter", {
     metadata: {
       labels: {
-        "app.kubernetes.io/name": "node-exporter",
+        // "app.kubernetes.io/name": "node-exporter",
         app: "node-exporter",
       },
       name: "node-exporter",
@@ -14,14 +17,19 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
     },
     spec: {
       selector: {
-        matchLabels: {
-          "app.kubernetes.io/name": "node-exporter",
+        matchLabels,
+        // matchExpressions,
+      },
+      updateStrategy: {
+        type: "RollingUpdate",
+        rollingUpdate: {
+          maxUnavailable: k.IntOrString.fromNumber(1),
         },
       },
       template: {
         metadata: {
           labels: {
-            "app.kubernetes.io/name": "node-exporter",
+            ...matchLabels,
           },
         },
         spec: {
@@ -35,43 +43,43 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
               resources: {
                 requests: {
                   cpu: k.Quantity.fromString("100m"),
-                  memory: k.Quantity.fromString("180Mi"),
+                  memory: k.Quantity.fromString("128Mi"),
                 },
                 limits: {
                   cpu: k.Quantity.fromString("250m"),
-                  memory: k.Quantity.fromString("180Mi"),
+                  memory: k.Quantity.fromString("128Mi"),
                 },
               },
-              volumeMounts: [
-                {
-                  mountPath: "/host/sys",
-                  mountPropagation: "HostToContainer",
-                  name: "sys",
-                  readOnly: true,
-                },
-                {
-                  mountPath: "/host/root",
-                  mountPropagation: "HostToContainer",
-                  name: "root",
-                  readOnly: true,
-                },
-              ],
+              // volumeMounts: [
+              //   {
+              //     mountPath: "/host/sys",
+              //     mountPropagation: "HostToContainer",
+              //     name: "sys",
+              //     readOnly: true,
+              //   },
+              //   {
+              //     mountPath: "/host/root",
+              //     mountPropagation: "HostToContainer",
+              //     name: "root",
+              //     readOnly: true,
+              //   },
+              // ],
             },
           ],
-          volumes: [
-            {
-              name: "sys",
-              hostPath: {
-                path: "/sys",
-              },
-            },
-            {
-              name: "root",
-              hostPath: {
-                path: "/",
-              },
-            },
-          ],
+          // volumes: [
+          //   {
+          //     name: "sys",
+          //     hostPath: {
+          //       path: "/sys",
+          //     },
+          //   },
+          //   {
+          //     name: "root",
+          //     hostPath: {
+          //       path: "/",
+          //     },
+          //   },
+          // ],
         },
       },
     },

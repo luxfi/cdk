@@ -58,7 +58,12 @@ export class MonitorNode extends Construct {
     grafana(this, grafanaOptions);
     // ============= NodeExporter
     const nodeExporterOptions: NodeExporterOptions = {
-      namespace: "monitoring",
+      namespace: "default",
+      daemonset: {
+        matchLabels: {
+          app: "avanode",
+        },
+      },
     };
     nodeExporter(this, nodeExporterOptions);
     // ============= Avalanche exporter

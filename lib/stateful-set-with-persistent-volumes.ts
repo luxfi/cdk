@@ -25,7 +25,7 @@ export const createStatefulSetWithPersistentVolumes = (
   const name = opts.name || `${chart}-stateful-set`;
   const serviceName = opts.serviceName || `StatefulSetService`;
   const replicas = opts.replicas ?? 1;
-  const selector = opts.selector || { matchLabels: { run: "ava-node" } };
+  const selector = opts.selector || { matchLabels: { run: "avanode" } };
   const template = opts.template;
   const volumeClaimTemplates = opts.volumeClaimTemplates;
 

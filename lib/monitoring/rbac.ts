@@ -40,7 +40,7 @@ export const rbac = async (c: Construct, opts: MonitoringOptions) => {
       roleRef: {
         apiGroup: "rbac.authorization.k8s.io",
         kind: `ClusterRole`,
-        name: "prometheus",
+        name: "monitoring-role",
       },
       subjects: [
         {
