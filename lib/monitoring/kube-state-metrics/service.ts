@@ -12,6 +12,11 @@ export const service = (c: Construct, opts: KubeStateMetricsOptions) => {
         "app.kubernetes.io/name": "kube-state-metrics",
         "app.kubernetes.io/version": "2.3.0",
       },
+      annotations: {
+        "prometheus.io/port": "8080",
+        "prometheus.io/path": "/metrics",
+        "prometheus.io/scrape": "true",
+      },
     },
     spec: {
       selector: { "app.kubernetes.io/name": "kube-state-metrics" },

@@ -8,8 +8,9 @@ export const service = (c: Construct, opts: NodeExporterOptions) => {
       name: "node-exporter",
       namespace: opts.namespace,
       annotations: {
+        "prometheus.io/port": "9001",
+        "prometheus.io/path": "/metrics",
         "prometheus.io/scrape": "true",
-        "prometheus.io/port": "9100",
       },
       labels: {
         app: "node-exporter",

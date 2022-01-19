@@ -10,14 +10,21 @@ export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
     metadata: {
       namespace: opts.namespace,
       name: "ava-exporter",
-      labels: { app: "avanode" },
+      labels: {
+        app: "ava-exporter",
+        "app.kubernetes.io/component": "exporter",
+        "app.kubernetes.io/name": "avanode-exporter",
+      },
+      annotations: {
+        "app.kubernetes.io/scrape": "true",
+        "app.kubernetes.io/path": "/metrics",
+        "app.kubernetes.io/port": "9001",
+      },
     },
     spec: {
       selector: {
         matchLabels,
-        // matchExpressions,
       },
-      // replicas: opts.deployment.replicas,
       updateStrategy: {
         type: "RollingUpdate",
         rollingUpdate: {
@@ -29,6 +36,11 @@ export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
           labels: {
             ...matchLabels,
           },
+          annotations: {
+            "prometheus.io/port": "9001",
+            "prometheus.io/path": "/metrics",
+            "prometheus.io/scrape": "true",
+          },
         },
         spec: {
           containers: [
@@ -36,13 +48,7 @@ export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
               name: "ava-exporter",
               image: "quay.io/freshtracks.io/avalanche",
               imagePullPolicy: "IfNotPresent",
-              args: [
-                "--metric-count=1000",
-                "--series-count=50",
-                "--port=9001",
-                "--label-count=50",
-                "--value-interval=15",
-              ],
+              args: ["--metric-count=1000", "--series-count=50", "--port=9001"],
               ports: [
                 {
                   containerPort: 9001,

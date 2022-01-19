@@ -15,6 +15,7 @@ import * as kplus from "cdk8s-plus-22";
 // import { createStatefulSetWithPersistentVolumes } from "./stateful-set-with-persistent-volumes";
 
 export interface AvaNodeProps {
+  readonly namespace?: string;
   readonly image?: string;
   readonly command?: string;
   readonly args?: string[];
@@ -32,11 +33,12 @@ export class AvaNode extends Construct {
   constructor(scope: Construct, id: string, props: AvaNodeProps) {
     super(scope, id, {});
 
-    const image = props.image || `avaplatform/avalanchego:3163be79`;
+    const image = props.image || `avaplatform/avalanchego:v1.7.3`;
     // const command = props.command || `/avalanchego/build/avalanchego`;
     // const args = props.args || defaultArgs;
     // const label = { app: c.Names.toDnsLabel(this) };
     const replicas = props.replicas || 5;
+    const namespace = props.namespace || "default";
     // const env = props.env || {};
     const volumes = props.volumes || {};
     const servicePorts: k.ContainerPort[] = props.servicePorts || [
@@ -45,6 +47,13 @@ export class AvaNode extends Construct {
         containerPort: 9650,
       },
     ];
+
+    new k.KubeNamespace(this, `ava-${namespace}`, {
+      metadata: {
+        name: namespace,
+      },
+      spec: {},
+    });
 
     // const sa =
     // const serviceAccount = createServiceAccount(this, { name: `ava` });
@@ -69,7 +78,7 @@ export class AvaNode extends Construct {
     const volumeClaimTemplates = Object.keys(volumes).map((key: string) => {
       const volume = volumes[key];
       return {
-        metadata: { name: volume.name },
+        metadata: { name: volume.name, namespace },
         spec: {
           accessModes: ["ReadWriteOnce"],
           storageClassName: "fast",
@@ -85,12 +94,12 @@ export class AvaNode extends Construct {
 
     const config = {
       metadata: {
+        namespace,
         name: "avanode-statefulset",
-        labels: { app: "avanode" },
-        annotations: {
+        labels: {
           app: "avanode",
-          "prometheus.io/port": "9216",
-          "prometheus.io/scrape": "true",
+          "app.kubernetes.io/component": "avanode",
+          "app.kubernetes.io/name": "avanode",
         },
       },
       spec: {
@@ -107,26 +116,12 @@ export class AvaNode extends Construct {
         replicas,
         template: {
           metadata: {
+            namespace,
             labels: {
               app: "avanode",
             },
           },
           spec: {
-            // serviceAccountName: serviceAccount.name,
-            // affinity: {
-            //   podAntiAffinity: {
-            //     requiredDuringSchedulingIgnoredDuringExecution: [
-            //       {
-            //         labelSelector: {
-            //           matchExpressions: [
-            //             { key: "app", operator: "In", values: ["avanode"] },
-            //           ],
-            //         },
-            //         topologyKey: "kubernetes.io/hostname",
-            //       },
-            //     ],
-            //   },
-            // },
             containers: [
               {
                 name: `avanode`,
@@ -135,11 +130,11 @@ export class AvaNode extends Construct {
                 ports: servicePorts,
                 resources: {
                   requests: {
-                    cpu: k.Quantity.fromString("50m"),
+                    cpu: k.Quantity.fromString("250m"),
                     memory: k.Quantity.fromString("128Mi"),
                   },
                   limits: {
-                    cpu: k.Quantity.fromString("50m"),
+                    cpu: k.Quantity.fromString("250m"),
                     memory: k.Quantity.fromString("256Mi"),
                   },
                 },
@@ -163,5 +158,35 @@ export class AvaNode extends Construct {
       `avanode-statefulset`,
       config
     );
+
+    // Service
+    new k.KubeService(this, `avanode-service`, {
+      metadata: {
+        name: "avanode-service",
+        namespace,
+        labels: {
+          app: "avanode-service",
+          "app.kubernetes.io/component": "avanode",
+          "app.kubernetes.io/name": "avanode",
+        },
+        annotations: {
+          "prometheus.io/port": "9001",
+          "prometheus.io/path": "/metrics",
+          "prometheus.io/scrape": "true",
+        },
+      },
+      spec: {
+        type: "ClusterIP",
+        clusterIp: "None",
+        selector: { app: "avanode-service" },
+        ports: [
+          {
+            port: 9001,
+            targetPort: k.IntOrString.fromNumber(9001),
+            name: "http-avanode",
+          },
+        ],
+      },
+    });
   }
 }

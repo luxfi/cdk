@@ -14,6 +14,11 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
       },
       name: "node-exporter",
       namespace: opts.namespace,
+      annotations: {
+        "prometheus.io/port": "9001",
+        "prometheus.io/path": "/metrics",
+        "prometheus.io/scrape": "true",
+      },
     },
     spec: {
       selector: {
@@ -40,6 +45,15 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
               ports: [
                 { containerPort: 9100, name: "interface", protocol: "TCP" },
               ],
+              args: [
+                // "--path.procfs",
+                // "/host/proc",
+                // "--path.sysfs",
+                // "/host/sys",
+                "--collector.filesystem.ignored-mount-points",
+                '"^/(sys|proc|dev|host|etc)($|/)"',
+              ],
+
               resources: {
                 requests: {
                   cpu: k.Quantity.fromString("50m"),
@@ -50,36 +64,8 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
                   memory: k.Quantity.fromString("128Mi"),
                 },
               },
-              // volumeMounts: [
-              //   {
-              //     mountPath: "/host/sys",
-              //     mountPropagation: "HostToContainer",
-              //     name: "sys",
-              //     readOnly: true,
-              //   },
-              //   {
-              //     mountPath: "/host/root",
-              //     mountPropagation: "HostToContainer",
-              //     name: "root",
-              //     readOnly: true,
-              //   },
-              // ],
             },
           ],
-          // volumes: [
-          //   {
-          //     name: "sys",
-          //     hostPath: {
-          //       path: "/sys",
-          //     },
-          //   },
-          //   {
-          //     name: "root",
-          //     hostPath: {
-          //       path: "/",
-          //     },
-          //   },
-          // ],
         },
       },
     },

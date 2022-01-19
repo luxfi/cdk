@@ -63,7 +63,7 @@ export class MonitorNode extends Construct {
       namespace: "monitoring",
       daemonset: {
         matchLabels: {
-          app: "avanode",
+          app: "node-exporter",
         },
       },
     };
@@ -78,7 +78,7 @@ export class MonitorNode extends Construct {
       namespace: "monitoring",
       daemonset: {
         matchLabels: {
-          app: "avanode",
+          app: "ava-exporter",
         },
       },
     };

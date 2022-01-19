@@ -26,6 +26,7 @@ export class MyChart extends Chart {
     // storage(this);
 
     const avanode_config = {
+      namespace: "ava",
       image: `docker.io/auser/ava-node:latest`,
       replicas: 2,
     };
