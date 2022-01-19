@@ -110,6 +110,20 @@ export class AvaNode extends Construct {
           },
           spec: {
             // serviceAccountName: serviceAccount.name,
+            affinity: {
+              podAntiAffinity: {
+                requiredDuringSchedulingIgnoredDuringExecution: [
+                  {
+                    labelSelector: {
+                      matchExpressions: [
+                        { key: "app", operator: "In", values: ["avanode"] },
+                      ],
+                    },
+                    topologyKey: "kubernetes.io/hostname",
+                  },
+                ],
+              },
+            },
             containers: [
               {
                 name: `avanode`,

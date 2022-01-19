@@ -10,6 +10,7 @@ import * as k from "./imports/k8s";
 // import { WebService } from "./lib/web-service";
 import { AvaNode } from "./lib/ava-node";
 import { MonitorNode } from "./lib/monitor-node";
+// import { storage } from "./lib/storage";
 
 export class MyChart extends Chart {
   constructor(scope: Construct, id: string, props: ChartProps = {}) {
@@ -19,6 +20,8 @@ export class MyChart extends Chart {
     // const avaVolume = kplus.Volume.fromConfigMap(avaData, {});
     // const monitorData = new kplus.ConfigMap(this, "monitorData");
     // const monitorVolume = kplus.Volume.fromConfigMap(monitorData);
+
+    // storage(this);
 
     new k.KubeStorageClass(this, `fast-storage-class`, {
       metadata: {
@@ -40,30 +43,35 @@ export class MyChart extends Chart {
         accessModes: [`ReadWriteOnce`],
         storageClassName: "fast",
         capacity: { storage: k.Quantity.fromString("4Gi") },
-        local: {
-          path: "/data/vol1",
+        // hostPath: {
+        //   path: "/mnt/data",
+        // },
+        nfs: {
+          server: "172.17.0.5",
+          path: "/data",
         },
+        mountOptions: ["vers=4,loud"],
         // claimRef: {
         //   namespace: "default",
         //   name: "ava-storage-ref",
         // },
-        volumeMode: "Filesystem",
-        persistentVolumeReclaimPolicy: "Retain",
-        nodeAffinity: {
-          required: {
-            nodeSelectorTerms: [
-              {
-                matchExpressions: [
-                  {
-                    key: "kubernetes.io/hostname",
-                    operator: "In",
-                    values: ["minikube"],
-                  },
-                ],
-              },
-            ],
-          },
-        },
+        // volumeMode: "Filesystem",
+        // persistentVolumeReclaimPolicy: "Retain",
+        // nodeAffinity: {
+        //   required: {
+        //     nodeSelectorTerms: [
+        //       {
+        //         matchExpressions: [
+        //           {
+        //             key: "kubernetes.io/hostname",
+        //             operator: "In",
+        //             values: ["minikube"],
+        //           },
+        //         ],
+        //       },
+        //     ],
+        //   },
+        // },
       },
     });
 

@@ -20,7 +20,9 @@
     "test": "jest",
     "build": "npm run compile && npm run test && npm run synth",
     "upgrade": "npm i cdk8s@latest cdk8s-cli@latest",
-    "upgrade:next": "npm i cdk8s@next cdk8s-cli@next"
+    "upgrade:next": "npm i cdk8s@next cdk8s-cli@next",
+    "nfs-volume": "docker run -idt --name nfs --privileged --restart unless-stopped -e SHARED_DIRECTORY=/data -v /tmp:/data --net=host itsthenetwork/nfs-server-alpine:latest",
+    "nfs-ip": "docker ps 2>/dev/null | grep nfs | awk '{print $1}' | xargs  docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
   },
   "dependencies": {
     "cdk8s": "^1.3.32",
@@ -32,7 +34,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@types/node": "^14.18.4",
-    "cdk8s-cli": "^1.0.75",
+    "cdk8s-cli": "^1.0.78",
     "jest": "^26.6.3",
     "rimraf": "^3.0.2",
     "selfsigned": "^2.0.0",
