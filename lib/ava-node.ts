@@ -146,7 +146,8 @@ export class AvaNode extends Construct {
       },
     };
     if (volumeClaimTemplates.length > 0) {
-      config.spec.volumeClaimTemplates = volumeClaimTemplates;
+      // @ts-ignore
+      config.spec["volumeClaimTemplates"] = volumeClaimTemplates;
       for (let i = 0; i < config.spec.template.spec.containers.length; i++) {
         // @ts-ignore
         config.spec.template.spec.containers[i]["volumeMounts"] = volumeMounts;
