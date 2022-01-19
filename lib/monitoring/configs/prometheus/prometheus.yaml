@@ -157,9 +157,9 @@ scrape_configs:
       - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
       - source_labels: [__meta_kubernetes_namespace]
-        target_label: avalanchego_namespace
+        target_label: kubernetes_namespace
       - source_labels: [__meta_kubernetes_service_name]
-        target_label: avalanchego_name
+        target_label: kubernetes_name
 
   - job_name: avalanche-machine
     scheme: https
