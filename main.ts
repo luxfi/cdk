@@ -12,6 +12,8 @@ import { AvaNode } from "./lib/ava-node";
 import { MonitorNode } from "./lib/monitor-node";
 // import { storage } from "./lib/storage";
 
+const ON_CLUSTER = process.env.CLUSTER !== "";
+
 export class MyChart extends Chart {
   constructor(scope: Construct, id: string, props: ChartProps = {}) {
     super(scope, id, props);
@@ -37,59 +39,41 @@ export class MyChart extends Chart {
       // volumeBindingMode: "Immediate",
     });
 
-    let vol = new k.KubePersistentVolume(this, `ava-data`, {
-      metadata: { name: "ava-storage", labels: { app: "avanode" } },
-      spec: {
-        accessModes: [`ReadWriteOnce`],
-        storageClassName: "fast",
-        capacity: { storage: k.Quantity.fromString("4Gi") },
-        // hostPath: {
-        //   path: "/mnt/data",
-        // },
-        nfs: {
-          server: "172.17.0.5",
-          path: "/data",
-        },
-        mountOptions: ["vers=4,loud"],
-        // claimRef: {
-        //   namespace: "default",
-        //   name: "ava-storage-ref",
-        // },
-        // volumeMode: "Filesystem",
-        // persistentVolumeReclaimPolicy: "Retain",
-        // nodeAffinity: {
-        //   required: {
-        //     nodeSelectorTerms: [
-        //       {
-        //         matchExpressions: [
-        //           {
-        //             key: "kubernetes.io/hostname",
-        //             operator: "In",
-        //             values: ["minikube"],
-        //           },
-        //         ],
-        //       },
-        //     ],
-        //   },
-        // },
-      },
-    });
-
-    new AvaNode(this, `avanode`, {
+    const avanode_config = {
       image: `docker.io/auser/ava-node:latest`,
       replicas: 1,
-      volumes: {
-        "/usr/share/.avalanchego": vol,
-      },
-    });
-
-    new MonitorNode(this, `monitoring-node`, {
+    };
+    const monitor_node_config = {
       image: `docker.io/auser/mon-node:latest`,
       replicas: 2,
-      // volumes: {
-      //   "/root": monitorVolume,
-      // },
-    });
+    };
+
+    if (ON_CLUSTER) {
+      let vol = new k.KubePersistentVolume(this, `ava-data`, {
+        metadata: { name: "ava-storage", labels: { app: "avanode" } },
+        spec: {
+          accessModes: [`ReadWriteOnce`],
+          storageClassName: "fast",
+          capacity: { storage: k.Quantity.fromString("4Gi") },
+          // hostPath: {
+          //   path: "/mnt/data",
+          // },
+          nfs: {
+            server: "172.17.0.5",
+            path: "/data",
+          },
+          mountOptions: ["vers=4,loud"],
+        },
+      });
+
+      // @ts-ignore
+      avanode_config["volumes"] = { "usr/share/.avalanchego": vol };
+      // @ts-ignore
+      monitor_node_config["volumes"] = { "/root": vol };
+    }
+
+    new AvaNode(this, `avanode`, avanode_config);
+    new MonitorNode(this, `monitoring-node`, monitor_node_config);
   }
 }
 

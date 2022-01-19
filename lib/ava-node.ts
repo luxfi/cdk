@@ -83,8 +83,7 @@ export class AvaNode extends Construct {
       };
     });
 
-    // // const set =
-    this.statefulSet = new k.KubeStatefulSet(this, `avanode-statefulset`, {
+    const config = {
       metadata: {
         name: "avanode-statefulset",
         labels: { app: "avanode" },
@@ -110,27 +109,26 @@ export class AvaNode extends Construct {
           },
           spec: {
             // serviceAccountName: serviceAccount.name,
-            affinity: {
-              podAntiAffinity: {
-                requiredDuringSchedulingIgnoredDuringExecution: [
-                  {
-                    labelSelector: {
-                      matchExpressions: [
-                        { key: "app", operator: "In", values: ["avanode"] },
-                      ],
-                    },
-                    topologyKey: "kubernetes.io/hostname",
-                  },
-                ],
-              },
-            },
+            // affinity: {
+            //   podAntiAffinity: {
+            //     requiredDuringSchedulingIgnoredDuringExecution: [
+            //       {
+            //         labelSelector: {
+            //           matchExpressions: [
+            //             { key: "app", operator: "In", values: ["avanode"] },
+            //           ],
+            //         },
+            //         topologyKey: "kubernetes.io/hostname",
+            //       },
+            //     ],
+            //   },
+            // },
             containers: [
               {
                 name: `avanode`,
                 image,
                 imagePullPolicy: kplus.ImagePullPolicy.IF_NOT_PRESENT,
                 ports: servicePorts,
-                volumeMounts,
                 resources: {
                   requests: {
                     cpu: k.Quantity.fromString("50m"),
@@ -147,6 +145,18 @@ export class AvaNode extends Construct {
           },
         },
       },
-    });
+    };
+    if (volumeClaimTemplates.length > 0) {
+      config.spec.volumeClaimTemplates = volumeClaimTemplates;
+      for (let i = 0; i < config.spec.template.spec.containers.length; i++) {
+        // @ts-ignore
+        config.spec.template.spec.containers[i]["volumeMounts"] = volumeMounts;
+      }
+    }
+    this.statefulSet = new k.KubeStatefulSet(
+      this,
+      `avanode-statefulset`,
+      config
+    );
   }
 }
