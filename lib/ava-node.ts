@@ -133,11 +133,11 @@ export class AvaNode extends Construct {
                 volumeMounts,
                 resources: {
                   requests: {
-                    cpu: k.Quantity.fromString("100m"),
+                    cpu: k.Quantity.fromString("50m"),
                     memory: k.Quantity.fromString("128Mi"),
                   },
                   limits: {
-                    cpu: k.Quantity.fromString("100m"),
+                    cpu: k.Quantity.fromString("50m"),
                     memory: k.Quantity.fromString("256Mi"),
                   },
                 },

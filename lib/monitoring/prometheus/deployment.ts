@@ -51,11 +51,11 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       ports: [{ containerPort: 9090 }],
       resources: {
         requests: {
-          cpu: k.Quantity.fromString("500m"),
+          cpu: k.Quantity.fromString("50m"),
           memory: k.Quantity.fromString("500M"),
         },
         limits: {
-          cpu: k.Quantity.fromString("500m"),
+          cpu: k.Quantity.fromString("50m"),
           memory: k.Quantity.fromString("500M"),
         },
       },
