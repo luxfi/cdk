@@ -38,11 +38,11 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
       ports: [{ containerPort: 3000 }],
       resources: {
         requests: {
-          cpu: k.Quantity.fromString("100m"),
+          cpu: k.Quantity.fromString("50m"),
           memory: k.Quantity.fromString("100Mi"),
         },
         limits: {
-          cpu: k.Quantity.fromString("100m"),
+          cpu: k.Quantity.fromString("50m"),
           memory: k.Quantity.fromString("100Mi"),
         },
       },

@@ -42,11 +42,11 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
               ],
               resources: {
                 requests: {
-                  cpu: k.Quantity.fromString("100m"),
+                  cpu: k.Quantity.fromString("50m"),
                   memory: k.Quantity.fromString("128Mi"),
                 },
                 limits: {
-                  cpu: k.Quantity.fromString("250m"),
+                  cpu: k.Quantity.fromString("100m"),
                   memory: k.Quantity.fromString("128Mi"),
                 },
               },
