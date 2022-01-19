@@ -11,6 +11,7 @@ import prometheusComponent from "./prometheus";
 import grafanaComponent from "./grafana";
 import nodeExporterComponent from "./node-exporter";
 import avalancheExporterComponent from "./avalanche-exporter";
+import kubeStateMetricsComponent from "./kube-state-metrics";
 
 export * from "./types";
 
@@ -39,6 +40,13 @@ export const grafana = (c: Construct, options: t.GrafanaOptions) => {
 
 export const nodeExporter = (c: Construct, options: t.NodeExporterOptions) => {
   return nodeExporterComponent(c, options);
+};
+
+export const kubeStateMetrics = (
+  c: Construct,
+  options: t.KubeStateMetricsOptions
+) => {
+  return kubeStateMetricsComponent(c, options);
 };
 
 export const avalancheExporter = (

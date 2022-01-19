@@ -29,3 +29,5 @@ export interface NodeExporterOptions extends BaseOptions {
 export interface AvalancheExporterOptions extends BaseOptions {
   daemonset?: DaemonsetOptions;
 }
+
+export interface KubeStateMetricsOptions extends BaseOptions {}

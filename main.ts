@@ -31,7 +31,7 @@ export class MyChart extends Chart {
     };
     const monitor_node_config = {
       image: `docker.io/auser/mon-node:latest`,
-      replicas: 2,
+      replicas: 1,
     };
 
     if (ON_CLUSTER) {

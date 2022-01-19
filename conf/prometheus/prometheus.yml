@@ -35,6 +35,7 @@ scrape_configs:
           ]
         action: keep
         regex: default;kubernetes;https
+
   - job_name: "kubernetes-nodes"
     scheme: https
     tls_config:

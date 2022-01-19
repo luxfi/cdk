@@ -14,6 +14,8 @@ import {
   grafana,
   nodeExporter,
   avalancheExporter,
+  KubeStateMetricsOptions,
+  kubeStateMetrics,
 } from "./monitoring";
 
 export interface MonitorNodeProps {
@@ -66,6 +68,11 @@ export class MonitorNode extends Construct {
       },
     };
     nodeExporter(this, nodeExporterOptions);
+    // ============= Kube State Metrics
+    const kubeStateMetricsOptions: KubeStateMetricsOptions = {
+      namespace: "kube-system",
+    };
+    kubeStateMetrics(this, kubeStateMetricsOptions);
     // ============= Avalanche exporter
     const avalancheExporterOptions: AvalancheExporterOptions = {
       namespace: "monitoring",

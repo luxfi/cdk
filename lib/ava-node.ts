@@ -87,6 +87,11 @@ export class AvaNode extends Construct {
       metadata: {
         name: "avanode-statefulset",
         labels: { app: "avanode" },
+        annotations: {
+          app: "avanode",
+          "prometheus.io/port": "9216",
+          "prometheus.io/scrape": "true",
+        },
       },
       spec: {
         serviceName: "avanode",
