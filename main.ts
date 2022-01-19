@@ -27,7 +27,7 @@ export class MyChart extends Chart {
 
     const avanode_config = {
       image: `docker.io/auser/ava-node:latest`,
-      replicas: 1,
+      replicas: 2,
     };
     const monitor_node_config = {
       image: `docker.io/auser/mon-node:latest`,
