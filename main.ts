@@ -1,5 +1,5 @@
 require("dotenv").config();
-require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
+require("dotenv").config({ path: `.env.${process.env.CLUSTER}` });
 
 import { Construct } from "constructs";
 import { App, Chart, ChartProps } from "cdk8s";
@@ -25,20 +25,6 @@ export class MyChart extends Chart {
 
     // storage(this);
 
-    new k.KubeStorageClass(this, `fast-storage-class`, {
-      metadata: {
-        name: "fast",
-        namespace: "default",
-        labels: {
-          app: "avanode",
-        },
-      },
-      provisioner: "kubernetes.io/no-provisioner",
-      // provisioner: "k8s.io/minikube-hostpath",
-      volumeBindingMode: "WaitForFirstConsumer",
-      // volumeBindingMode: "Immediate",
-    });
-
     const avanode_config = {
       image: `docker.io/auser/ava-node:latest`,
       replicas: 1,
@@ -49,6 +35,21 @@ export class MyChart extends Chart {
     };
 
     if (ON_CLUSTER) {
+      new k.KubeStorageClass(this, `fast-storage-class`, {
+        metadata: {
+          name: "fast",
+          namespace: "default",
+          labels: {
+            cluster: `${process.env.CLUSTER}`,
+            app: "avanode",
+          },
+        },
+        provisioner: "kubernetes.io/no-provisioner",
+        // provisioner: "k8s.io/minikube-hostpath",
+        volumeBindingMode: "WaitForFirstConsumer",
+        // volumeBindingMode: "Immediate",
+      });
+
       let vol = new k.KubePersistentVolume(this, `ava-data`, {
         metadata: { name: "ava-storage", labels: { app: "avanode" } },
         spec: {
