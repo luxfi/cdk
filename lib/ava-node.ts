@@ -100,7 +100,6 @@ export class AvaNode extends Construct {
           type: "RollingUpdate",
         },
         replicas,
-        volumeClaimTemplates,
         template: {
           metadata: {
             labels: {
