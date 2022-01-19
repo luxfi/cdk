@@ -12,7 +12,7 @@ import { AvaNode } from "./lib/ava-node";
 import { MonitorNode } from "./lib/monitor-node";
 // import { storage } from "./lib/storage";
 
-const ON_CLUSTER = process.env.CLUSTER !== "";
+const ON_CLUSTER = process.env.CLUSTER !== "local";
 
 export class MyChart extends Chart {
   constructor(scope: Construct, id: string, props: ChartProps = {}) {
