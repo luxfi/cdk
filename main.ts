@@ -55,14 +55,10 @@ export class MyChart extends Chart {
           accessModes: [`ReadWriteOnce`],
           storageClassName: "fast",
           capacity: { storage: k.Quantity.fromString("4Gi") },
-          // hostPath: {
-          //   path: "/mnt/data",
-          // },
-          nfs: {
-            server: "172.17.0.5",
-            path: "/data",
+          // TODO:
+          hostPath: {
+            path: "/mnt/data",
           },
-          mountOptions: ["vers=4,loud"],
         },
       });
 
