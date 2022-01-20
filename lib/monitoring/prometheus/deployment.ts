@@ -9,6 +9,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     {
       name: "prometheus-config-volume",
       mountPath: "/etc/prometheus",
+      defaultMode: 0o420,
     },
     {
       name: "prometheus-rules-volume",
@@ -16,7 +17,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     },
     {
       name: "prometheus-data-volume",
-      mountPath: "/prometheus",
+      mountPath: "/usr/share/prometheus",
       // claim: { claimName: storageVolumeClaimName },
     },
   ];
@@ -25,7 +26,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       name: "prometheus-data-permissions-setup",
       image: "busybox",
       imagePullPolicy: "IfNotPresent",
-      command: ["/bin/chmod", "-R", "777", "/prometheus"],
+      command: ["/bin/chmod", "-R", "777", "/usr/share/prometheus"],
       volumeMounts: prometheusVolumeMounts,
       securityContext: {
         runAsNonRoot: false,
@@ -44,20 +45,20 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       command: ["/usr/bin/prometheus"],
       args: [
         "--storage.tsdb.retention.time=12h",
-        "--storage.tsdb.retention.size=5MB",
         "--config.file=/etc/prometheus/prometheus.yaml",
-        "--storage.tsdb.path=/prometheus/",
+        // "--web.config.file=/etc/prometheus/web-config.yaml",
+        "--storage.tsdb.path=/usr/share/prometheus",
       ],
       initialDelaySeconds: 30,
       ports: [{ containerPort: 9090 }],
       resources: {
         requests: {
-          cpu: k.Quantity.fromString("250m"),
-          memory: k.Quantity.fromString("1Gi"),
+          cpu: k.Quantity.fromString("500m"),
+          memory: k.Quantity.fromString("500M"),
         },
         limits: {
-          cpu: k.Quantity.fromString("250m"),
-          memory: k.Quantity.fromString("2Gi"),
+          cpu: k.Quantity.fromNumber(1),
+          memory: k.Quantity.fromString("1Gi"),
         },
       },
       volumeMounts,
@@ -85,6 +86,12 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         labels: { app: "prometheus" },
       },
       spec: {
+        hostAliases: [
+          {
+            ip: "127.0.0.1",
+            hostnames: ["grafana.lux", "prometheus.lux"],
+          },
+        ],
         serviceAccountName: "prometheus",
         initContainers,
         containers,
@@ -99,7 +106,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
           },
           {
             name: "prometheus-data-volume",
-            mountPath: "/prometheus",
+            mountPath: "/usr/share/prometheus",
             // claim: { claimName: storageVolumeClaimName },
           },
         ],

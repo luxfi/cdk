@@ -15,16 +15,16 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
     spec: {
       rules: [
         {
-          host: `prometheus.lux`,
+          host: "prometheus.lux",
           http: {
             paths: [
               {
-                path: "/",
+                path: "/*",
                 pathType: "Prefix",
                 backend: {
                   service: {
                     name: `prometheus-service`,
-                    port: { number: 9090 },
+                    port: { number: 8080 },
                   },
                 },
               },
@@ -32,12 +32,12 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
           },
         },
       ],
-      tls: [
-        {
-          hosts: [`prometheus.lux`],
-          secretName: `prometheus-secret`,
-        },
-      ],
+      // tls: [
+      //   {
+      //     hosts: [`prometheus.lux`],
+      //     secretName: `prometheus-secret`,
+      //   },
+      // ],
     },
   });
 };

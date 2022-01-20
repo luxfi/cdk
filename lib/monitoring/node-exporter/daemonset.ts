@@ -31,25 +31,37 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
           maxUnavailable: k.IntOrString.fromNumber(1),
         },
       },
+
       template: {
         metadata: {
           labels: {
             ...matchLabels,
           },
         },
+
         spec: {
+          volumes: [
+            {
+              hostPath: {
+                path: "sys",
+              },
+              name: "sys",
+            },
+            {
+              hostPath: {
+                path: "/",
+              },
+              name: "root",
+            },
+          ],
           containers: [
             {
               name: "node-exporter",
               image: "prom/node-exporter",
-              ports: [
-                { containerPort: 9100, name: "interface", protocol: "TCP" },
-              ],
+              ports: [{ containerPort: 9100, protocol: "TCP" }],
               args: [
-                // "--path.procfs",
-                // "/host/proc",
-                // "--path.sysfs",
-                // "/host/sys",
+                "--path.sysfs=/host/sys",
+                "--path.rootfs=/host/root",
                 "--collector.cpu",
                 "--collector.diskstats",
                 "--collector.filesystem",
@@ -57,22 +69,38 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
                 "--collector.uname",
                 "--collector.time",
                 "--collector.arp",
-                "--collector.filesystem.ignored-mount-points",
-                '"^/(sys|proc|dev|host|etc)($|/)"',
-                "--web.listen-address=:9100",
-                '--web.telemetry-path="/metrics"',
+                "--no-collector.wifi",
+                "--no-collector.hwmon",
+                "--collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)",
+                "--collector.netclass.ignored-devices=^(veth.*)$",
+                // "--web.listen-address=:9100",
+                // '--web.telemetry-path="/metrics"',
               ],
 
               resources: {
                 requests: {
-                  cpu: k.Quantity.fromString("50m"),
-                  memory: k.Quantity.fromString("128Mi"),
+                  cpu: k.Quantity.fromString("105m"),
+                  memory: k.Quantity.fromString("180Mi"),
                 },
                 limits: {
-                  cpu: k.Quantity.fromString("100m"),
-                  memory: k.Quantity.fromString("128Mi"),
+                  cpu: k.Quantity.fromString("250m"),
+                  memory: k.Quantity.fromString("180Mi"),
                 },
               },
+              volumeMounts: [
+                {
+                  mountPath: "/host/sys",
+                  // mountPropagation: "HostToContainer",
+                  name: "sys",
+                  readOnly: true,
+                },
+                {
+                  mountPath: "/host/root",
+                  // mountPropagation: "HostToContainer",
+                  name: "root",
+                  readOnly: true,
+                },
+              ],
             },
           ],
         },

@@ -15,7 +15,7 @@
     "docker:build": "npm run docker:ava && npm run docker:monitor",
     "clean": "tsc --build --clean",
     "replace:vars": "./scripts/replace-vars.ts",
-    "predeploy": "npm run compile && npm run synth; npm run replace:vars",
+    "predeploy": "npm run compile && npm run synth",
     "deploy": "kubectl apply -f dist/cdk.k8s.yaml",
     "reset": "kubectl delete -f dist/cdk.k8s.yaml 2>/dev/null; npm run compile && npm run synth && kubectl apply -f dist/cdk.k8s.yaml",
     "compile": "tsc -p .",

@@ -3,6 +3,13 @@
 eval $(minikube docker-env);
 
 npm run init
-helm repo add coredns https://coredns.github.io/helm
-helm --namespace=kube-system install coredns coredns/coredns \
+
+helm --namespace=kube-system upgrade coredns coredns/coredns \
+  --repo https://coredns.github.io/helm \
   --set prometheus.service.enabled=true
+
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+
+minikube addons enable ingress

@@ -5,7 +5,10 @@ import * as path from "path";
 import { fileMap, promethusConfigsDirectory } from "../../utils";
 
 export const configMap = (c: Construct, opts: PrometheusOptions) => {
-  const data = fileMap(path.join(promethusConfigsDirectory, "prometheus.yaml"));
+  const data = {
+    ...fileMap(path.join(promethusConfigsDirectory, "prometheus.yaml")),
+    ...fileMap(path.join(promethusConfigsDirectory, "web-config.yaml")),
+  };
   return new k.KubeConfigMap(c, "prometheus-core", {
     metadata: {
       name: "prometheus-core",

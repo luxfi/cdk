@@ -4,7 +4,7 @@ import rules from "./rules";
 import configMap from "./configmap";
 import deployment from "./deployment";
 import secret from "./secret";
-import ingress from "./ingress";
+// import ingress from "./ingress";
 import { PrometheusOptions } from "../types";
 
 export const prometheusCore = (c: Construct, opts: PrometheusOptions) => {
@@ -14,7 +14,7 @@ export const prometheusCore = (c: Construct, opts: PrometheusOptions) => {
     rules: rules(c, opts),
     configMap: configMap(c, opts),
     deployment: deployment(c, opts),
-    ingress: ingress(c, opts),
+    // ingress: ingress(c, opts),
   };
 };
 

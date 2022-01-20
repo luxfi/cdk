@@ -13,10 +13,11 @@ export const service = (c: Construct, opts: GrafanaOptions) => {
       selector: { app: "grafana-service" },
       ports: [
         {
+          name: "grafana-service",
+          protocol: "TCP",
           port: 3000,
         },
       ],
-      type: `NodePort`,
     },
   });
 };

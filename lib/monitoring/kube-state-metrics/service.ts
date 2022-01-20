@@ -20,7 +20,6 @@ export const service = (c: Construct, opts: KubeStateMetricsOptions) => {
     },
     spec: {
       selector: { "app.kubernetes.io/name": "kube-state-metrics" },
-      clusterIp: "None",
       ports: [
         {
           name: "http-metrics",

@@ -15,12 +15,15 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
     },
     spec: {
       selector: { app: "prometheus-service" },
+      type: "NodePort",
       ports: [
         {
-          port: 9090,
+          name: "prometheus-service",
+          protocol: "TCP",
+          port: 8080,
+          targetPort: k.IntOrString.fromNumber(9090),
         },
       ],
-      type: `ClusterIP`,
     },
   });
 };

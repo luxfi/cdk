@@ -17,7 +17,7 @@ export const volumes = (c: Construct, opts: PrometheusOptions) => {
       storageClassName: "fast",
       capacity: { storage: k.Quantity.fromString("4Gi") },
       local: {
-        path: "/prometheus",
+        path: "/usr/share/prometheus",
       },
       volumeMode: "Filesystem",
       persistentVolumeReclaimPolicy: "Delete",
@@ -43,7 +43,7 @@ export const volumes = (c: Construct, opts: PrometheusOptions) => {
   const prometheusVolumeMounts = [
     {
       name: storageVolumeName,
-      mountPath: "/prometheus",
+      mountPath: "/usr/share/prometheus",
       hostPath: {
         path: "/data/prometheus",
         type: "DirectoryOrCreate",
