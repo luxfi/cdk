@@ -2,7 +2,7 @@ import { Construct } from "constructs";
 import { PrometheusOptions } from "../types";
 import * as k from "../../../imports/k8s";
 import * as path from "path";
-import { directoryMap, promethusConfigsDirectory } from "../utils";
+import { directoryMap, promethusConfigsDirectory } from "../../utils";
 
 export const rules = (c: Construct, opts: PrometheusOptions) => {
   const promRulesDir = path.join(promethusConfigsDirectory, "rules");

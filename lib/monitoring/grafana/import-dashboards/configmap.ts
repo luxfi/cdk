@@ -2,7 +2,7 @@ import { Construct } from "constructs";
 import { GrafanaOptions } from "../../types";
 import * as k from "../../../../imports/k8s";
 import * as path from "path";
-import { fileMap, directoryMap, grafanaConfigsDirectory } from "../../utils";
+import { fileMap, directoryMap, grafanaConfigsDirectory } from "../../../utils";
 const jsonminify = require("jsonminify");
 
 export const configMap = (c: Construct, opts: GrafanaOptions) => {

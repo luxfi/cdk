@@ -5,26 +5,22 @@ import * as k from "../../../imports/k8s";
 export const service = (c: Construct, opts: PrometheusOptions) => {
   return new k.KubeService(c, "prometheus-service", {
     metadata: {
-      name: "prometheus",
+      name: "prometheus-service",
       namespace: opts.namespace,
       annotations: {
         "prometheus.io/scrape": "true",
         "prometheus.io/port": "9090",
       },
-      labels: { app: "prometheus" },
+      labels: { app: "prometheus-service" },
     },
     spec: {
-      selector: { app: "prometheus" },
+      selector: { app: "prometheus-service" },
       ports: [
         {
           port: 9090,
-          protocol: "TCP",
-          name: "webui",
-          nodePort: 30909,
-          targetPort: k.IntOrString.fromNumber(9090),
         },
       ],
-      type: `LoadBalancer`,
+      type: `ClusterIP`,
     },
   });
 };

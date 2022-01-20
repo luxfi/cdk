@@ -1,12 +1,12 @@
 import { Construct } from "constructs";
-import { PrometheusOptions } from "../types";
+import { GrafanaOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
-export const ingress = (c: Construct, opts: PrometheusOptions) => {
-  return new k.KubeIngress(c, `prometheus-ui`, {
+export const ingress = (c: Construct, opts: GrafanaOptions) => {
+  return new k.KubeIngress(c, `grafana-ui`, {
     metadata: {
       namespace: opts.namespace,
-      name: "prometheus-ui",
+      name: "grafana-ui",
       annotations: {
         "kubernetes.io/ingress.class": "nginx",
         "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
@@ -15,16 +15,16 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
     spec: {
       rules: [
         {
-          host: `prometheus.lux`,
+          host: `grafana.lux`,
           http: {
             paths: [
               {
-                path: "/",
+                path: "/dashboard",
                 pathType: "Prefix",
                 backend: {
                   service: {
-                    name: `prometheus-service`,
-                    port: { number: 9090 },
+                    name: `grafana-service`,
+                    port: { number: 3000 },
                   },
                 },
               },
@@ -34,8 +34,8 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
       ],
       tls: [
         {
-          hosts: [`prometheus.lux`],
-          secretName: `prometheus-secret`,
+          hosts: [`grafana.lux`],
+          secretName: `grafana-secret`,
         },
       ],
     },
