@@ -98,6 +98,14 @@ When you're working on the `src/monitor` tool, you'll need to compile it as it g
 
 All the commands are available in the `src/cmd/*.tsx`. Run through the [avalanche documentation](https://www.avax.network/build) and see what commands are missing to get through the tutorials and add them.
 
+## Tips
+
+To start minikube for local development, you can use kvm (qemu) which is much faster than docker/virtualbox:
+
+```bash
+minikube start --mount --memory=8192 --cpus=4 --driver=kvm2
+```
+
 ## TODO
 
 - [ ] Write tests

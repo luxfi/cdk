@@ -27,15 +27,11 @@ scrape_configs:
         action: replace
         target_label: pod
 
-  - job_name: ava
-    metrics_path: "/ext/metrics"
-    static_configs:
-      - targets: ["ava.ava:9650"]
-
   - job_name: ava-exporter
+    metrics_path: "/ext/metrics"
     scheme: http
     static_configs:
-      - targets: ["localhost:9100"]
+      - targets: ["ava-exporter.monitoring:9001"]
         labels:
           alias: "machine"
     tls_config:

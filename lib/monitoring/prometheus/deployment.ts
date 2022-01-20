@@ -44,7 +44,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       imagePullPolicy: "IfNotPresent",
       command: ["/usr/bin/prometheus"],
       args: [
-        "--storage.tsdb.retention.time=12h",
+        "--storage.tsdb.retention.time=2h",
         "--config.file=/etc/prometheus/prometheus.yaml",
         // "--web.config.file=/etc/prometheus/web-config.yaml",
         "--storage.tsdb.path=/usr/share/prometheus",
@@ -58,7 +58,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         },
         limits: {
           cpu: k.Quantity.fromNumber(1),
-          memory: k.Quantity.fromString("1Gi"),
+          memory: k.Quantity.fromString("2Gi"),
         },
       },
       volumeMounts,
@@ -86,12 +86,6 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         labels: { app: "prometheus" },
       },
       spec: {
-        hostAliases: [
-          {
-            ip: "127.0.0.1",
-            hostnames: ["grafana.lux", "prometheus.lux"],
-          },
-        ],
         serviceAccountName: "prometheus",
         initContainers,
         containers,

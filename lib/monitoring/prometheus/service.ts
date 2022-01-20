@@ -15,7 +15,7 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
     },
     spec: {
       selector: { app: "prometheus-service" },
-      type: "NodePort",
+      type: "ClusterIP",
       ports: [
         {
           name: "prometheus-service",
