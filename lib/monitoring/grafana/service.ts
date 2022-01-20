@@ -16,7 +16,7 @@ export const service = (c: Construct, opts: GrafanaOptions) => {
           port: 3000,
         },
       ],
-      type: `ClusterIP`,
+      type: `NodePort`,
     },
   });
 };

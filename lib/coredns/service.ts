@@ -37,7 +37,7 @@ export const service = (c: Construct, opts: CoreDNSOptions) => {
         },
       ],
       type: `ClusterIP`,
-      // clusterIp: "CLUSTER_DNS_IP",
+      // clusterIp: "{{ CLUSTER_DNS_IP }}",
     },
   });
 };

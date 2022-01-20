@@ -10,7 +10,7 @@ import * as k from "./imports/k8s";
 // import { WebService } from "./lib/web-service";
 import { AvaNode } from "./lib/ava-node";
 import { MonitorNode } from "./lib/monitor-node";
-import { coredns } from "./lib/coredns";
+// import { coredns } from "./lib/coredns";
 // import { storage } from "./lib/storage";
 
 const ON_CLUSTER = process.env.CLUSTER !== "local";
@@ -71,7 +71,7 @@ export class MyChart extends Chart {
       monitor_node_config["volumes"] = { "/root": vol };
     }
 
-    coredns(this, { namespace: "kube-system" });
+    // coredns(this, { namespace: "kube-system" });
     new AvaNode(this, `avanode`, avanode_config);
     new MonitorNode(this, `monitoring-node`, monitor_node_config);
   }

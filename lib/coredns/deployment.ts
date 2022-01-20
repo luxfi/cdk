@@ -29,6 +29,7 @@ export const deployment = (c: Construct, opts: CoreDNSOptions) => {
           memory: k.Quantity.fromString("70Mi"),
         },
         limits: {
+          cpu: k.Quantity.fromString("100m"),
           memory: k.Quantity.fromString("170Mi"),
         },
       },

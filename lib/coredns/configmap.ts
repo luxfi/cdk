@@ -8,7 +8,7 @@ export const configMap = (c: Construct, opts: CoreDNSOptions) => {
   let data = fileMap(path.join(corednsConfigsDirectory, "Corefile"));
   new k.KubeConfigMap(c, "coredns-corefile", {
     metadata: {
-      name: "coredns",
+      name: "coredns-corefile",
       namespace: opts.namespace,
     },
     data,

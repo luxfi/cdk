@@ -48,6 +48,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         "--config.file=/etc/prometheus/prometheus.yaml",
         "--storage.tsdb.path=/prometheus/",
       ],
+      initialDelaySeconds: 30,
       ports: [{ containerPort: 9090 }],
       resources: {
         requests: {
@@ -56,7 +57,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         },
         limits: {
           cpu: k.Quantity.fromString("250m"),
-          memory: k.Quantity.fromString("1Gi"),
+          memory: k.Quantity.fromString("2Gi"),
         },
       },
       volumeMounts,
