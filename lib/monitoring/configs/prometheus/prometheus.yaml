@@ -26,8 +26,17 @@ scrape_configs:
         action: replace
         target_label: pod
 
+  - job_name: ava
+    metrics_path: "/ext/metrics"
+    static_configs:
+      - targets: ["localhost:9650"]
+
   - job_name: ava-exporter
     scheme: http
+    static_configs:
+      - targets: ["localhost:9100"]
+        labels:
+          alias: "machine"
     tls_config:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
       insecure_skip_verify: true

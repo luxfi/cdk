@@ -102,7 +102,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
           volumes: [
             {
               name: "config-volume",
-              configMap: { name: "grafana-import-dashboards" },
+              configMap: { name: "grafana-dashboards" },
             },
           ],
         },

@@ -50,8 +50,17 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
                 // "/host/proc",
                 // "--path.sysfs",
                 // "/host/sys",
+                "--collector.cpu",
+                "--collector.diskstats",
+                "--collector.filesystem",
+                "--collector.loadavg",
+                "--collector.uname",
+                "--collector.time",
+                "--collector.arp",
                 "--collector.filesystem.ignored-mount-points",
                 '"^/(sys|proc|dev|host|etc)($|/)"',
+                "--web.listen-address=:9100",
+                '--web.telemetry-path="/metrics"',
               ],
 
               resources: {

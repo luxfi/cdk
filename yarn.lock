@@ -631,6 +631,11 @@
   "resolved" "https://registry.npmjs.org/@types/js-yaml/-/js-yaml-3.12.7.tgz"
   "version" "3.12.7"
 
+"@types/jsonminify@^0.4.1":
+  "integrity" "sha512-CkbsT83tCMuFefGh+aXlsunetd66yN62QxtjBfk4lX4zMVBPRlWyHQvZvIPOMUznVA7MXdt6RtqHa9fra1PlCw=="
+  "resolved" "https://registry.npmjs.org/@types/jsonminify/-/jsonminify-0.4.1.tgz"
+  "version" "0.4.1"
+
 "@types/node@*":
   "integrity" "sha512-YofkM6fGv4gDJq78g4j0mMuGMkZVxZDgtU0JRdx6FgiJDG+0fY0GKVolOV8WqVmEhLCXkQRjwDdKyPxJp/uucg=="
   "resolved" "https://registry.npmjs.org/@types/node/-/node-17.0.8.tgz"
@@ -3214,6 +3219,11 @@
   optionalDependencies:
     "graceful-fs" "^4.1.6"
 
+"jsonminify@^0.4.2":
+  "integrity" "sha512-mEtP5ECD0293D+s45JhDutqF5mFCkWY8ClrPFxjSFR2KUoantofky7noSzyKnAnD9Gd8pXHZSUd5bgzLDUBbfA=="
+  "resolved" "https://registry.npmjs.org/jsonminify/-/jsonminify-0.4.2.tgz"
+  "version" "0.4.2"
+
 "jsonpath-plus@^0.19.0":
   "integrity" "sha512-GSVwsrzW9LsA5lzsqe4CkuZ9wp+kxBb2GwNniaWzI2YFn5Ig42rSW8ZxVpWXaAfakXNrx5pgY5AbQq7kzX29kg=="
   "resolved" "https://registry.npmjs.org/jsonpath-plus/-/jsonpath-plus-0.19.0.tgz"
@@ -3533,6 +3543,11 @@
   "integrity" "sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs="
   "resolved" "https://registry.npmjs.org/node-int64/-/node-int64-0.4.0.tgz"
   "version" "0.4.0"
+
+"node-json-minify@^3.0.0":
+  "integrity" "sha512-BH1dWvkrbrqoRjlxF17VCXa3W3UpynDPo8DRbbk7TiTyScbYPXJc4FSqEyS98trl1EYJ32+zA/WdE0dTPs7+yw=="
+  "resolved" "https://registry.npmjs.org/node-json-minify/-/node-json-minify-3.0.0.tgz"
+  "version" "3.0.0"
 
 "node-notifier@^8.0.0":
   "integrity" "sha512-oJP/9NAdd9+x2Q+rfphB2RJCHjod70RcRLjosiPMMu5gjIfwVnOUGq2nbTjTUbmy0DJ/tFIVT30+Qe3nzl4TJg=="

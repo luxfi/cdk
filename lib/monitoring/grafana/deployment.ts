@@ -76,6 +76,18 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           name: "grafana-data-storage",
           mountPath: "/var/lib/grafana",
         },
+        {
+          name: "grafana-dashboards",
+          mountPath: "/etc/grafana/dashboards",
+        },
+        {
+          name: "grafana-provision-avalanche",
+          mountPath: "/etc/grafana/provisioning/dashboards",
+        },
+        {
+          name: "grafana-provision-datasources",
+          mountPath: "/etc/grafana/provisioning/datasources",
+        },
       ],
     },
   ];
@@ -109,6 +121,18 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
             name: "grafana-data-storage",
             emptyDir: {},
             // claim: { claimName: storageVolumeClaimName },
+          },
+          {
+            name: "grafana-dashboards",
+            configMap: { name: "grafana-dashboards" },
+          },
+          {
+            name: "grafana-provision-avalanche",
+            configMap: { name: "grafana-provision-avalanche" },
+          },
+          {
+            name: "grafana-provision-datasources",
+            configMap: { name: "grafana-provision-datasources" },
           },
         ],
       },
