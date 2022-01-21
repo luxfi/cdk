@@ -143,7 +143,7 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
     metadata: {
       namespace: opts.namespace,
       name: "grafana-deployment",
-      labels: { app: "grafana-server" },
+      labels: { app: "grafana" },
     },
     spec,
   });

@@ -15,7 +15,7 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
     spec: {
       rules: [
         {
-          host: "prometheus.lux",
+          host: "prometheus-service.monitoring.svc.cluster.local",
           http: {
             paths: [
               {
@@ -24,7 +24,7 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
                 backend: {
                   service: {
                     name: `prometheus-service`,
-                    port: { number: 8080 },
+                    port: { number: 9090 },
                   },
                 },
               },
@@ -32,12 +32,12 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
           },
         },
       ],
-      // tls: [
-      //   {
-      //     hosts: [`prometheus.lux`],
-      //     secretName: `prometheus-secret`,
-      //   },
-      // ],
+      tls: [
+        {
+          hosts: [`prometheus-service.monitoring.svc.cluster.local`],
+          secretName: `prometheus-secret`,
+        },
+      ],
     },
   });
 };

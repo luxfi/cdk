@@ -13,11 +13,12 @@ export const service = (c: Construct, opts: AvalancheExporterOptions) => {
         "prometheus.io/scrape": "true",
       },
       labels: {
+        service: "ava-exporter-service",
         app: "ava-exporter",
       },
     },
     spec: {
-      selector: { app: "ava-exporter" },
+      selector: { app: "ava-exporter", service: "ava-exporter-service" },
       ports: [
         {
           port: 9001,

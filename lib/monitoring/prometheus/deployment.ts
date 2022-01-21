@@ -48,9 +48,13 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         "--config.file=/etc/prometheus/prometheus.yaml",
         // "--web.config.file=/etc/prometheus/web-config.yaml",
         "--storage.tsdb.path=/usr/share/prometheus",
+        "--web.listen-address=0.0.0.0:9090",
+        // "--web.listen-addresses=:8080",
+        // `--web.listen-address=prometheus-service.${opts.namespace}.svc.cluster.local:9090`,
+        // "--web.enable-admin-api",
       ],
       initialDelaySeconds: 30,
-      ports: [{ containerPort: 9090 }],
+      ports: [{ containerPort: 9090, name: "metrics" }],
       resources: {
         requests: {
           cpu: k.Quantity.fromString("500m"),
@@ -87,6 +91,8 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       },
       spec: {
         serviceAccountName: "prometheus",
+        hostname: "prometheus",
+        subdomain: "service",
         initContainers,
         containers,
         volumes: [
@@ -113,6 +119,10 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       namespace: opts.namespace,
       name: "prometheus-deployment",
       labels: { app: "prometheus-server" },
+      annotations: {
+        "prometheus.io/port": "9090",
+        "prometheus.io/scrape": "true",
+      },
     },
     spec,
   });

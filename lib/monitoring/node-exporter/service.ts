@@ -13,17 +13,21 @@ export const service = (c: Construct, opts: NodeExporterOptions) => {
       },
       labels: {
         app: "node-exporter",
+        service: "node-exporter-service",
+        "app.kubernetes.io/component": "exporter",
+        "app.kubernetes.io/name": "node-exporter",
       },
     },
     spec: {
       selector: {
+        app: "node-exporter",
+        service: "node-exporter-service",
         "app.kubernetes.io/component": "exporter",
         "app.kubernetes.io/name": "node-exporter",
       },
       ports: [
         {
           name: "node-exporter",
-          protocol: "TCP",
           port: 9100,
           targetPort: k.IntOrString.fromNumber(9100),
         },

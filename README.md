@@ -113,5 +113,6 @@ minikube start --mount --memory=8192 --cpus=4 --driver=kvm2
 - [ ] Fill in commands
 - [ ] Make the `lib/ava/remoteExec.ts` sane and extensible. Do **NOT** execute commands locally. Use the `@kubernetes/client-node` library `exec()` command because we want to execute the commands on the kubernetes node.
 - [ ] Write and expose a _small_ rpc server to expose the NodePort and the blockchain rpc host/port
+- [ ] Implement NetworkPolicy for the deployments/Nodes
 
 Feel free to execute any commands you'd like and that you discover, there are quite a few. We need to be able to execute these commands
