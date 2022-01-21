@@ -106,6 +106,15 @@ To start minikube for local development:
 minikube start --mount --memory=8192 --cpus=4 --bootstrapper=kubeadm
 ```
 
+You can connect a local proxy using the `./scripts/kube.ts` script:
+
+```bash
+# Forward the prometheus server:
+./scripts/kube.ts port-forward -n monitoring -l app=prometheus-server
+# Forward grafana
+./scripts/kube.ts port-forward -n monitoring -l app=grafana
+```
+
 ## TODO
 
 - [ ] Write tests
