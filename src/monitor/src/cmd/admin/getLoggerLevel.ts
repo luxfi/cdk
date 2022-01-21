@@ -33,7 +33,7 @@ export async function handler(args: ArgShape) {
         }
         console.log(loggerTable.toString());
     } else {
-        console.log(`${chalk.red('Error getting aliases for this chain!')}`);
+        console.log(`${chalk.red('Error getting logger levels for this chain!')}`);
         console.error('Reason:', data.error.message);
     }
 }
