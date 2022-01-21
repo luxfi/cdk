@@ -11,7 +11,7 @@
     "dev": "tsc -p . -w",
     "start": "node build/bin/cli.js",
     "prepare": "npm run build",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "files": [
     "build/*.js",
