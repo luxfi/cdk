@@ -100,10 +100,10 @@ All the commands are available in the `src/cmd/*.tsx`. Run through the [avalanch
 
 ## Tips
 
-To start minikube for local development, you can use kvm (qemu) which is much faster than docker/virtualbox:
+To start minikube for local development:
 
 ```bash
-minikube start --mount --memory=8192 --cpus=4 --driver=kvm2
+minikube start --mount --memory=8192 --cpus=4 --bootstrapper=kubeadm
 ```
 
 ## TODO
