@@ -10,7 +10,7 @@ const { spawn } = require("child_process");
 enum COMMAND_STRINGS {
   EXEC_CONTAINER = `kubectl exec`,
   PODEXEC = `kubectl run -it --rm --restart=Never alpine --image=alpine`,
-  GET_POD_ID = `kubectl get pod -o jsonpath='{.items[?(@.status.phase=="Running")].metadata.name}'`,
+  GET_POD_ID = `kubectl get pod -o jsonpath='{range .items[?(@.status.phase=="Running")]}{.items[0].metadata.name}'`,
   GET_SERVICE_PORT = `kubectl get pod -o jsonpath='{.spec.containers[0].ports[0].containerPort}'`,
   PORT_FORWARD = `kubectl port-forward`,
   GET_SERVICE = `kubectl get svc`,

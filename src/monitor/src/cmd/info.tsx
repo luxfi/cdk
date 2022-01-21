@@ -50,6 +50,8 @@ export async function handler(args: ArgShape) {
   let { data: statusData } = await info.isBootstrapped();
   let { data: peerData } = await info.peers();
 
+  console.log(bId);
+
   statusTable.push(["BlockchainID", bId.blockchainID]);
   statusTable.push(["Bootstrapped", statusData.isBootstrapped]);
   statusTable.push(["Peers", peerData.numPeers]);

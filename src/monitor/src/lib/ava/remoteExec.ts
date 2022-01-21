@@ -51,7 +51,7 @@ export function exec(
     requestParams: any = {},
     rawContainerName?: string,
     rawPodName?: string,
-    namespace: string = "default"
+    namespace: string = "ava"
   ): Promise<ExecResponse> {
     return new Promise(async (resolve, reject) => {
       let containerName = rawContainerName;

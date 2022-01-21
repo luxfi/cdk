@@ -36,7 +36,7 @@ yargs
     namespace: {
       alias: "n",
       description: `Namespace`,
-      default: "default",
+      default: "ava",
     },
     networkId: {
       alias: "i",

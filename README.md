@@ -106,6 +106,12 @@ To start minikube for local development:
 minikube start --mount --memory=8192 --cpus=4 --bootstrapper=kubeadm
 ```
 
+Spin up the local avalanche node inside of kubernetes using the following command:
+
+```bash
+./scripts/kube.ts port-forward -n ava -l app=avanode
+```
+
 You can connect a local proxy using the `./scripts/kube.ts` script:
 
 ```bash

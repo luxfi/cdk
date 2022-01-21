@@ -95,7 +95,7 @@ export class AvaNode extends Construct {
     const config = {
       metadata: {
         namespace,
-        name: "avanode-statefulset",
+        name: "avanode",
         labels: {
           app: "avanode",
           "app.kubernetes.io/component": "avanode",
