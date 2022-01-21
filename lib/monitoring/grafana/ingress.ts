@@ -15,7 +15,7 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
     spec: {
       rules: [
         {
-          host: `grafana.lux`,
+          host: `grafana.cluster.local`,
           http: {
             paths: [
               {

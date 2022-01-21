@@ -2,13 +2,16 @@ global:
   scrape_interval: 5s
   scrape_timeout: 5s
   evaluation_interval: 15s
+  external_labels:
+    container: ${HOSTNAME}
 rule_files:
   - "/etc/prometheus-rules/*.rules"
 
 scrape_configs:
   - job_name: "prometheus"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["prometheus.service.monitoring.svc.cluster.local:9090"]
+      - targets: ["localhost:9090"]
 
   - job_name: "kube-state-metrics"
     static_configs:
@@ -47,10 +50,6 @@ scrape_configs:
 
       - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
     # - source_labels: [__meta_kubernetes_namespace]
     #   separator: ;
     #   regex: (.*)

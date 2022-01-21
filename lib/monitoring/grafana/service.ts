@@ -7,13 +7,13 @@ export const service = (c: Construct, opts: GrafanaOptions) => {
     metadata: {
       name: "grafana-service",
       namespace: opts.namespace,
-      labels: { app: "grafana-service" },
+      labels: { app: "grafana" },
     },
     spec: {
-      selector: { app: "grafana-service" },
+      selector: { app: "grafana" },
       ports: [
         {
-          name: "grafana-service",
+          name: "grafana",
           protocol: "TCP",
           port: 3000,
         },

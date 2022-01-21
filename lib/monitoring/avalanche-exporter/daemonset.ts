@@ -46,7 +46,7 @@ export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
           },
         },
         spec: {
-          serviceAccount: "monitoring-role",
+          // serviceAccount: "monitoring-role",
           containers: [
             {
               name: "ava-exporter",

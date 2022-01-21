@@ -174,7 +174,7 @@ export class AvaNode extends Construct {
       },
       spec: {
         type: "ClusterIP",
-        selector: { app: "avanode", service: "avanode-service" },
+        selector: { app: "avanode" },
         ports: [
           {
             port: 9650,

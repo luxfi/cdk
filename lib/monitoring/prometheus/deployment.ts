@@ -49,9 +49,9 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         // "--web.config.file=/etc/prometheus/web-config.yaml",
         "--storage.tsdb.path=/usr/share/prometheus",
         "--web.listen-address=0.0.0.0:9090",
-        // "--web.listen-addresses=:8080",
-        // `--web.listen-address=prometheus-service.${opts.namespace}.svc.cluster.local:9090`,
-        // "--web.enable-admin-api",
+        "--web.external-url=http://localhost:9090",
+        "--enable-feature=expand-external-labels",
+        "--web.enable-admin-api",
       ],
       initialDelaySeconds: 30,
       ports: [{ containerPort: 9090, name: "metrics" }],
@@ -70,7 +70,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
   ];
 
   const spec = {
-    selector: { matchLabels: { app: "prometheus" } },
+    selector: { matchLabels: { app: "prometheus-server" } },
     replicas: opts.deployment.replicas,
     strategy: {
       rollingUpdate: {
@@ -87,12 +87,12 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     template: {
       metadata: {
         name: "prometheus",
-        labels: { app: "prometheus" },
+        labels: { app: "prometheus-server" },
       },
       spec: {
         serviceAccountName: "prometheus",
-        hostname: "prometheus",
-        subdomain: "service",
+        // hostname: "prometheus",
+        // subdomain: "service",
         initContainers,
         containers,
         volumes: [
@@ -120,8 +120,8 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       name: "prometheus-deployment",
       labels: { app: "prometheus-server" },
       annotations: {
-        "prometheus.io/port": "9090",
-        "prometheus.io/scrape": "true",
+        // "prometheus.io/port": "9090",
+        // "prometheus.io/scrape": "false",
       },
     },
     spec,

@@ -20,7 +20,7 @@ export const service = (c: Construct, opts: AvalancheExporterOptions) => {
       },
     },
     spec: {
-      selector: { app: "ava-exporter", service: "ava-exporter-service" },
+      selector: { app: "ava-exporter" },
       ports: [
         {
           port: 9001,

@@ -8,14 +8,14 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
       name: "prometheus-service",
       namespace: opts.namespace,
       annotations: {
-        "prometheus.io/scrape": "true",
-        "prometheus.io/path": "/metrics",
-        "prometheus.io/port": "9090",
+        // "prometheus.io/scrape": "true",
+        // "prometheus.io/path": "/metrics",
+        // "prometheus.io/port": "9090",
       },
       labels: { app: "prometheus", service: "prometheus-service" },
     },
     spec: {
-      selector: { app: "prometheus", service: "prometheus-service" },
+      selector: { app: "prometheus-server" },
       type: "ClusterIP",
       ports: [
         {
