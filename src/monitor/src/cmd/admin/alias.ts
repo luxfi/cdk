@@ -1,6 +1,7 @@
 import {Argv} from "yargs";
 import {ArgShape} from "../../cli";
 import {admin} from "../../lib/ava";
+import chalk from "chalk";
 
 export const command = "alias [args]";
 
@@ -23,8 +24,9 @@ export const builder = (yargs: Argv) =>
 export async function handler(args: ArgShape) {
     const {data} = await admin.alias(args);
     if (data.success) {
-        console.log(`Alias created successfully!`);
+        console.log(`${chalk.green('Alias created successfully!')}`);
     } else {
-        console.error(`Error creating new alias`, data.error.message);
+        console.log(`${chalk.red('Error creating new alias!')}`);
+        console.error('Reason:', data.error.message);
     }
 }
