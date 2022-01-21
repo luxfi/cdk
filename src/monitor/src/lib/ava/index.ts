@@ -43,6 +43,7 @@ export const admin = {
   getChainAliases: exec("/ext/admin", "admin.getChainAliases"),
   getLoggerLevel: exec("/ext/admin", "admin.getLoggerLevel"),
   lockProfile: exec("/ext/admin", "admin.lockProfile"),
+  memoryProfile: exec("/ext/admin", "admin.memoryProfile"),
 };
 
 export const auth = {
