@@ -46,6 +46,7 @@ export const admin = {
   memoryProfile: exec("/ext/admin", "admin.memoryProfile"),
   setLoggerLevel: exec("/ext/admin", "admin.setLoggerLevel"),
   startCPUProfiler: exec("/ext/admin", "admin.startCPUProfiler"),
+  stopCPUProfiler: exec("/ext/admin", "admin.stopCPUProfiler"),
 };
 
 export const auth = {
