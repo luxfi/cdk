@@ -97,20 +97,20 @@ export class AvaNode extends Construct {
         },
       });
     });
-    const volumeMounts = Object.keys(volumes).map((mountPath: string) => {
-      const volume = volumes[mountPath];
-      return {
-        name: volume.name,
-        mountPath,
-      };
-    });
-    const volumesForSet = Object.keys(volumes).map((mountPath: string) => {
-      const volume = volumes[mountPath];
-      return {
-        name: volume.name,
-        persistentVolumeClaim: { claimName },
-      };
-    });
+    // const volumeMounts = Object.keys(volumes).map((mountPath: string) => {
+    //   const volume = volumes[mountPath];
+    //   return {
+    //     name: volume.name,
+    //     mountPath,
+    //   };
+    // });
+    // const volumesForSet = Object.keys(volumes).map((mountPath: string) => {
+    //   const volume = volumes[mountPath];
+    //   return {
+    //     name: volume.name,
+    //     persistentVolumeClaim: { claimName },
+    //   };
+    // });
     // const set =
     new k.KubeDeployment(this, `avanodeset`, {
       metadata: { name: "ava-nodeset", labels: { role: "ava-node" } },
@@ -127,7 +127,7 @@ export class AvaNode extends Construct {
                 name: `ava-node`,
                 image,
                 imagePullPolicy: kplus.ImagePullPolicy.NEVER,
-                volumeMounts,
+                // volumeMounts,
                 resources: {
                   requests: {
                     cpu: k.Quantity.fromString("100m"),
@@ -141,7 +141,7 @@ export class AvaNode extends Construct {
                 // env: [env],
               },
             ],
-            volumes: volumesForSet,
+            // volumes: volumesForSet,
             // affinity: {
             //   podAntiAffinity: {
             //     requiredDuringSchedulingIgnoredDuringExecution: [

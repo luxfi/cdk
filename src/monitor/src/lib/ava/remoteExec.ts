@@ -158,6 +158,7 @@ export function exec(
         });
         resp.on("close", (code: number) => {
           body = osStream.body().trim();
+
           try {
             data = JSON.parse(body);
           } catch (e) {
