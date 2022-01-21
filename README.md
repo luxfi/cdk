@@ -91,7 +91,6 @@ All the commands are available in the `src/cmd/*.tsx`. Run through the [avalanch
 ## TODO
 
 - [ ] Write tests
-- [ ] Write tests
 - [ ] Fill in commands
 - [ ] Make the `lib/ava/remoteExec.ts` sane and extensible. Do **NOT** execute commands locally. Use the `@kubernetes/client-node` library `exec()` command because we want to execute the commands on the kubernetes node.
 - [ ] Write and expose a _small_ rpc server to expose the NodePort and the blockchain rpc host/port
