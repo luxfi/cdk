@@ -22,7 +22,7 @@
   "staking-tls-key-file": "/etc/ava/staking.key",
   "snow-sample-size": 1,
   "snow-quorum-size": 1,
-  "signature-verification-enabled": true,
+  "signature-verification-enabled": false,
   "chain-config-dir": "/etc/ava/chains/",
   "network-require-validator-to-connect": false,
   "eth-apis": [

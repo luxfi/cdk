@@ -1,6 +1,6 @@
 {
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "build"],
+  "exclude": ["node_modules", "build", "**/*.spec.ts", "**/*.test.ts"],
   "compileOnSave": true,
   "compilerOptions": {
     "target": "es5", // Compatible with older browsers
@@ -10,7 +10,7 @@
     "inlineSourceMap": true,
     "strict": true, // Strict types, eg. prohibits `var x=0; x=null`
     "alwaysStrict": true, // Enable JavaScript's "use strict" mode
-    "types": ["node"],
+    "types": ["node", "jest"],
     "outDir": "build",
     "sourceRoot": "./src",
     "noImplicitAny": true,

@@ -20,7 +20,7 @@ export const builder = (yargs: Argv) =>
 
 export async function handler(args: ArgShape) {
   const chain = args.chain;
-  const resp = await info.isBootstrapped({ chain });
+  const resp = await info.isBootstrapped(args);
 
   if (resp.data.isBootstrapped) {
     console.log(`Chain ${chain} is bootstrapped`);
