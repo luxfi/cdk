@@ -40,6 +40,7 @@ export const avax = {
 export const admin = {
   alias: exec("/ext/admin", "admin.alias"),
   aliasChain: exec("/ext/admin", "admin.aliasChain"),
+  getChainAliases: exec("/ext/admin", "admin.getChainAliases"),
 };
 
 export const auth = {
