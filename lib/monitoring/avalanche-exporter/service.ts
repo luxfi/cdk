@@ -11,6 +11,8 @@ export const service = (c: Construct, opts: AvalancheExporterOptions) => {
         "prometheus.io/port": "9001",
         "prometheus.io/path": "/metrics",
         "prometheus.io/scrape": "true",
+        "prometheus.io/scheme": "http",
+        "avalanche/scrape": "true",
       },
       labels: {
         service: "ava-exporter-service",
@@ -23,7 +25,6 @@ export const service = (c: Construct, opts: AvalancheExporterOptions) => {
         {
           port: 9001,
           targetPort: k.IntOrString.fromNumber(9001),
-          name: "http-exporter",
         },
       ],
       type: `ClusterIP`,

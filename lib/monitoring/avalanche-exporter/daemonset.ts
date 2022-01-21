@@ -12,13 +12,13 @@ export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
       name: "ava-exporter",
       labels: {
         app: "ava-exporter",
-        "app.kubernetes.io/component": "exporter",
-        "app.kubernetes.io/name": "avanode-exporter",
       },
       annotations: {
-        "app.kubernetes.io/scrape": "true",
-        "app.kubernetes.io/path": "/metrics",
-        "app.kubernetes.io/port": "9001",
+        "prometheus.io/port": "9001",
+        "prometheus.io/path": "/metrics",
+        "prometheus.io/scrape": "true",
+        "prometheus.io/scheme": "http",
+        "avalanche/scrape": "true",
       },
     },
     spec: {
@@ -34,15 +34,19 @@ export const deployment = (c: Construct, opts: AvalancheExporterOptions) => {
       template: {
         metadata: {
           labels: {
+            app: "ava-exporter",
             ...matchLabels,
           },
           annotations: {
             "prometheus.io/port": "9001",
             "prometheus.io/path": "/metrics",
             "prometheus.io/scrape": "true",
+            "prometheus.io/scheme": "http",
+            "avalanche/scrape": "true",
           },
         },
         spec: {
+          serviceAccount: "monitoring-role",
           containers: [
             {
               name: "ava-exporter",

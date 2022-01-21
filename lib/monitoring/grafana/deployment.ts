@@ -113,7 +113,7 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
         labels: { app: "grafana" },
       },
       spec: {
-        serviceAccountName: "grafana",
+        serviceAccount: "monitoring-role",
         initContainers,
         containers,
         volumes: [

@@ -40,6 +40,16 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
         },
 
         spec: {
+          serviceAccount: "monitoring-role",
+          dnsPolicy: "ClusterFirst",
+          dnsConfig: {
+            options: [
+              {
+                name: "ndots",
+                value: "1",
+              },
+            ],
+          },
           volumes: [
             {
               hostPath: {

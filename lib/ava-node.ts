@@ -165,24 +165,20 @@ export class AvaNode extends Construct {
         name: "avanode-service",
         namespace,
         labels: {
-          app: "avanode-service",
+          app: "avanode",
+          service: "avanode-service",
           "app.kubernetes.io/component": "avanode",
           "app.kubernetes.io/name": "avanode",
         },
-        annotations: {
-          "prometheus.io/port": "9001",
-          "prometheus.io/path": "/metrics",
-          "prometheus.io/scrape": "true",
-        },
+        annotations: {},
       },
       spec: {
-        type: "NodePort",
-        selector: { app: "avanode-service" },
+        type: "ClusterIP",
+        selector: { app: "avanode", service: "avanode-service" },
         ports: [
           {
-            port: 9001,
-            targetPort: k.IntOrString.fromNumber(9001),
-            name: "http-avanode",
+            port: 9650,
+            targetPort: k.IntOrString.fromNumber(9650),
           },
         ],
       },

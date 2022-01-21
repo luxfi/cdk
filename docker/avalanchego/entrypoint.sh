@@ -14,6 +14,6 @@ if [[ ! -z "${ANOTHER_NODE}" ]]; then
   FLAGS="$FLAGS --bootstrap-ips=$ANOTHER_NODE"
 fi
 
-CMD="/avalanchego/build/avalanchego $FLAGS"
+CMD="/avalanchego/build/avalanchego $FLAGS $@"
 
 exec $CMD

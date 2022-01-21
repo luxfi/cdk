@@ -39,16 +39,7 @@ export class MonitorNode extends Construct {
       namespace: "monitoring",
     };
     monitoring(this, monOptions);
-    // ============= Prometheus
-    const prometheusOptions: PrometheusOptions = {
-      namespace: "monitoring",
-      deployment: {
-        image,
-        replicas,
-        useVolumes: false,
-      },
-    };
-    prometheus(this, prometheusOptions);
+
     // ============= Grafana
     const grafanaOptions: GrafanaOptions = {
       namespace: "monitoring",
@@ -83,5 +74,15 @@ export class MonitorNode extends Construct {
       },
     };
     avalancheExporter(this, avalancheExporterOptions);
+    // ============= Prometheus
+    const prometheusOptions: PrometheusOptions = {
+      namespace: "monitoring",
+      deployment: {
+        image,
+        replicas,
+        useVolumes: false,
+      },
+    };
+    prometheus(this, prometheusOptions);
   }
 }
