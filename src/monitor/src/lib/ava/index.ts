@@ -60,6 +60,8 @@ export const health = {
   health: exec("/ext/health", "health.health"),
 };
 
+export const metrics = exec("/ext/metrics", "metrics");
+
 export const keystore = {
   createUser: exec("/ext/keystore", "keystore.createUser"),
   deleteUser: exec("/ext/keystore", "keystore.deleteUser"),
