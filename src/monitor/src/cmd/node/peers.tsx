@@ -1,11 +1,6 @@
 import { Argv } from "yargs";
 import { ArgShape } from "@cli";
-import { V1Pod } from "@kubernetes/client-node";
-import { api } from "../../lib/kube";
 import { info } from "../../lib/ava";
-import chalk from "chalk";
-import clear from "clear";
-import figlet from "figlet";
 
 export const command = "peers [args]";
 
