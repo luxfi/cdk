@@ -4,6 +4,7 @@ import { exec } from "./remoteExec";
 export const info = {
   getBlockchainID: exec("/ext/info", "info.getBlockchainID"),
   peers: exec("/ext/info", "info.peers"),
+  getNetworkID: exec("/ext/info", "info.getNetworkID"),
   getNetworkName: exec("/ext/info", "info.getNetworkName"),
   isBootstrapped: exec("/ext/info", "info.isBootstrapped", { chain: "X" }),
   uptime: exec("/ext/info", "info.uptime"),
