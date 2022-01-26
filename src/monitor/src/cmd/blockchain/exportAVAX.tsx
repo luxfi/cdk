@@ -61,7 +61,6 @@ export const builder = (yargs: Argv) =>
 
 export async function handler(args: ArgShape) {
     const {chain} = args;
-    console.log(args);
     let func = platform.exportAVAX;
     if (chain === "C") func = avax.exportAVAX;
 

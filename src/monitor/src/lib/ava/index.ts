@@ -26,19 +26,22 @@ export const platform = {
   getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
-  exportAVAX: exec("/ext/bc/P", "platform.exportAVAX"),
+  exportAVAX: exec("/ext/P", "platform.exportAVAX"),
+  exportKey: exec("/ext/P", "platform.exportKey"),
 };
 
 export const avm = {
   createAddress: exec("/ext/bc", "avm.createAddress"),
   importKey: exec("/ext/bc", "avm.importKey"),
   getBalance: exec("/ext/bc", "avm.getBalance"),
+  exportKey: exec("/ext/bc/X", "avm.exportKey"),
 };
 
 export const avax = {
   importKey: exec("/ext/bc/C/avax", "avax.importKey"),
   getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
   exportAVAX: exec("/ext/bc/C/avax", "avax.exportAVAX"),
+  exportKey: exec("/ext/bc/C/avax", "avax.exportKey"),
 };
 
 export const admin = {
