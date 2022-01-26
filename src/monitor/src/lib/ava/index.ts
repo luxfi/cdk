@@ -25,6 +25,7 @@ export const platform = {
   getBlockchainStatus: exec("/ext/P", "platform.getBlockchainStatus"),
   getCurrentSupply: exec("/ext/P", "platform.getCurrentSupply"),
   getCurrentValidators: exec("/ext/P", "platform.getCurrentValidators"),
+  getHeight: exec("/ext/P", "platform.getHeight"),
   getSubnets: exec("/ext/P", "platform.getSubnets"),
   getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
   importKey: exec("/ext/P", "platform.importKey"),
