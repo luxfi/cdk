@@ -28,6 +28,7 @@ export const platform = {
   getHeight: exec("/ext/P", "platform.getHeight"),
   getMinStake: exec("/ext/P", "platform.getMinStake"),
   getSubnets: exec("/ext/P", "platform.getSubnets"),
+  getStake: exec("/ext/P", "platform.getStake"),
   getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
   getRewardUTXOs: exec("/ext/P", "platform.getRewardUTXOs"),
   getStakingAssetID: exec("/ext/P", "platform.getStakingAssetID"),
