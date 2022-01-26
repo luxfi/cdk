@@ -33,6 +33,7 @@ export const platform = {
   getRewardUTXOs: exec("/ext/P", "platform.getRewardUTXOs"),
   getStakingAssetID: exec("/ext/P", "platform.getStakingAssetID"),
   getTimestamp: exec("/ext/P", "platform.getTimestamp"),
+  getTotalStake: exec("/ext/P", "platform.getTotalStake"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
