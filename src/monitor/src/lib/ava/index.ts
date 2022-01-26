@@ -29,6 +29,7 @@ export const platform = {
   getMinStake: exec("/ext/P", "platform.getMinStake"),
   getSubnets: exec("/ext/P", "platform.getSubnets"),
   getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
+  getRewardUTXOs: exec("/ext/P", "platform.getRewardUTXOs"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
