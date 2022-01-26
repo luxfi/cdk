@@ -32,6 +32,7 @@ export const platform = {
   getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
   getRewardUTXOs: exec("/ext/P", "platform.getRewardUTXOs"),
   getStakingAssetID: exec("/ext/P", "platform.getStakingAssetID"),
+  getTimestamp: exec("/ext/P", "platform.getTimestamp"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
