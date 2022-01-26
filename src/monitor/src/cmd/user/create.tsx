@@ -1,11 +1,7 @@
 import { Argv } from "yargs";
 import { ArgShape } from "@cli";
-import { V1Pod } from "@kubernetes/client-node";
-import { api } from "../../lib/kube";
 import { keystore } from "../../lib/ava";
 import chalk from "chalk";
-import clear from "clear";
-import figlet from "figlet";
 import * as password from "secure-random-password";
 
 export const command = "create [args]";
@@ -53,7 +49,7 @@ export async function handler(args: ArgShape) {
   );
 
   const resp = await keystore.createUser({ username, password });
-  if (resp.data.success) {
+  if (resp.data?.success) {
     console.log(chalk.green(`Created user ${username}`));
   } else {
     console.log(
