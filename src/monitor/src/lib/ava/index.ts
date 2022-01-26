@@ -26,6 +26,7 @@ export const platform = {
   getPendingValidators: exec("/ext/P", "platform.getPendingValidators"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
+  exportAVAX: exec("/ext/bc/P", "platform.exportAVAX"),
 };
 
 export const avm = {
@@ -37,6 +38,7 @@ export const avm = {
 export const avax = {
   importKey: exec("/ext/bc/C/avax", "avax.importKey"),
   getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
+  exportAVAX: exec("/ext/bc/C/avax", "avax.exportAVAX"),
 };
 
 export const admin = {
