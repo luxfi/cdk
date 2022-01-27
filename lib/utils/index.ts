@@ -1,6 +1,7 @@
 import * as path from "path";
 
 export * from "./files";
+export * from "./configs";
 
 export const baseDirectory = path.join(__dirname, "..");
 export const monitoringConfigsDirectory = path.join(

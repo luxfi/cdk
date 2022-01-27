@@ -36,9 +36,10 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       args: [
         "--storage.tsdb.retention.time=12h",
         "--config.file=/etc/prometheus/prometheus.yaml",
-        // "--web.config.file=/etc/prometheus/web-config.yaml",
         "--storage.tsdb.path=/usr/share/prometheus",
+        "--web.config.file=/etc/prometheus/web-config.yaml",
         // "--web.listen-address=0.0.0.0:9090",
+        // "--web.listen-address=127.0.0.1:9090",
         "--web.enable-lifecycle",
       ],
       securityContext: {
@@ -51,6 +52,22 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         { name: "prometheus", containerPort: 9090, targetPort: 9090 },
         { containerPort: 9091, name: "metrics" },
       ],
+      readinessProbe: {
+        httpGet: {
+          path: "/-/ready",
+          port: k.IntOrString.fromNumber(9090),
+        },
+        initialDelaySeconds: 30,
+        timeoutSeconds: 30,
+      },
+      livenessProbe: {
+        httpGet: {
+          path: "/-/healthy",
+          port: k.IntOrString.fromNumber(9090),
+        },
+        initialDelaySeconds: 30,
+        timeoutSeconds: 30,
+      },
       resources: {
         requests: {
           cpu: k.Quantity.fromString("500m"),

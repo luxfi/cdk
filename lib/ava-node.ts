@@ -183,5 +183,23 @@ export class AvaNode extends Construct {
         ],
       },
     });
+
+    new k.KubeService(this, "loadbalancer-service", {
+      metadata: {
+        namespace,
+        name: "lb-ava",
+      },
+      spec: {
+        selector: { app: "avanode" },
+        type: "LoadBalancer",
+        ports: [
+          {
+            name: "ava-port",
+            port: 9650,
+            targetPort: k.IntOrString.fromNumber(80),
+          },
+        ],
+      },
+    });
   }
 }

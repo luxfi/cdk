@@ -1,5 +1,4 @@
-require("dotenv").config();
-require("dotenv").config({ path: `.env.${process.env.CLUSTER}` });
+require("./lib/utils/configs");
 
 import { Construct } from "constructs";
 import { App, Chart, ChartProps } from "cdk8s";
@@ -8,6 +7,7 @@ import { App, Chart, ChartProps } from "cdk8s";
 
 import * as k from "./imports/k8s";
 // import { WebService } from "./lib/web-service";
+import networking from "./lib/networking";
 import { AvaNode } from "./lib/ava-node";
 import { MonitorNode } from "./lib/monitor-node";
 import { debugging } from "./lib/debugging";
@@ -75,6 +75,7 @@ export class MyChart extends Chart {
 
     if (DEBUG) debugging(this, { namespace: `default` });
     // coredns(this, { namespace: "kube-system" });
+    networking(this, { namespace: "networking" });
     new AvaNode(this, `avanode`, avanode_config);
     new MonitorNode(this, `monitoring-node`, monitor_node_config);
   }

@@ -2,16 +2,15 @@ import { Construct } from "constructs";
 import { PrometheusOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
-const IS_LOCAL = process.env.CLUSTER === "local";
+import { HOST as host } from "../../utils";
 
 export const ingress = (c: Construct, opts: PrometheusOptions) => {
-  const host = IS_LOCAL ? "prometheus.minikube.local" : process.env.HOST;
   return new k.KubeIngress(c, `prometheus-ui`, {
     metadata: {
       namespace: opts.namespace,
       name: "prometheus-ui",
       annotations: {
-        "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
+        // "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
       },
     },
     spec: {
@@ -37,7 +36,7 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
       ],
       // tls: [
       //   {
-      //     hosts: [`prometheus-service.cluster`],
+      //     hosts: [host],
       //     secretName: `prometheus-secret`,
       //   },
       // ],

@@ -2,16 +2,17 @@ import { Construct } from "constructs";
 import { GrafanaOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
-const IS_LOCAL = process.env.CLUSTER === "local";
+import { HOST } from "../../utils";
 
 export const ingress = (c: Construct, opts: GrafanaOptions) => {
-  const host = IS_LOCAL ? "grafana.minikube.local" : process.env.HOST;
+  const host = `grafana.${HOST}`;
   return new k.KubeIngress(c, `grafana-ui`, {
     metadata: {
       namespace: opts.namespace,
       name: "grafana-ui",
       annotations: {
         // "kubernetes.io/ingress.class": "nginx",
+        host: `host: ${host}`,
         "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
       },
     },
@@ -28,7 +29,7 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
                 backend: {
                   service: {
                     name: `grafana-service`,
-                    port: { number: 3000 },
+                    port: { number: 443 },
                   },
                 },
               },
@@ -36,12 +37,12 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
           },
         },
       ],
-      // tls: [
-      //   {
-      //     hosts: [`grafana.cluster`],
-      //     secretName: `grafana-tls-secret`,
-      //   },
-      // ],
+      tls: [
+        {
+          hosts: [host],
+          secretName: `grafana-tls-secret`,
+        },
+      ],
     },
   });
 };

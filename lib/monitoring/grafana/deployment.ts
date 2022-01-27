@@ -3,26 +3,30 @@ import { GrafanaOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
 export const deployment = (c: Construct, opts: GrafanaOptions) => {
-  const initContainers: any[] = [
-    {
-      name: "grafana-data-permissions-setup",
-      image: "busybox",
-      imagePullPolicy: "IfNotPresent",
-      command: ["/bin/chmod", "-R", "777", "/var/lib/grafana"],
-      volumeMounts: [
-        {
-          name: "grafana-data-storage",
-          mountPath: "/var/lib/grafana",
-        },
-      ],
-      securityContext: {
-        runAsNonRoot: false,
-        privileged: true,
-      },
-      terminationMessagePath: "/dev/termination-log",
-      terminationMessagePolicy: "File",
-    },
-  ];
+  // const initContainers: any[] = [
+  //   {
+  //     name: "grafana-data-permissions-setup",
+  //     image: "busybox",
+  //     imagePullPolicy: "IfNotPresent",
+  //     command: ["/bin/chmod", "-R", "777", "/var/lib/grafana"],
+  //     volumeMounts: [
+  //       {
+  //         name: "grafana-data-storage",
+  //         mountPath: "/var/lib/grafana",
+  //       },
+  //       {
+  //         name: "grafana-config-volume",
+  //         mountPath: "/etc/grafana",
+  //       },
+  //     ],
+  //     securityContext: {
+  //       runAsNonRoot: false,
+  //       privileged: true,
+  //     },
+  //     terminationMessagePath: "/dev/termination-log",
+  //     terminationMessagePolicy: "File",
+  //   },
+  // ];
 
   const containers: any[] = [
     {
@@ -35,6 +39,11 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
         // "-homepath='/usr/share/grafana'",
         // "-config='/usr/share/grafana/conf/defaults.ini'",
       ],
+      securityContext: {
+        runAsUser: 1000,
+        runAsGroup: 1000,
+        fsGroup: 1000,
+      },
       ports: [{ containerPort: 3000 }],
       resources: {
         requests: {
@@ -93,6 +102,11 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           readOnly: true,
           mountPath: "/var/run/secrets/grafana.lux",
         },
+        {
+          name: "grafana-config-volume",
+          readOnly: true,
+          mountPath: "/usr/share/grafana/conf/",
+        },
       ],
     },
   ];
@@ -119,7 +133,7 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
       },
       spec: {
         serviceAccountName: "grafana",
-        initContainers,
+        // initContainers,
         containers,
         volumes: [
           {
@@ -138,6 +152,10 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           {
             name: "grafana-provision-datasources",
             configMap: { name: "grafana-provision-datasources" },
+          },
+          {
+            name: "grafana-config-volume",
+            configMap: { name: "grafana-configmap" },
           },
           {
             name: "grafana-secret-volume",

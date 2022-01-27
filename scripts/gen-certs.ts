@@ -2,14 +2,23 @@
 
 const path = require("path");
 const fs = require("fs");
-const selfsigned = require("selfsigned");
+const { exec } = require("./openssl");
 
 const args = require("yargs")
   .env("AVA")
   .options({
+    passphrase: {
+      alias: "p",
+      help: "passphrase",
+      default: "veryinsecure",
+    },
+    days: {
+      help: "days",
+      default: 360,
+    },
     commonName: {
       alias: "n",
-      default: `prometheus-service.monitoring.svc.cluster.local`,
+      default: `lux.town`,
     },
     countryName: {
       alias: "c",
@@ -53,31 +62,76 @@ const args = require("yargs")
 console.log(`Generating certs`);
 const attrs = [
   {
-    name: "commonName",
+    name: "CN",
     value: args.commonName,
   },
-  { name: "countryName", value: args.countryName },
-  { name: "localityName", value: args.localityName },
-  { name: "stateOrProvinceName", value: args.stateOrProvinceName },
-  { name: "organizationName", value: args.organizationName },
-  { name: "organizationalUnitName", value: args.organizationalUnitName },
-  { name: "emailAddress", value: args.emailAddress },
+  { name: "C", value: args.countryName },
+  { name: "L", value: args.localityName },
+  { name: "ST", value: args.stateOrProvinceName },
+  { name: "O", value: args.organizationName },
+  { name: "OU", value: args.organizationalUnitName },
+  // { name: "emailAddress", value: args.emailAddress },
 ];
 
-const outDir = path.normalize(args.outDir);
-const pems = selfsigned.generate(attrs, {
-  algorithm: "rsa",
-  keySize: 4096,
-  days: 365,
-});
+const subj = attrs
+  .reduce((acc: string[], { name, value }: { name: string; value: string }) => {
+    acc.push(`/${name}=${value}`);
+    return acc;
+  }, [])
+  .join("");
 
-console.log(`Generated pems, saving to ${outDir}`);
+const outDir = path.normalize(args.outDir);
 
 const keyFile = path.join(outDir, "tls.key");
 const certFile = path.join(outDir, `tls.crt`);
-const privKey = path.join(outDir, "tls.priv");
-fs.writeFileSync(certFile, pems.cert, "utf-8");
-fs.writeFileSync(keyFile, pems.public, "utf-8");
-fs.writeFileSync(privKey, pems.private, "utf-8");
+const csrFile = path.join(outDir, `tls.csr`);
+// const privKey = path.join(outDir, "tls.priv");
+const pemFile = path.join(outDir, "tls.pem");
+const certPem = path.join(outDir, "ca_cert.pem");
+const certReq = path.join(outDir, "cert_req.csr");
+(async () => {
+  console.log(`Generate certificate authority files`);
+  await exec("genrsa", { out: certPem, "4096": false });
+  console.log(`Generating certificate`);
+  // openssl req -x509 -days 365 -newkey rsa:4096 -keyout ca_private_key.pem -out ca_cert.pem
+  await exec("req", {
+    new: true,
+    nodes: true,
+    x509: true,
+    sha256: true,
+    days: args.days,
+    key: keyFile,
+    passin: `pass:'${args.passphrase}'`,
+    subj: subj,
+    keyout: pemFile,
+    out: certPem,
+  });
+  console.log(`Generate key and certificate signing request`);
+  // openssl req -new -key my_private_key.pem -out my_cert_req.pem
+  await exec("req", {
+    new: true,
+    nodes: true,
+    sha256: true,
+    subj: subj,
+    newkey: "rsa:4096",
+    key: pemFile,
+    out: certReq,
+    passin: `pass:'${args.passphrase}'`,
+  });
+  // console.log(`Generating self-signed certificate`);
+  // // openssl x509 -req -in my_cert_req.pem -days 365 -CA ca_cert.pem -CAkey ca_private_key.pem -CAcreateserial -out my_signed_cert.pem
+  // await exec("x509", {
+  //   in: certReq,
+  //   out: certFile,
+  //   CA: certPem,
+  //   CAkey: pemFile,
+  //   CAcreateserial: true,
+  //   days: args.days,
+  //   // passin: `pass:${args.passphrase}`,
+  // });
+  console.log(`Generated pems, saving to ${outDir}`);
+})();
 
-console.log(`Done. Check your path`);
+// fs.writeFileSync(certFile, pems.cert, "utf-8");
+// fs.writeFileSync(keyFile, pems.public, "utf-8");
+// fs.writeFileSync(privKey, pems.private, "utf-8");
