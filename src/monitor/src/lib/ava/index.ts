@@ -44,6 +44,7 @@ export const platform = {
   listAddresses: exec("/ext/P", "platform.listAddresses"),
   sampleValidators: exec("/ext/P", "platform.sampleValidators"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
+  validatedBy: exec("/ext/bc/P", "platform.validatedBy"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
   exportKey: exec("/ext/P", "platform.exportKey"),
 };
