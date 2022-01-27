@@ -40,6 +40,7 @@ export const platform = {
   getValidatorsAt: exec("/ext/P", "platform.getValidatorsAt"),
   importAVAX: exec("/ext/P", "platform.getValidatorsAt"),
   importKey: exec("/ext/P", "platform.importKey"),
+  issueTx: exec("/ext/P", "platform.issueTx"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
   exportKey: exec("/ext/P", "platform.exportKey"),
@@ -52,6 +53,7 @@ export const avm = {
   getUTXOs: exec("/ext/bc/X", "avm.getUTXOs"),
   import: exec("/ext/bc/X", "avm.import"),
   importKey: exec("/ext/bc", "avm.importKey"),
+  issueTx: exec("/ext/bc", "avm.issueTx"),
   getBalance: exec("/ext/bc", "avm.getBalance"),
   exportKey: exec("/ext/bc/X", "avm.exportKey"),
 };
@@ -60,6 +62,7 @@ export const avax = {
   getUTXOs: exec("/ext/bc/C/avax", "avax.getUTXOs"),
   import: exec("/ext/bc/C/avax", "avax.import"),
   importKey: exec("/ext/bc/C/avax", "avax.importKey"),
+  issueTx: exec("/ext/bc/C/avax", "avax.issueTx"),
   getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
   exportAVAX: exec("/ext/bc/C/avax", "avax.exportAVAX"),
   exportKey: exec("/ext/bc/C/avax", "avax.exportKey"),
