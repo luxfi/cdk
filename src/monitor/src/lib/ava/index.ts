@@ -38,6 +38,7 @@ export const platform = {
   getTxStatus: exec("/ext/P", "platform.getTxStatus"),
   getUTXOs: exec("/ext/P", "platform.getUTXOs"),
   getValidatorsAt: exec("/ext/P", "platform.getValidatorsAt"),
+  importAVAX: exec("/ext/P", "platform.getValidatorsAt"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
@@ -49,6 +50,7 @@ export const avm = {
   getTx: exec("/ext/bc/X", "avm.getTx"),
   getTxStatus: exec("/ext/bc/X", "avm.getTxStatus"),
   getUTXOs: exec("/ext/bc/X", "avm.getUTXOs"),
+  import: exec("/ext/bc/X", "avm.import"),
   importKey: exec("/ext/bc", "avm.importKey"),
   getBalance: exec("/ext/bc", "avm.getBalance"),
   exportKey: exec("/ext/bc/X", "avm.exportKey"),
@@ -56,6 +58,7 @@ export const avm = {
 
 export const avax = {
   getUTXOs: exec("/ext/bc/C/avax", "avax.getUTXOs"),
+  import: exec("/ext/bc/C/avax", "avax.import"),
   importKey: exec("/ext/bc/C/avax", "avax.importKey"),
   getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
   exportAVAX: exec("/ext/bc/C/avax", "avax.exportAVAX"),
