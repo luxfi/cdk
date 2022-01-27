@@ -37,7 +37,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         "--storage.tsdb.retention.time=12h",
         "--config.file=/etc/prometheus/prometheus.yaml",
         "--storage.tsdb.path=/usr/share/prometheus",
-        "--web.config.file=/etc/prometheus/web-config.yaml",
+        // "--web.config.file=/etc/prometheus/web-config.yaml",
         // "--web.listen-address=0.0.0.0:9090",
         // "--web.listen-address=127.0.0.1:9090",
         "--web.enable-lifecycle",

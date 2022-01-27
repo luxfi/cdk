@@ -25,9 +25,7 @@ export const secret = (c: Construct, opts: GrafanaOptions) => {
 
   const dataFiles = directoryMap(path.join(grafanaConfigsDirectory, "cert"));
   const certData = Object.keys(dataFiles).reduce((acc: any, key: string) => {
-    const value = dataFiles[key].split("\n");
-    const val = value.slice(1, value.length - 2).join("");
-    // .replace(/(?:\\[rn]|[\r\n]+)+/g, "");
+    const val = Buffer.from(dataFiles[key]).toString("base64");
     return { ...acc, [key]: val };
   }, {});
 

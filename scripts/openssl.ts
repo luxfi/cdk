@@ -9,10 +9,11 @@ type OptionsOrFunction = any | Callback;
 const expectedStderrForAction = {
   "cms.verify": /^verification successful/i,
   genrsa: /^generating/i,
+  rsa: /^generating/i,
   pkcs12: /^mac verified ok/i,
   "req.new": /^generating/i,
   "req.verify": /^verify ok/i,
-  rsa: /^writing rsa key/i,
+  // rsa: /^writing rsa key/i,
   "smime.verify": /^verification successful/i,
   "x509.req": /^signature ok/i,
 };
@@ -21,7 +22,7 @@ export const exec = (
   cmd: string,
   options: OptionsOrFunction,
   stdin?: string
-) => {
+): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
     let params: any[] = cmd
       .split(".")
@@ -45,7 +46,7 @@ export const exec = (
     });
     // Add last params
     params = params.concat(lastParams);
-    debug("Spawning openssl with params", `openssl ${params.join(" ")}`);
+    debug("Spawning openssl with params:", `openssl ${params.join(" ")}`);
 
     const openssl = spawn("openssl", params);
     const outRes: Buffer[] = [];
@@ -54,7 +55,6 @@ export const exec = (
     let errLen = 0;
 
     if (stdin) {
-      console.log("STDIN", stdin);
       const stdinStream = new stream.Readable();
       stdinStream.push(stdin); // Add data to the internal queue for users of the stream to consume
       stdinStream.push(null); // Signals the end of the stream (EOF)
@@ -81,7 +81,7 @@ export const exec = (
       const expectedStderr: any = (expectedStderrForAction as any)[cmd];
       let err = null;
 
-      if (code || (stderr && expectedStderr && !stderr.match(expectedStderr))) {
+      if (stderr && expectedStderr && !stderr.match(expectedStderr)) {
         err = new Error(stderr);
         (err as any).code = code;
         openssl.stdin.end();
@@ -89,7 +89,7 @@ export const exec = (
       }
 
       openssl.stdin.end();
-      resolve([err, stdout]);
+      resolve(stdout);
     });
   });
 };

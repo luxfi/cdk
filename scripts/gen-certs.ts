@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
 
-const path = require("path");
-const fs = require("fs");
-const { exec } = require("./openssl");
+import * as path from "path";
+import { exec } from "./openssl";
+import ipRegex from "./ipRegex";
 
 const args = require("yargs")
   .env("AVA")
@@ -14,7 +14,12 @@ const args = require("yargs")
     },
     days: {
       help: "days",
-      default: 360,
+      default: 3650,
+    },
+    dns: {
+      help: "DNS name or IP",
+      multiple: true,
+      default: ["127.0.0.1"],
     },
     commonName: {
       alias: "n",
@@ -80,44 +85,72 @@ const subj = attrs
   }, [])
   .join("");
 
+// @ts-ignore
+const addext = args.dns
+  .reduce((acc: string[], domain: string) => {
+    const isIp = ipRegex({ exact: true }).test(domain);
+    if (isIp) {
+      acc.push(`IP:${domain}`);
+    } else {
+      acc.push(`DNS:${domain}`);
+    }
+    return acc;
+  }, [])
+  .join(",");
+
 const outDir = path.normalize(args.outDir);
 
 const keyFile = path.join(outDir, "tls.key");
 const certFile = path.join(outDir, `tls.crt`);
-const csrFile = path.join(outDir, `tls.csr`);
+// const csrFile = path.join(outDir, `tls.csr`);
 // const privKey = path.join(outDir, "tls.priv");
-const pemFile = path.join(outDir, "tls.pem");
-const certPem = path.join(outDir, "ca_cert.pem");
-const certReq = path.join(outDir, "cert_req.csr");
+// const pemFile = path.join(outDir, "tls.pem");
+// const certPem = path.join(outDir, "ca_cert.pem");
+// const certReq = path.join(outDir, "cert_req.csr");
 (async () => {
-  console.log(`Generate certificate authority files`);
-  await exec("genrsa", { out: certPem, "4096": false });
+  // console.log(`Generate certificate authority files`);
+  // await exec("genrsa", { out: certPem, "4096": false });
   console.log(`Generating certificate`);
-  // openssl req -x509 -days 365 -newkey rsa:4096 -keyout ca_private_key.pem -out ca_cert.pem
+  // openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
+  // -keyout example.key -out example.crt -subj "/CN=example.com" \
+  // -addext "subjectAltName=DNS:example.com,DNS:www.example.net,IP:10.0.0.1"
   await exec("req", {
-    new: true,
-    nodes: true,
     x509: true,
+    newkey: "rsa:4096",
     sha256: true,
     days: args.days,
-    key: keyFile,
-    passin: `pass:'${args.passphrase}'`,
-    subj: subj,
-    keyout: pemFile,
-    out: certPem,
-  });
-  console.log(`Generate key and certificate signing request`);
-  // openssl req -new -key my_private_key.pem -out my_cert_req.pem
-  await exec("req", {
-    new: true,
     nodes: true,
-    sha256: true,
-    subj: subj,
-    newkey: "rsa:4096",
-    key: pemFile,
-    out: certReq,
-    passin: `pass:'${args.passphrase}'`,
+    keyout: keyFile,
+    out: certFile,
+    // passin: `pass:'${args.passphrase}'`,
+    subj: `${subj}`,
+    // addext: `"subjectAltName=${addext}"`,
   });
+  console.log(`Checking keys`);
+  const val1 = (await exec("pkey", {
+    pubout: true,
+    in: keyFile,
+  })) as Buffer;
+  const val2 = (await exec("x509", {
+    pubkey: true,
+    in: certFile,
+    noout: true,
+  })) as Buffer;
+  const b1 = await exec(`sha256`, {}, val1.toString());
+  const b2 = await exec("sha256", {}, val2.toString());
+  console.log("val1", b1.toString());
+  console.log("val2", b2.toString());
+  // // openssl req -new -key my_private_key.pem -out my_cert_req.pem
+  // await exec("req", {
+  //   new: true,
+  //   nodes: true,
+  //   sha256: true,
+  //   subj: subj,
+  //   newkey: "rsa:4096",
+  //   key: pemFile,
+  //   out: certReq,
+  //   passin: `pass:'${args.passphrase}'`,
+  // });
   // console.log(`Generating self-signed certificate`);
   // // openssl x509 -req -in my_cert_req.pem -days 365 -CA ca_cert.pem -CAkey ca_private_key.pem -CAcreateserial -out my_signed_cert.pem
   // await exec("x509", {
