@@ -36,6 +36,7 @@ export const platform = {
   getTotalStake: exec("/ext/P", "platform.getTotalStake"),
   getTx: exec("/ext/P", "platform.getTx"),
   getTxStatus: exec("/ext/P", "platform.getTxStatus"),
+  getUTXOs: exec("/ext/P", "platform.getUTXOs"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
@@ -46,12 +47,14 @@ export const avm = {
   createAddress: exec("/ext/bc", "avm.createAddress"),
   getTx: exec("/ext/bc/X", "avm.getTx"),
   getTxStatus: exec("/ext/bc/X", "avm.getTxStatus"),
+  getUTXOs: exec("/ext/bc/X", "avm.getUTXOs"),
   importKey: exec("/ext/bc", "avm.importKey"),
   getBalance: exec("/ext/bc", "avm.getBalance"),
   exportKey: exec("/ext/bc/X", "avm.exportKey"),
 };
 
 export const avax = {
+  getUTXOs: exec("/ext/bc/C/avax", "avax.getUTXOs"),
   importKey: exec("/ext/bc/C/avax", "avax.importKey"),
   getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
   exportAVAX: exec("/ext/bc/C/avax", "avax.exportAVAX"),
