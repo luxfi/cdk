@@ -10,8 +10,13 @@ rule_files:
 scrape_configs:
   - job_name: "prometheus"
     metrics_path: "/metrics"
+    scheme: "https"
     static_configs:
       - targets: ["localhost:9090"]
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      insecure_skip_verify: true
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
 
   - job_name: "kube-state-metrics"
     static_configs:

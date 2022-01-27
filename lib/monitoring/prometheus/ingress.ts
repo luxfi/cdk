@@ -2,15 +2,16 @@ import { Construct } from "constructs";
 import { PrometheusOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
-import { HOST as host } from "../../utils";
+import { HOST } from "../../utils";
 
 export const ingress = (c: Construct, opts: PrometheusOptions) => {
+  const host = `prometheus.${HOST}`;
   return new k.KubeIngress(c, `prometheus-ui`, {
     metadata: {
       namespace: opts.namespace,
       name: "prometheus-ui",
       annotations: {
-        // "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
+        "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
       },
     },
     spec: {
@@ -26,7 +27,7 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
                 backend: {
                   service: {
                     name: `prometheus-service`,
-                    port: { number: 9090 },
+                    port: { number: 8443 },
                   },
                 },
               },
@@ -34,12 +35,12 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
           },
         },
       ],
-      // tls: [
-      //   {
-      //     hosts: [host],
-      //     secretName: `prometheus-secret`,
-      //   },
-      // ],
+      tls: [
+        {
+          hosts: [host],
+          secretName: `prometheus-secret`,
+        },
+      ],
     },
   });
 };

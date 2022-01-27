@@ -88,16 +88,6 @@ export const operatorDeployment = (c: Construct, opts: PrometheusOptions) => {
     },
   });
 
-  new k.KubeServiceAccount(c, "prometheus-operator-service-account", {
-    metadata: {
-      name: "prometheus-operator",
-      namespace: opts.namespace,
-      labels: {
-        app: "prometheus-operator",
-      },
-    },
-  });
-
   new k.KubeClusterRole(c, `prometheus-operator-role`, {
     metadata: {
       name: "prometheus-operator",
@@ -110,13 +100,20 @@ export const operatorDeployment = (c: Construct, opts: PrometheusOptions) => {
           "alertmanagers",
           "alertmanagers/finalizers",
           "alertmanagerconfigs",
+          "AlertmanagerConfig",
           "prometheus",
+          "prometheuses",
+          "prometheusrules",
           "prometheus/finalizers",
+          "thanosrulers",
           "probes",
           "namespaces",
           "nodes",
           "services",
           "pods",
+          "probes",
+          "podmonitors",
+          "servicemonitors",
         ],
         verbs: ["get", "list", "watch"],
       },

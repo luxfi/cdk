@@ -19,7 +19,7 @@ const args = require("yargs")
     dns: {
       help: "DNS name or IP",
       multiple: true,
-      default: ["127.0.0.1"],
+      default: ["127.0.0.1", "minikube.local"],
     },
     commonName: {
       alias: "n",

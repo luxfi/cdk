@@ -25,6 +25,17 @@ export const serviceAccount = (c: Construct, options: MonitoringOptions) => {
       },
     }
   );
+  const prometheusOperatorServiceAccount = new k.KubeServiceAccount(
+    c,
+    "prometheus-operator-service-account",
+    {
+      metadata: {
+        name: "prometheus-operator",
+        labels: { app: "prometheus-operator" },
+        namespace: options.namespace,
+      },
+    }
+  );
   const grafanaServiceAccount = new k.KubeServiceAccount(
     c,
     "grafana-service-account",
@@ -40,6 +51,7 @@ export const serviceAccount = (c: Construct, options: MonitoringOptions) => {
   return {
     monitoringServiceAccount,
     prometheusServiceAccount,
+    prometheusOperatorServiceAccount,
     grafanaServiceAccount,
   };
 };
