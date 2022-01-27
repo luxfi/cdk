@@ -75,7 +75,7 @@ export async function handler(args: ArgShape) {
         console.log(`${chalk.green('Transaction ID: ')} ${data.txID}`);
         if (chain === "P") console.log(`${chalk.green('changeAddr: ')} ${data.changeAddr}`);
     } else {
-        console.log(`${chalk.red('Error getting transaction status!')}`);
+        console.log(`${chalk.red('Error importing transaction!')}`);
         console.error('Reason:', data.error.message);
     }
 }
