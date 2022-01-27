@@ -37,6 +37,7 @@ export const platform = {
   getTx: exec("/ext/P", "platform.getTx"),
   getTxStatus: exec("/ext/P", "platform.getTxStatus"),
   getUTXOs: exec("/ext/P", "platform.getUTXOs"),
+  getValidatorsAt: exec("/ext/P", "platform.getValidatorsAt"),
   importKey: exec("/ext/P", "platform.importKey"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
