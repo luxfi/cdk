@@ -57,7 +57,8 @@ export const avm = {
   getUTXOs: exec("/ext/bc/X", "avm.getUTXOs"),
   import: exec("/ext/bc/X", "avm.import"),
   importKey: exec("/ext/bc", "avm.importKey"),
-  issueTx: exec("/ext/bc", "avm.issueTx"),
+  issueTx: exec("/ext/bc/X", "avm.issueTx"),
+  listAddresses: exec("/ext/bc", "avm.listAddresses"),
   getBalance: exec("/ext/bc", "avm.getBalance"),
   exportKey: exec("/ext/bc/X", "avm.exportKey"),
 };
