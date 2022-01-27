@@ -45,6 +45,7 @@ export const platform = {
   sampleValidators: exec("/ext/P", "platform.sampleValidators"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   validatedBy: exec("/ext/bc/P", "platform.validatedBy"),
+  validates: exec("/ext/bc/P", "platform.validates"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
   exportKey: exec("/ext/P", "platform.exportKey"),
 };
