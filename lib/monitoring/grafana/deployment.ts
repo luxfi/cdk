@@ -88,6 +88,11 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           name: "grafana-provision-datasources",
           mountPath: "/etc/grafana/provisioning/datasources",
         },
+        {
+          name: "grafana-secret-volume",
+          readOnly: true,
+          mountPath: "/var/run/secrets/grafana.lux",
+        },
       ],
     },
   ];
@@ -133,6 +138,12 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           {
             name: "grafana-provision-datasources",
             configMap: { name: "grafana-provision-datasources" },
+          },
+          {
+            name: "grafana-secret-volume",
+            secret: {
+              secretName: "grafana-tls-secret",
+            },
           },
         ],
       },

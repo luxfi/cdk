@@ -30,7 +30,7 @@ export const service = (c: Construct, opts: NodeExporterOptions) => {
           port: 9100,
           targetPort: k.IntOrString.fromNumber(9100),
           protocol: "TCP",
-          nodePort: 30909,
+          // nodePort: 31000,
         },
       ],
     },

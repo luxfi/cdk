@@ -9,7 +9,7 @@ const args = require("yargs")
   .options({
     commonName: {
       alias: "n",
-      default: `lux`,
+      default: `prometheus-service.monitoring.svc.cluster.local`,
     },
     countryName: {
       alias: "c",
@@ -65,12 +65,16 @@ const attrs = [
 ];
 
 const outDir = path.normalize(args.outDir);
-const pems = selfsigned.generate(attrs, { days: 365 });
+const pems = selfsigned.generate(attrs, {
+  algorithm: "rsa",
+  keySize: 4096,
+  days: 365,
+});
 
 console.log(`Generated pems, saving to ${outDir}`);
 
 const keyFile = path.join(outDir, "tls.key");
-const certFile = path.join(outDir, `tls.cert`);
+const certFile = path.join(outDir, `tls.crt`);
 const privKey = path.join(outDir, "tls.priv");
 fs.writeFileSync(certFile, pems.cert, "utf-8");
 fs.writeFileSync(keyFile, pems.public, "utf-8");

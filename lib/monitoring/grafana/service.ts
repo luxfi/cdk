@@ -11,6 +11,7 @@ export const service = (c: Construct, opts: GrafanaOptions) => {
     },
     spec: {
       selector: { app: "grafana" },
+      type: "ClusterIP",
       ports: [
         {
           name: "grafana",

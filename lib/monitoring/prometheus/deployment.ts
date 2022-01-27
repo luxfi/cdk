@@ -1,10 +1,10 @@
 import { Construct } from "constructs";
 import { PrometheusOptions } from "../types";
 import * as k from "../../../imports/k8s";
-import volumes from "./volumes";
+// import volumes from "./volumes";
 
 export const deployment = (c: Construct, opts: PrometheusOptions) => {
-  const { prometheusVolumeMounts } = volumes(c, opts);
+  // const { prometheusVolumeMounts } = volumes(c, opts);
   const volumeMounts = [
     {
       name: "prometheus-config-volume",
@@ -20,20 +20,10 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       mountPath: "/usr/share/prometheus",
       // claim: { claimName: storageVolumeClaimName },
     },
-  ];
-  const initContainers = [
     {
-      name: "prometheus-data-permissions-setup",
-      image: "busybox",
-      imagePullPolicy: "IfNotPresent",
-      command: ["/bin/chmod", "-R", "777", "/usr/share/prometheus"],
-      volumeMounts: prometheusVolumeMounts,
-      securityContext: {
-        runAsNonRoot: false,
-        privileged: true,
-      },
-      terminationMessagePath: "/dev/termination-log",
-      terminationMessagePolicy: "File",
+      name: "prometheus-secret-volume",
+      readOnly: true,
+      mountPath: "/var/run/secrets/prometheus.lux",
     },
   ];
 
@@ -48,10 +38,19 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         "--config.file=/etc/prometheus/prometheus.yaml",
         // "--web.config.file=/etc/prometheus/web-config.yaml",
         "--storage.tsdb.path=/usr/share/prometheus",
-        "--web.listen-address=0.0.0.0:9090",
+        // "--web.listen-address=0.0.0.0:9090",
+        "--web.enable-lifecycle",
       ],
-      initialDelaySeconds: 30,
-      ports: [{ containerPort: 9090, name: "metrics" }],
+      securityContext: {
+        runAsUser: 9090,
+        runAsGroup: 9090,
+        fsGroup: 9090,
+      },
+      initialDelaySeconds: 5,
+      ports: [
+        { name: "prometheus", containerPort: 9090, targetPort: 9090 },
+        { containerPort: 9091, name: "metrics" },
+      ],
       resources: {
         requests: {
           cpu: k.Quantity.fromString("500m"),
@@ -68,14 +67,17 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
 
   const spec = {
     selector: { matchLabels: { app: "prometheus-server" } },
+    serviceName: "prometheus-service",
     replicas: opts.deployment.replicas,
+    podManagementPolicy: "Parallel",
     strategy: {
       rollingUpdate: {
-        maxSurge: k.IntOrString.fromNumber(1),
-        maxUnavailable: k.IntOrString.fromNumber(1),
+        maxSurge: k.IntOrString.fromString("25%"),
+        maxUnavailable: k.IntOrString.fromString("25%"),
       },
       type: "RollingUpdate",
     },
+    dnsPolicy: "ClusterFirst",
     securityContext: {
       // fsGroup: 2000,
       // runAsUser: 1000,
@@ -90,7 +92,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         serviceAccountName: "prometheus",
         // hostname: "prometheus",
         // subdomain: "service",
-        initContainers,
+        // initContainers,
         containers,
         volumes: [
           {
@@ -104,7 +106,12 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
           {
             name: "prometheus-data-volume",
             mountPath: "/usr/share/prometheus",
-            // claim: { claimName: storageVolumeClaimName },
+          },
+          {
+            name: "prometheus-secret-volume",
+            secret: {
+              secretName: "prometheus-tls-secret",
+            },
           },
         ],
       },

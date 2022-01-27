@@ -3,23 +3,11 @@ import { Construct } from "constructs";
 // import * as c from "cdk8s";
 import * as kplus from "cdk8s-plus-22";
 import { EnvVar } from "../imports/k8s";
-import {
-  MonitoringOptions,
-  PrometheusOptions,
-  GrafanaOptions,
-  NodeExporterOptions,
-  AvalancheExporterOptions,
-  monitoring,
-  prometheus,
-  grafana,
-  nodeExporter,
-  avalancheExporter,
-  KubeStateMetricsOptions,
-  kubeStateMetrics,
-} from "./monitoring";
+import * as m from "./monitoring";
 
 export interface MonitorNodeProps {
   readonly image?: string;
+  readonly namespace?: string;
   readonly replicas?: number;
   readonly env?: { [key: string]: EnvVar };
   readonly servicePorts?: kplus.ServicePort[];
@@ -33,56 +21,57 @@ export class MonitorNode extends Construct {
     const image = props.image || `docker.io/auser/mon-node:latest`;
     // const image = "prom/prometheus";
     const replicas = props.replicas || 1;
+    const namespace = props.namespace || "monitoring";
 
     // ============= Monitoring
-    const monOptions: MonitoringOptions = {
-      namespace: "monitoring",
+    const monOptions: m.MonitoringOptions = {
+      namespace,
     };
-    monitoring(this, monOptions);
+    m.monitoring(this, monOptions);
 
     // ============= Grafana
-    const grafanaOptions: GrafanaOptions = {
-      namespace: "monitoring",
+    const grafanaOptions: m.GrafanaOptions = {
+      namespace,
       deployment: {
         image,
         replicas,
       },
     };
-    grafana(this, grafanaOptions);
+    m.grafana(this, grafanaOptions);
     // ============= NodeExporter
-    const nodeExporterOptions: NodeExporterOptions = {
-      namespace: "monitoring",
+    const nodeExporterOptions: m.NodeExporterOptions = {
+      namespace,
       daemonset: {
         matchLabels: {
           app: "node-exporter",
         },
       },
     };
-    nodeExporter(this, nodeExporterOptions);
+    m.nodeExporter(this, nodeExporterOptions);
     // ============= Kube State Metrics
-    const kubeStateMetricsOptions: KubeStateMetricsOptions = {
+    const kubeStateMetricsOptions: m.KubeStateMetricsOptions = {
       namespace: "kube-system",
     };
-    kubeStateMetrics(this, kubeStateMetricsOptions);
+    m.kubeStateMetrics(this, kubeStateMetricsOptions);
     // ============= Avalanche exporter
-    const avalancheExporterOptions: AvalancheExporterOptions = {
-      namespace: "monitoring",
+    const avalancheExporterOptions: m.AvalancheExporterOptions = {
+      namespace,
       daemonset: {
         matchLabels: {
           app: "ava-exporter",
         },
       },
     };
-    avalancheExporter(this, avalancheExporterOptions);
+    m.avalancheExporter(this, avalancheExporterOptions);
     // ============= Prometheus
-    const prometheusOptions: PrometheusOptions = {
-      namespace: "monitoring",
+    const prometheusOptions: m.PrometheusOptions = {
+      namespace,
       deployment: {
         image,
         replicas,
         useVolumes: false,
       },
     };
-    prometheus(this, prometheusOptions);
+    m.prometheus(this, prometheusOptions);
   }
 }

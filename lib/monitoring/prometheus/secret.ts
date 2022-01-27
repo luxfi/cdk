@@ -8,14 +8,18 @@ export const secret = (c: Construct, opts: PrometheusOptions) => {
   const dataFiles = directoryMap(path.join(promethusConfigsDirectory, "cert"));
   const data = Object.keys(dataFiles).reduce((acc: any, key: string) => {
     const value = dataFiles[key].split("\n");
-    const val = value.slice(1, value.length - 2).join("");
+    const val = value
+      .slice(1, value.length - 2)
+      .join("")
+      .replace(/(?:\\[rn]|[\r\n]+)+/g, "");
     return { ...acc, [key]: val };
   }, {});
-  return new k.KubeSecret(c, `prometheus-secret`, {
+  return new k.KubeSecret(c, `prometheus-tls-secret`, {
     metadata: {
-      name: "prometheus-secret",
+      name: "prometheus-tls-secret",
       namespace: opts.namespace,
     },
+    type: "kubernetes.io/tls",
     data,
   });
 };
