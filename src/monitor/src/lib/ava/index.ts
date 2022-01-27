@@ -42,6 +42,7 @@ export const platform = {
   importKey: exec("/ext/P", "platform.importKey"),
   issueTx: exec("/ext/P", "platform.issueTx"),
   listAddresses: exec("/ext/P", "platform.listAddresses"),
+  sampleValidators: exec("/ext/P", "platform.sampleValidators"),
   getBalance: exec("/ext/bc/P", "platform.getBalance"),
   exportAVAX: exec("/ext/P", "platform.exportAVAX"),
   exportKey: exec("/ext/P", "platform.exportKey"),
