@@ -1,11 +1,11 @@
 import {Argv} from "yargs";
 import {ArgShape} from "@cli";
-import {avax, platform} from "../../lib/ava";
+import {avax, avm, platform} from "../../lib/ava";
 import chalk from "chalk";
 
 export const command = "exportAVAX [args]";
 
-export const desc = "Send AVAX from an address on the P-Chain/C-Chain to an address on the X-Chain.";
+export const desc = "Send AVAX from an address on the from one chain to another.";
 
 export const builder = (yargs: Argv) =>
     yargs.options({
@@ -45,9 +45,6 @@ export const builder = (yargs: Argv) =>
         },
     }).middleware((args) => {
         if (!args.chain || args.chain === "") args.chain = "P";
-        else if (args.chain === "X") {
-            throw new Error('Chain value should be P or C');
-        }
 
         if (args.chain === "C") {
             delete args.from;
@@ -62,14 +59,15 @@ export const builder = (yargs: Argv) =>
 export async function handler(args: ArgShape) {
     const {chain} = args;
     let func = platform.exportAVAX;
-    if (chain === "C") func = avax.exportAVAX;
+    if (chain === "C") func = avax.export;
+    else if (chain === "X") func = avm.export;
 
     const {data} = await func(args);
 
     if (data && data.txID) {
         console.log(`${chalk.green('txID: ')} ${data.txID}`);
 
-        if (chain === "P")
+        if (chain !== "C")
         console.log(`${chalk.green('changeAddr: ')} ${data.changeAddr}`);
     } else {
         console.log(`${chalk.red('Error exporting AVAX!')}`);

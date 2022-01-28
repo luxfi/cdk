@@ -52,6 +52,7 @@ export const platform = {
 
 export const avm = {
   createAddress: exec("/ext/bc", "avm.createAddress"),
+  export: exec("/ext/bc/X", "avm.export"),
   getTx: exec("/ext/bc/X", "avm.getTx"),
   getTxStatus: exec("/ext/bc/X", "avm.getTxStatus"),
   getUTXOs: exec("/ext/bc/X", "avm.getUTXOs"),
@@ -70,7 +71,7 @@ export const avax = {
   importKey: exec("/ext/bc/C/avax", "avax.importKey"),
   issueTx: exec("/ext/bc/C/avax", "avax.issueTx"),
   getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
-  exportAVAX: exec("/ext/bc/C/avax", "avax.exportAVAX"),
+  export: exec("/ext/bc/C/avax", "avax.export"),
   exportKey: exec("/ext/bc/C/avax", "avax.exportKey"),
 };
 
