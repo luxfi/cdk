@@ -59,6 +59,7 @@ export const avm = {
   createNFTAsset: exec("/ext/bc/X", "avm.createNFTAsset"),
   mintNFT: exec("/ext/bc/X", "avm.mintNFT"),
   export: exec("/ext/bc/X", "avm.export"),
+  getAllBalances: exec("/ext/bc/X", "avm.getAllBalances"),
   getTx: exec("/ext/bc/X", "avm.getTx"),
   getTxStatus: exec("/ext/bc/X", "avm.getTxStatus"),
   getUTXOs: exec("/ext/bc/X", "avm.getUTXOs"),
