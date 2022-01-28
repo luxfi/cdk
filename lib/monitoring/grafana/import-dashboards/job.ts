@@ -1,8 +1,10 @@
 import { Construct } from "constructs";
 import { GrafanaOptions } from "../../types";
 import * as k from "../../../../imports/k8s";
+import { HOST } from "../../../utils";
 
 export const job = (c: Construct, opts: GrafanaOptions) => {
+  const host = `grafana.${HOST}`;
   return new k.KubeJob(c, "import-dashboards-job", {
     metadata: {
       name: "grafana-import-dashboards",
@@ -28,7 +30,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
                 "-c",
                 `
             set -x;
-            while [ $(curl -Lsw '%{http_code}' "http://grafana:3000" -o /dev/null) -ne 200 ]; do
+            while [ $(curl -Lsw '%{http_code}' "http://${host}:3000" -o /dev/null) -ne 200 ]; do
               echo '.'
               sleep 15;
             done`,
@@ -48,7 +50,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
               if [ -e "$file" ] ; then
                 echo "importing $file" &&
                 curl --silent --fail --show-error \
-                  --request POST http://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@grafana:3000/api/datasources \
+                  --request POST http://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/datasources \
                   --header "Content-Type: application/json" \
                   --data-binary "@$file" ;
                 echo "" ;
@@ -62,7 +64,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
                   echo ',"overwrite":true,"inputs":[{"name":"DS_PROMETHEUS","type":"datasource","pluginId":"prometheus","value":"prometheus"}]}' ) \
                 | jq -c '.' \
                 | curl --silent --fail --show-error \
-                  --request POST http://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@grafana:3000/api/dashboards/import \
+                  --request POST http://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/dashboards/import \
                   --header "Content-Type: application/json" \
                   --data-binary "@-" ;
                 echo "" ;

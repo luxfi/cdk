@@ -3,46 +3,48 @@ import { GrafanaOptions } from "../types";
 import * as k from "../../../imports/k8s";
 
 export const deployment = (c: Construct, opts: GrafanaOptions) => {
-  // const initContainers: any[] = [
-  //   {
-  //     name: "grafana-data-permissions-setup",
-  //     image: "busybox",
-  //     imagePullPolicy: "IfNotPresent",
-  //     command: ["/bin/chmod", "-R", "777", "/var/lib/grafana"],
-  //     volumeMounts: [
-  //       {
-  //         name: "grafana-data-storage",
-  //         mountPath: "/var/lib/grafana",
-  //       },
-  //       {
-  //         name: "grafana-config-volume",
-  //         mountPath: "/etc/grafana",
-  //       },
-  //     ],
-  //     securityContext: {
-  //       runAsNonRoot: false,
-  //       privileged: true,
-  //     },
-  //     terminationMessagePath: "/dev/termination-log",
-  //     terminationMessagePolicy: "File",
-  //   },
-  // ];
+  // @ts-ignore
+  const initContainers: any[] = [
+    {
+      name: "grafana-data-permissions-setup",
+      image: "busybox",
+      imagePullPolicy: "IfNotPresent",
+      command: ["/bin/chown", "grafana:grafana", "/var/local/grafana"],
+      volumeMounts: [
+        {
+          name: "grafana-data-storage",
+          mountPath: "/var/local/grafana",
+        },
+        {
+          name: "grafana-config-volume",
+          mountPath: "/etc/grafana",
+        },
+      ],
+      securityContext: {
+        runAsNonRoot: false,
+        privileged: true,
+      },
+      terminationMessagePath: "/dev/termination-log",
+      terminationMessagePolicy: "File",
+    },
+  ];
 
   const containers: any[] = [
     {
-      image: "grafana/grafana-oss:latest",
+      // image: "grafana/grafana-oss:latest",
+      image: opts.deployment.image,
       name: "grafana",
       imagePullPolicy: "IfNotPresent",
-      // workingDir: "/usr/share/grafana/",
-      // command: ["grafana-server"],
+      workingDir: "/var/local/grafana",
+      command: ["/usr/sbin/grafana-server"],
       args: [
-        // "-homepath='/usr/share/grafana'",
-        // "-config='/usr/share/grafana/conf/defaults.ini'",
+        "-homepath=/usr/share/grafana",
+        "-config=/usr/share/grafana/conf/defaults.ini",
       ],
       securityContext: {
-        runAsUser: 1000,
-        runAsGroup: 1000,
-        fsGroup: 1000,
+        runAsUser: 100,
+        runAsGroup: 101,
+        fsGroup: 101,
       },
       ports: [{ containerPort: 3000 }],
       resources: {
@@ -76,6 +78,7 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
       ],
       readinessProbe: {
         httpGet: {
+          scheme: "HTTPS",
           path: "/login",
           port: k.IntOrString.fromNumber(3000),
         },
@@ -83,15 +86,23 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
       volumeMounts: [
         {
           name: "grafana-data-storage",
-          mountPath: "/var/lib/grafana",
+          mountPath: "/var/local/grafana",
         },
         {
           name: "grafana-dashboards",
-          mountPath: "/etc/grafana/dashboards",
+          mountPath: "/usr/share/grafana/conf/provisioning/dashboards",
         },
         {
           name: "grafana-provision-avalanche",
-          mountPath: "/etc/grafana/provisioning/dashboards",
+          mountPath: "/etc/grafana/dashboards",
+        },
+        {
+          name: "grafana-plugins",
+          mountPath: "/usr/share/grafana/conf/provisioning/plugins",
+        },
+        {
+          name: "grafana-notifiers",
+          mountPath: "/usr/share/grafana/conf/provisioning/notifiers",
         },
         {
           name: "grafana-provision-datasources",
@@ -104,7 +115,6 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
         },
         {
           name: "grafana-config-volume",
-          readOnly: true,
           mountPath: "/usr/share/grafana/conf/",
         },
       ],
@@ -122,9 +132,9 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
       type: "RollingUpdate",
     },
     securityContext: {
-      // fsGroup: 2000,
-      // runAsUser: 1000,
-      // runAsNonRoot: true,
+      fsGroup: 101,
+      runAsUser: 101,
+      runAsNonRoot: true,
     },
     template: {
       metadata: {
@@ -144,6 +154,14 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           {
             name: "grafana-dashboards",
             configMap: { name: "grafana-dashboards" },
+          },
+          {
+            name: "grafana-plugins",
+            configMap: { name: "grafana-plugins" },
+          },
+          {
+            name: "grafana-notifiers",
+            configMap: { name: "grafana-notifiers" },
           },
           {
             name: "grafana-provision-avalanche",

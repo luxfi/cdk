@@ -22,12 +22,12 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
           http: {
             paths: [
               {
-                path: "/",
+                path: "/v1/prometheus",
                 pathType: "Prefix",
                 backend: {
                   service: {
                     name: `prometheus-service`,
-                    port: { number: 8443 },
+                    port: { name: "prometheus" },
                   },
                 },
               },

@@ -12,7 +12,6 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
       name: "grafana-ui",
       annotations: {
         // "kubernetes.io/ingress.class": "nginx",
-        host: `host: ${host}`,
         "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
       },
     },
@@ -29,7 +28,7 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
                 backend: {
                   service: {
                     name: `grafana-service`,
-                    port: { number: 443 },
+                    port: { name: "grafana" },
                   },
                 },
               },
@@ -39,7 +38,7 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
       ],
       tls: [
         {
-          hosts: [host],
+          hosts: [host, "127.0.0.1"],
           secretName: `grafana-tls-secret`,
         },
       ],

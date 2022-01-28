@@ -11,7 +11,8 @@ RUN apk update && apk add openrc prometheus prometheus-node-exporter grafana gra
 RUN rc-update add prometheus default && \
   rc-update add grafana default && \
   chmod +x /home/auser/entrypoint.sh && \
-  chown -R auser:auser /home/auser
+  chown -R auser:auser /home/auser &&\
+  chown -R grafana:grafana /usr/share/grafana
 
 USER auser
 

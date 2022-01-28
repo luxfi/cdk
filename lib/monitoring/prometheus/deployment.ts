@@ -42,9 +42,9 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         // "--web.listen-address=127.0.0.1:9090",
       ],
       securityContext: {
-        runAsUser: 9090,
-        runAsGroup: 9090,
-        fsGroup: 9090,
+        runAsUser: 101,
+        runAsGroup: 102,
+        fsGroup: 102,
       },
       initialDelaySeconds: 5,
       ports: [
@@ -97,9 +97,9 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     },
     dnsPolicy: "ClusterFirst",
     securityContext: {
-      // fsGroup: 2000,
-      // runAsUser: 1000,
-      // runAsNonRoot: true,
+      fsGroup: 102,
+      runAsUser: 101,
+      runAsNonRoot: true,
     },
     template: {
       metadata: {
