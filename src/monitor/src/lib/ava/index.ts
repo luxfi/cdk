@@ -76,6 +76,10 @@ export const avax = {
   getAtomicTxStatus: exec("/ext/bc/C/avax", "avax.getAtomicTxStatus"),
 };
 
+export const wallet = {
+  issueTx: exec("/ext/bc/X/wallet", "wallet.issueTx")
+};
+
 export const admin = {
   alias: exec("/ext/admin", "admin.alias"),
   aliasChain: exec("/ext/admin", "admin.aliasChain"),
