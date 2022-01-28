@@ -10,5 +10,5 @@ providers:
     updateIntervalSeconds: 30
     allowUiUpdates: true
     options:
-      path: /etc/grafana/dashboards
+      path: /usr/share/grafana/conf/provisioning/dashboards/avalanche
       foldersFromFileStructure: true

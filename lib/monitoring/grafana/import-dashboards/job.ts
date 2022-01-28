@@ -30,7 +30,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
                 "-c",
                 `
             set -x;
-            while [ $(curl -Lsw '%{http_code}' "http://${host}:3000" -o /dev/null) -ne 200 ]; do
+            while [ $(curl -k -Lsw '%{http_code}' "https://${host}:3000" -o /dev/null) -ne 200 ]; do
               echo '.'
               sleep 15;
             done`,
@@ -49,8 +49,8 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
             for file in *-datasource.json ; do
               if [ -e "$file" ] ; then
                 echo "importing $file" &&
-                curl --silent --fail --show-error \
-                  --request POST http://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/datasources \
+                curl --silent --fail --show-error -k \
+                  --request POST https://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/datasources \
                   --header "Content-Type: application/json" \
                   --data-binary "@$file" ;
                 echo "" ;
@@ -63,8 +63,8 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
                   cat "$file"; \
                   echo ',"overwrite":true,"inputs":[{"name":"DS_PROMETHEUS","type":"datasource","pluginId":"prometheus","value":"prometheus"}]}' ) \
                 | jq -c '.' \
-                | curl --silent --fail --show-error \
-                  --request POST http://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/dashboards/import \
+                | curl --silent --fail --show-error -k \
+                  --request POST https://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/dashboards/import \
                   --header "Content-Type: application/json" \
                   --data-binary "@-" ;
                 echo "" ;
