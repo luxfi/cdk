@@ -64,6 +64,7 @@ export const avm = {
 };
 
 export const avax = {
+  getAtomicTx: exec("/ext/bc/C/avax", "avax.getAtomicTx"),
   getUTXOs: exec("/ext/bc/C/avax", "avax.getUTXOs"),
   import: exec("/ext/bc/C/avax", "avax.import"),
   importKey: exec("/ext/bc/C/avax", "avax.importKey"),
