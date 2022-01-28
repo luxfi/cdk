@@ -57,6 +57,7 @@ export const avm = {
   mint: exec("/ext/bc/X", "avm.mint"),
   createVariableCapAsset: exec("/ext/bc/X", "avm.createVariableCapAsset"),
   createNFTAsset: exec("/ext/bc/X", "avm.createNFTAsset"),
+  mintNFT: exec("/ext/bc/X", "avm.mintNFT"),
   export: exec("/ext/bc/X", "avm.export"),
   getTx: exec("/ext/bc/X", "avm.getTx"),
   getTxStatus: exec("/ext/bc/X", "avm.getTxStatus"),

@@ -3,9 +3,9 @@ import {ArgShape} from "@cli";
 import {avm} from "../../lib/ava";
 import chalk from "chalk";
 
-export const command = "mint [args]";
+export const command = "mintNFT [args]";
 
-export const desc = "Mint units of a variable-cap asset created with avm.createVariableCapAsset.";
+export const desc = "Mint non-fungible tokens which were created with avm.createNFTAsset.";
 
 export const builder = (yargs: Argv) =>
     yargs.options({
@@ -20,18 +20,19 @@ export const builder = (yargs: Argv) =>
             description: "Password for the key",
             required: true,
         },
-        amount: {
-            description: "Amount to transfer",
+        assetID: {
+            alias: 'a',
+            description: "Asset ID of the newly created NFT",
             required: true,
-            type: "number"
+            type: "string"
         },
         to: {
             description: "Transfer to address",
             required: true,
             type: "string"
         },
-        assetID: {
-            description: "Asset ID",
+        payload: {
+            description: "Arbitrary payload.",
             required: true,
             type: "string"
         },
@@ -47,13 +48,13 @@ export const builder = (yargs: Argv) =>
     });
 
 export async function handler(args: ArgShape) {
-    const {data} = await avm.mint(args);
+    const {data} = await avm.mintNFT(args);
 
     if (data?.txID) {
         console.log(`${chalk.green('txID: ')} ${data.txID}`);
         console.log(`${chalk.green('changeAddr: ')} ${data.changeAddr}`);
     } else {
-        console.log(`${chalk.red('Error minting asset!')}`);
+        console.log(`${chalk.red('Error minting NFT!')}`);
         console.error('Reason:', data.error.message);
     }
 }
