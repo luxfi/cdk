@@ -73,6 +73,7 @@ export const avax = {
   getBalance: exec("/ext/bc/C/rpc", "eth_getBalance"),
   export: exec("/ext/bc/C/avax", "avax.export"),
   exportKey: exec("/ext/bc/C/avax", "avax.exportKey"),
+  getAtomicTxStatus: exec("/ext/bc/C/avax", "avax.getAtomicTxStatus"),
 };
 
 export const admin = {
