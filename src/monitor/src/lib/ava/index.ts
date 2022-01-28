@@ -54,6 +54,7 @@ export const avm = {
   buildGenesis: exec("/ext/vm/avm", "avm.buildGenesis"),
   createAddress: exec("/ext/bc", "avm.createAddress"),
   createFixedCapAsset: exec("/ext/bc/X", "avm.createFixedCapAsset"),
+  mint: exec("/ext/bc/X", "avm.mint"),
   export: exec("/ext/bc/X", "avm.export"),
   getTx: exec("/ext/bc/X", "avm.getTx"),
   getTxStatus: exec("/ext/bc/X", "avm.getTxStatus"),
