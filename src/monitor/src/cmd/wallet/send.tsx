@@ -57,7 +57,7 @@ export async function handler(args: ArgShape) {
         console.log(`${chalk.green('txID: ')} ${data.txID}`);
         console.log(`${chalk.green('changeAddr: ')} ${data.changeAddr}`);
     } else {
-        console.log(`${chalk.red('Error exporting AVAX!')}`);
+        console.log(`${chalk.red('Error sending asset!')}`);
         console.error('Reason:', data.error.message);
     }
 }

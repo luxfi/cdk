@@ -79,6 +79,7 @@ export const avax = {
 export const wallet = {
   issueTx: exec("/ext/bc/X/wallet", "wallet.issueTx"),
   send: exec("/ext/bc/X/wallet", "wallet.send"),
+  sendMultiple: exec("/ext/bc/X/wallet", "wallet.sendMultiple"),
 };
 
 export const admin = {
