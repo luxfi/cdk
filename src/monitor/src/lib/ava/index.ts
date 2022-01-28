@@ -56,6 +56,7 @@ export const avm = {
   createFixedCapAsset: exec("/ext/bc/X", "avm.createFixedCapAsset"),
   mint: exec("/ext/bc/X", "avm.mint"),
   createVariableCapAsset: exec("/ext/bc/X", "avm.createVariableCapAsset"),
+  createNFTAsset: exec("/ext/bc/X", "avm.createNFTAsset"),
   export: exec("/ext/bc/X", "avm.export"),
   getTx: exec("/ext/bc/X", "avm.getTx"),
   getTxStatus: exec("/ext/bc/X", "avm.getTxStatus"),
