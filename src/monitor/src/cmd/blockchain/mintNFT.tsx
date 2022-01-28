@@ -45,6 +45,11 @@ export const builder = (yargs: Argv) =>
             type: "array",
             help: "Use spaces to separate address and use -- to stop adding values"
         },
+        encoding: {
+            alias: "e",
+            description: "encoding",
+            choices: ["cb58", "hex", "json"]
+        }
     });
 
 export async function handler(args: ArgShape) {
