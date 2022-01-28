@@ -3,7 +3,7 @@ import {ArgShape} from "@cli";
 import {avax, avm, platform} from "../../lib/ava";
 import chalk from "chalk";
 
-export const command = "exportAVAX [args]";
+export const command = "export [args]";
 
 export const desc = "Send AVAX from an address on the from one chain to another.";
 
