@@ -51,6 +51,7 @@ export const platform = {
 };
 
 export const avm = {
+  buildGenesis: exec("/ext/vm/avm", "avm.buildGenesis"),
   createAddress: exec("/ext/bc", "avm.createAddress"),
   export: exec("/ext/bc/X", "avm.export"),
   getTx: exec("/ext/bc/X", "avm.getTx"),
