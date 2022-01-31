@@ -3,9 +3,9 @@ import {ArgShape} from "@cli";
 import {avm} from "../../lib/ava";
 import chalk from "chalk";
 
-export const command = "send [args]";
+export const command = "sendNFT [args]";
 
-export const desc = "Send a quantity of an asset to an address.";
+export const desc = "Send a non-fungible token.";
 
 export const builder = (yargs: Argv) =>
     yargs.options({
@@ -20,8 +20,8 @@ export const builder = (yargs: Argv) =>
             description: "Password for the key",
             required: true,
         },
-        amount: {
-            description: "Amount to transfer",
+        groupID: {
+            description: "NFT group from which to send the NFT",
             required: true,
             type: "number"
         },
@@ -33,9 +33,6 @@ export const builder = (yargs: Argv) =>
         assetID: {
             description: "Attach a memo.",
             required: true
-        },
-        memo: {
-            description: "Attach a memo."
         },
         changeAddr: {
             description: "Address to send any change",
@@ -49,13 +46,13 @@ export const builder = (yargs: Argv) =>
     });
 
 export async function handler(args: ArgShape) {
-    const {data} = await avm.send(args);
+    const {data} = await avm.sendNFT(args);
 
     if (data?.txID) {
         console.log(`${chalk.green('txID: ')} ${data.txID}`);
         console.log(`${chalk.green('changeAddr: ')} ${data.changeAddr}`);
     } else {
-        console.log(`${chalk.red('Error sending asset!')}`);
+        console.log(`${chalk.red('Error sending NFT!')}`);
         console.error('Reason:', data.error.message);
     }
 }

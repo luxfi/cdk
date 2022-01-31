@@ -69,8 +69,9 @@ export const avm = {
   importKey: exec("/ext/bc", "avm.importKey"),
   issueTx: exec("/ext/bc/X", "avm.issueTx"),
   listAddresses: exec("/ext/bc/X", "avm.listAddresses"),
-  sendMultiple: exec("/ext/bc/X", "avm.sendMultiple"),
   send: exec("/ext/bc/X", "avm.send"),
+  sendMultiple: exec("/ext/bc/X", "avm.sendMultiple"),
+  sendNFT: exec("/ext/bc/X", "avm.sendNFT"),
   getBalance: exec("/ext/bc", "avm.getBalance"),
   exportKey: exec("/ext/bc/X", "avm.exportKey"),
 };
