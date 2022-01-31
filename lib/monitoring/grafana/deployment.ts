@@ -1,96 +1,11 @@
 import { Construct } from "constructs";
 import { GrafanaOptions } from "../types";
 import * as k from "../../../imports/k8s";
+import { HOST, IS_LOCAL } from "../../utils";
 
 export const deployment = (c: Construct, opts: GrafanaOptions) => {
-  const host = "grafana-service.monitoring.svc.cluster.local";
+  const host = IS_LOCAL ? "localhost": `grafana.${HOST}`;
   // @ts-ignore
-  const initContainers: any[] = [
-    {
-      name: "grafana-data-permissions-setup",
-      image: "busybox",
-      imagePullPolicy: "IfNotPresent",
-      command: ["/bin/chown", "grafana:grafana", "/var/local/grafana"],
-      volumeMounts: [
-        {
-          name: "grafana-data-storage",
-          mountPath: "/var/local/grafana",
-        },
-        {
-          name: "grafana-config-volume",
-          mountPath: "/etc/grafana",
-        },
-      ],
-      securityContext: {
-        runAsNonRoot: false,
-        privileged: true,
-      },
-      terminationMessagePath: "/dev/termination-log",
-      terminationMessagePolicy: "File",
-    },
-    {
-      name: "grafana-import-dashboards",
-      image: opts.deployment.image,
-      imagePullPolicy: "IfNotPresent",
-      command: ["/bin/sh", "-c"],
-      workingDir: "/opt/grafana-import-dashboards",
-      args: [
-        `
-            for file in *-datasource.json ; do
-              if [ -e "$file" ] ; then
-                echo "importing $file" &&
-                curl --silent --fail --show-error -k \
-                  --request POST https://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/datasources \
-                  --header "Content-Type: application/json" \
-                  --data-binary "@$file" ;
-                echo "" ;
-              fi
-            done ;
-            for file in *-dashboard.json ; do
-              if [ -e "$file" ] ; then
-                echo "importing $file" &&
-                ( echo '{"dashboard":'; \
-                  cat "$file"; \
-                  echo ',"overwrite":true,"inputs":[{"name":"DS_PROMETHEUS","type":"datasource","pluginId":"prometheus","value":"prometheus"}]}' ) \
-                | jq -c '.' \
-                | curl --silent --fail --show-error -k \
-                  --request POST https://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/dashboards/import \
-                  --header "Content-Type: application/json" \
-                  --data-binary "@-" ;
-                echo "" ;
-              fi
-            done
-            `,
-      ],
-      env: [
-        {
-          name: "GF_ADMIN_USER",
-          valueFrom: {
-            secretKeyRef: {
-              name: "grafana",
-              key: "admin-username",
-            },
-          },
-        },
-        {
-          name: "GF_ADMIN_PASSWORD",
-          valueFrom: {
-            secretKeyRef: {
-              name: "grafana",
-              key: "admin-password",
-            },
-          },
-        },
-      ],
-      volumeMounts: [
-        {
-          name: "config-volume",
-          mountPath: "/opt/grafana-import-dashboards",
-        },
-      ],
-    },
-  ];
-
   const containers: any[] = [
     {
       // image: "grafana/grafana-oss:latest",
@@ -137,6 +52,10 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           name: "GF_AUTH_ANONYMOUS_ENABLED",
           value: "false",
         },
+        {
+          name: "HOST",
+          value: host
+        }
       ],
       readinessProbe: {
         httpGet: {
@@ -155,11 +74,15 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
           mountPath: "/usr/share/grafana/conf/provisioning/dashboards",
         },
         {
-          name: "grafana-provision-avalanche",
-          // mountPath: "/etc/grafana/dashboards",
-          mountPath:
-            "/usr/share/grafana/conf/provisioning/dashboards/avalanche",
+          name: "ava-dashboards",
+          mountPath: "/usr/share/grafana/conf/provisioning/dashboards/avalanche"
         },
+        // {
+        //   name: "grafana-provision-avalanche",
+        //   // mountPath: "/etc/grafana/dashboards",
+        //   mountPath:
+        //     "/usr/share/grafana/conf/provisioning/dashboards/avalanche",
+        // },
         {
           name: "grafana-plugins",
           mountPath: "/usr/share/grafana/conf/provisioning/plugins",
@@ -220,6 +143,10 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
             configMap: { name: "grafana-dashboards" },
           },
           {
+            name: "ava-dashboards",
+            configMap: { name: "ava-dashboards" }
+          },
+          {
             name: "grafana-plugins",
             configMap: { name: "grafana-plugins" },
           },
@@ -227,10 +154,10 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
             name: "grafana-notifiers",
             configMap: { name: "grafana-notifiers" },
           },
-          {
-            name: "grafana-provision-avalanche",
-            configMap: { name: "grafana-provision-avalanche" },
-          },
+          // {
+          //   name: "grafana-provision-avalanche",
+          //   configMap: { name: "grafana-provision-avalanche" },
+          // },
           {
             name: "grafana-provision-datasources",
             configMap: { name: "grafana-provision-datasources" },

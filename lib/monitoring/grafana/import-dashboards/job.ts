@@ -1,10 +1,10 @@
 import { Construct } from "constructs";
 import { GrafanaOptions } from "../../types";
 import * as k from "../../../../imports/k8s";
-import { HOST } from "../../../utils";
+import { IS_LOCAL, HOST } from "../../../utils";
 
 export const job = (c: Construct, opts: GrafanaOptions) => {
-  const host = `grafana.${HOST}`;
+  const host = IS_LOCAL ? `grafana-service.monitoring` : `grafana.${HOST}`;
   return new k.KubeJob(c, "import-dashboards-job", {
     metadata: {
       name: "grafana-import-dashboards",
@@ -24,23 +24,26 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
           initContainers: [
             {
               name: "wait-for-grafana",
-              image: "busybox",
+              image: "docker.io/auser/worker:latest",
+              imagePullPolicy: "IfNotPresent",
               args: [
                 "/bin/sh",
                 "-c",
                 `
-            set -x;
-            while [ $(curl -k -Lsw '%{http_code}' "https://${host}:3000" -o /dev/null) -ne 200 ]; do
+            echo "Waiting for grafana to boot-up";
+            while [ $(curl -k -Lsw '%{http_code}' "https://${host}:3000" -o /dev/null) -ne "200" ]; do
               echo '.'
               sleep 15;
-            done`,
+            done;
+            echo "Ready to go";
+            `,
               ],
             },
           ],
           containers: [
             {
               name: "grafana-import-dashboards",
-              image: opts.deployment.image,
+              image: "docker.io/auser/worker:latest",
               imagePullPolicy: "IfNotPresent",
               command: ["/bin/sh", "-c"],
               workingDir: "/opt/grafana-import-dashboards",
@@ -49,24 +52,28 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
             for file in *-datasource.json ; do
               if [ -e "$file" ] ; then
                 echo "importing $file" &&
-                curl --silent --fail --show-error -k \
-                  --request POST https://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/datasources \
+                curl -k \
+                  --show-error --silent --fail \
+                  --request POST "https://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/datasources" \
                   --header "Content-Type: application/json" \
-                  --data-binary "@$file" ;
-                echo "" ;
+                  --data-binary "@$file"
               fi
-            done ;
+            done;
+
             for file in *-dashboard.json ; do
               if [ -e "$file" ] ; then
-                echo "importing $file" &&
-                ( echo '{"dashboard":'; \
+                echo "importing $file";
+                DATA=$( echo '{"dashboard":'; \
                   cat "$file"; \
-                  echo ',"overwrite":true,"inputs":[{"name":"DS_PROMETHEUS","type":"datasource","pluginId":"prometheus","value":"prometheus"}]}' ) \
-                | jq -c '.' \
-                | curl --silent --fail --show-error -k \
+                  echo ',"overwrite":true,"inputs":[{"name":"DS_PROMETHEUS","type":"datasource","pluginId":"prometheus", "value":"prometheus"}]}' \
+                );
+                DATA=$( echo "$DATA" | jq -c '.' );
+                curl \
+                  -k \
+                  --show-error --silent --fail \
                   --request POST https://\${GF_ADMIN_USER}:\${GF_ADMIN_PASSWORD}@${host}:3000/api/dashboards/import \
                   --header "Content-Type: application/json" \
-                  --data-binary "@-" ;
+                  --data-binary "$DATA" ;
                 echo "" ;
               fi
             done

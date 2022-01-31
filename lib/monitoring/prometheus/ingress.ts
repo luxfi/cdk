@@ -11,18 +11,19 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
       namespace: opts.namespace,
       name: "prometheus-ui",
       annotations: {
-        "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
+        "kubernetes.io/ingress.class": "nginx",
+        // "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
       },
     },
     spec: {
-      ingressClassName: "nginx",
+      // ingressClassName: "nginx",
       rules: [
         {
           host,
           http: {
             paths: [
               {
-                path: "/v1/prometheus",
+                path: "/v1",
                 pathType: "Prefix",
                 backend: {
                   service: {
@@ -37,7 +38,7 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
       ],
       tls: [
         {
-          hosts: [host],
+          hosts: [host, "prometheus-service.monitoring"],
           secretName: `prometheus-secret`,
         },
       ],

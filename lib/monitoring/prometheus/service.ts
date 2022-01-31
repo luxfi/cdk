@@ -33,9 +33,9 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
       labels: { app: "prometheus", service: "prometheus-service" },
     },
     spec: {
-      sessionAffinity: "ClientIP",
+      // sessionAffinity: "ClientIP",
       selector: { service: "prometheus-service" },
-      type: "ClusterIP",
+      type: "NodePort",
       ports: [
         {
           name: "prometheus-ui",
