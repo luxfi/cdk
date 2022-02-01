@@ -70,8 +70,8 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
               image: "prom/node-exporter",
               ports: [{ containerPort: 9100, protocol: "TCP" }],
               args: [
-                "--path.sysfs=/host/sys",
-                "--path.rootfs=/host/root",
+                // "--path.sysfs=/host/sys",
+                // "--path.rootfs=/host/root",
                 "--collector.cpu",
                 "--collector.diskstats",
                 "--collector.filesystem",
@@ -98,18 +98,18 @@ export const daemonset = (c: Construct, opts: NodeExporterOptions) => {
                 },
               },
               volumeMounts: [
-                {
-                  mountPath: "/host/sys",
-                  // mountPropagation: "HostToContainer",
-                  name: "sys",
-                  readOnly: true,
-                },
-                {
-                  mountPath: "/host/root",
-                  // mountPropagation: "HostToContainer",
-                  name: "root",
-                  readOnly: true,
-                },
+                // {
+                //   mountPath: "/host/sys",
+                //   // mountPropagation: "HostToContainer",
+                //   name: "sys",
+                //   readOnly: true,
+                // },
+                // {
+                //   mountPath: "/host/root",
+                //   // mountPropagation: "HostToContainer",
+                //   name: "root",
+                //   readOnly: true,
+                // },
               ],
             },
           ],

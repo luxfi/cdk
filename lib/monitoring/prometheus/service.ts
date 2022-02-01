@@ -20,6 +20,7 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
   //     ],
   //   },
   // });
+
   const prometheusService = new k.KubeService(c, "prometheus-service", {
     metadata: {
       name: "prometheus-service",
@@ -33,19 +34,15 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
       labels: { app: "prometheus", service: "prometheus-service" },
     },
     spec: {
-      // sessionAffinity: "ClientIP",
+      sessionAffinity: "ClientIP",
+      clusterIp: "None",
       selector: { service: "prometheus-service" },
-      type: "NodePort",
+      type: "ClusterIP",
       ports: [
         {
           name: "prometheus-ui",
           port: 9090,
           targetPort: k.IntOrString.fromString("prometheus-ui"),
-        },
-        {
-          name: "reloader-web",
-          port: 8080,
-          targetPort: k.IntOrString.fromString("reloader-web"),
         },
       ],
     },

@@ -1,7 +1,7 @@
 import { Construct } from "constructs";
 import { GrafanaOptions } from "../../types";
 import * as k from "../../../../imports/k8s";
-import { IS_LOCAL, HOST } from "../../../utils";
+import { IS_LOCAL, HOST, REGISTRY } from "../../../utils";
 
 export const job = (c: Construct, opts: GrafanaOptions) => {
   const host = IS_LOCAL ? `grafana-service.monitoring` : `grafana.${HOST}`;
@@ -24,7 +24,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
           initContainers: [
             {
               name: "wait-for-grafana",
-              image: "docker.io/auser/worker:latest",
+              image: `${REGISTRY}/auser/worker:latest`,
               imagePullPolicy: "IfNotPresent",
               args: [
                 "/bin/sh",
@@ -43,7 +43,7 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
           containers: [
             {
               name: "grafana-import-dashboards",
-              image: "docker.io/auser/worker:latest",
+              image: `${REGISTRY}/auser/worker:latest`,
               imagePullPolicy: "IfNotPresent",
               command: ["/bin/sh", "-c"],
               workingDir: "/opt/grafana-import-dashboards",

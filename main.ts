@@ -1,4 +1,4 @@
-require("./lib/utils/configs");
+const {ON_CLUSTER, DEBUG, REGISTRY} = require("./lib/utils/configs");
 
 import { Construct } from "constructs";
 import { App, Chart, ChartProps } from "cdk8s";
@@ -14,9 +14,6 @@ import { debugging } from "./lib/debugging";
 // import { coredns } from "./lib/coredns";
 // import { storage } from "./lib/storage";
 
-const ON_CLUSTER = process.env.CLUSTER !== "local";
-const DEBUG = process.env.DEBUG === "true";
-
 export class MyChart extends Chart {
   constructor(scope: Construct, id: string, props: ChartProps = {}) {
     super(scope, id, props);
@@ -30,11 +27,11 @@ export class MyChart extends Chart {
 
     const avanode_config = {
       namespace: "ava",
-      image: `docker.io/auser/ava-node:latest`,
+      image: `${REGISTRY}/auser/ava-node:latest`,
       replicas: 2,
     };
     const monitor_node_config = {
-      image: `docker.io/auser/mon-node:latest`,
+      image: `${REGISTRY}/auser/mon-node:latest`,
       replicas: 1,
     };
 

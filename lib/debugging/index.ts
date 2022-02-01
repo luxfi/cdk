@@ -5,10 +5,12 @@ import { Construct } from "constructs";
 import { DebuggingOptions } from "./types";
 
 import { dnsutils } from "./dnsutils";
+import { k3sDashboard} from './k3s-dashboard'
 
 export const debugging = (c: Construct, opts: DebuggingOptions) => {
   return {
     dnsutils: dnsutils(c, opts),
+    k3sDashboard: k3sDashboard(c, opts),
   };
 };
 

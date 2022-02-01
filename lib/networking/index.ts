@@ -6,6 +6,7 @@ export interface NetworkingOptions {
 }
 
 export const networking = (c: Construct, opts: NetworkingOptions) => {
+
   new k.KubeIngressClass(c, "networking-class", {
     metadata: {
       name: "nginx",

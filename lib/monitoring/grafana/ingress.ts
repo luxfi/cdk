@@ -11,7 +11,7 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
       namespace: opts.namespace,
       name: "grafana-ui",
       annotations: {
-        "kubernetes.io/ingress.class": "nginx",
+        // "kubernetes.io/ingress.class": "nginx",
         // "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
       },
     },
@@ -23,7 +23,7 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
           http: {
             paths: [
               {
-                path: "/v1",
+                path: "/",
                 pathType: "Prefix",
                 backend: {
                   service: {

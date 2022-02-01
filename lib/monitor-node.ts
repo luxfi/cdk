@@ -4,6 +4,7 @@ import { Construct } from "constructs";
 import * as kplus from "cdk8s-plus-22";
 import { EnvVar } from "../imports/k8s";
 import * as m from "./monitoring";
+import { REGISTRY } from './utils'
 
 export interface MonitorNodeProps {
   readonly image?: string;
@@ -18,7 +19,7 @@ export class MonitorNode extends Construct {
   constructor(scope: Construct, id: string, props: MonitorNodeProps) {
     super(scope, id, {});
 
-    const image = props.image || `docker.io/auser/mon-node:latest`;
+    const image = props.image || `${REGISTRY}/auser/mon-node:latest`;
     // const image = "prom/prometheus";
     const replicas = props.replicas || 1;
     const namespace = props.namespace || "monitoring";

@@ -2,6 +2,7 @@ import { Construct } from "constructs";
 import { PrometheusOptions } from "../types";
 import * as k from "../../../imports/k8s";
 // import volumes from "./volumes";
+// import { REGISTRY } from '../../utils'
 
 export const deployment = (c: Construct, opts: PrometheusOptions) => {
   // const { prometheusVolumeMounts } = volumes(c, opts);
