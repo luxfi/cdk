@@ -106,10 +106,7 @@ scrape_configs:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
     kubernetes_sd_configs:
-      - api_servers:
-          - https://kubernetes.default.svc
-        in_cluster: true
-        role: node
+      - role: node
     relabel_configs:
       - action: labelmap
         regex: __meta_kubernetes_node_label_(.+)
@@ -147,20 +144,14 @@ scrape_configs:
       # insecure_skip_verify: true
     bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
     kubernetes_sd_configs:
-      - api_servers:
-          - https://kubernetes.default.svc
-        in_cluster: true
-        # role: apiserver
+      - role: apiserver
 
   - job_name: "kubernetes-services"
     metrics_path: /probe
     params:
       module: [http_2xx]
     kubernetes_sd_configs:
-      - api_servers:
-          - "https://kubernetes.default.svc"
-        in_cluster: true
-        role: service
+      - role: service
     relabel_configs:
       - source_labels:
           [__meta_kubernetes_service_annotation_prometheus_io_probe]
