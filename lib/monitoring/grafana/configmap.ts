@@ -5,7 +5,6 @@ import * as path from "path";
 import { fileMap, directoryMap, grafanaConfigsDirectory } from "../../utils";
 const jsonminify = require("jsonminify");
 
-
 export const configMap = (c: Construct, opts: GrafanaOptions) => {
   let data = directoryMap(path.join(grafanaConfigsDirectory, "conf"));
 
@@ -18,7 +17,7 @@ export const configMap = (c: Construct, opts: GrafanaOptions) => {
     data,
   });
 
-  data = fileMap(path.join(grafanaConfigsDirectory, "avalanche.yaml"))
+  data = fileMap(path.join(grafanaConfigsDirectory, "avalanche.yaml"));
   new k.KubeConfigMap(c, "grafana-avalanche-config", {
     metadata: {
       name: "grafana-avalanche-config",
@@ -27,7 +26,7 @@ export const configMap = (c: Construct, opts: GrafanaOptions) => {
     data,
   });
 
-    data = fileMap(path.join(grafanaConfigsDirectory, "prom.yaml"))
+  data = fileMap(path.join(grafanaConfigsDirectory, "prom.yaml"));
   new k.KubeConfigMap(c, "grafana-provision-datasources", {
     metadata: {
       name: "grafana-provision-datasources",
@@ -42,7 +41,7 @@ export const configMap = (c: Construct, opts: GrafanaOptions) => {
   new k.KubeConfigMap(c, "grafana-plugins", {
     metadata: {
       name: "grafana-plugins",
-      labels: { app: "grafana", "grafana_dashboard": "1" },
+      labels: { app: "grafana", grafana_dashboard: "1" },
       namespace: opts.namespace,
     },
     data: pluginsData,

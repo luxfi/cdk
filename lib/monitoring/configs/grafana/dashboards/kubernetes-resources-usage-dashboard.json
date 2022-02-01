@@ -38,9 +38,7 @@
   "id": null,
   "title": "Kubernetes resources usage monitoring (via Prometheus)",
   "description": "Monitors Kubernetes cluster using Prometheus. Shows overall cluster CPU / Memory / Filesystem usage as well as individual pod, containers, systemd services statistics. Uses cAdvisor metrics only.",
-  "tags": [
-    "kubernetes"
-  ],
+  "tags": ["kubernetes"],
   "style": "dark",
   "timezone": "browser",
   "editable": true,
@@ -2383,17 +2381,7 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "templating": {
     "list": [
