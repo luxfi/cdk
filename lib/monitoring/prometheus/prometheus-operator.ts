@@ -204,12 +204,12 @@ export const operatorDeployment = (c: Construct, opts: PrometheusOptions) => {
       type: "NodePort",
       selector: { app: "prometheus-operator" },
       ports: [
-        {
-          port: 9090,
-          name: "http-web",
-          protocol: "TCP",
-          targetPort: k.IntOrString.fromString("http-web"),
-        },
+        // {
+        //   port: 9090,
+        //   name: "http-web",
+        //   protocol: "TCP",
+        //   targetPort: k.IntOrString.fromString("http-web"),
+        // },
         {
           port: 8443,
           targetPort: k.IntOrString.fromString("https"),

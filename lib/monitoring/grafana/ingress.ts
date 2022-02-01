@@ -10,6 +10,9 @@ export const ingress = (c: Construct, opts: GrafanaOptions) => {
     metadata: {
       namespace: opts.namespace,
       name: "grafana-ui",
+      labels: {
+        app: "grafana"
+      },
       annotations: {
         // "kubernetes.io/ingress.class": "nginx",
         // "nginx.ingress.kubernetes.io/rewrite-target": "/$1",

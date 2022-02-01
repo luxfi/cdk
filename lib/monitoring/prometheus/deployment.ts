@@ -38,7 +38,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
         "--storage.tsdb.retention.time=12h",
         "--config.file=/etc/prometheus/prometheus.yaml",
         "--storage.tsdb.path=/usr/share/prometheus",
-        "--web.config.file=/etc/prometheus/web-config.yaml",
+        // "--web.config.file=/etc/prometheus/web-config.yaml",
         "--web.listen-address=0.0.0.0:9090",
         // "--web.listen-address=127.0.0.1:9090",
       ],
@@ -49,12 +49,12 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       },
       initialDelaySeconds: 5,
       ports: [
-        { name: "prometheus", containerPort: 9090, targetPort: 9090 },
+        { name: "prometheus", containerPort: 9090 },
         // { containerPort: 9090, name: "metrics" },
       ],
       readinessProbe: {
         httpGet: {
-          scheme: "HTTPS",
+          scheme: "HTTP",
           path: "/-/ready",
           port: k.IntOrString.fromNumber(9090),
         },
@@ -63,7 +63,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       },
       livenessProbe: {
         httpGet: {
-          scheme: "HTTPS",
+          scheme: "HTTP",
           path: "/-/healthy",
           port: k.IntOrString.fromNumber(9090),
         },
@@ -85,7 +85,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
   ];
 
   const spec = {
-    selector: { matchLabels: { app: "prometheus-server" } },
+    selector: { matchLabels: { app: "prometheus" } },
     serviceName: "prometheus-service",
     replicas: opts.deployment.replicas,
     podManagementPolicy: "Parallel",
@@ -96,7 +96,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
       },
       type: "RollingUpdate",
     },
-    dnsPolicy: "ClusterFirst",
+    // dnsPolicy: "ClusterFirst",
     securityContext: {
       fsGroup: 102,
       runAsUser: 101,
@@ -105,7 +105,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     template: {
       metadata: {
         name: "prometheus",
-        labels: { app: "prometheus-server" },
+        labels: { app: "prometheus" },
       },
       spec: {
         serviceAccountName: "prometheus",
@@ -141,7 +141,7 @@ export const deployment = (c: Construct, opts: PrometheusOptions) => {
     metadata: {
       namespace: opts.namespace,
       name: "prometheus-deployment",
-      labels: { app: "prometheus-server" },
+      labels: { app: "prometheus" },
       annotations: {
         // "prometheus.io/port": "9090",
         // "prometheus.io/scrape": "false",

@@ -10,6 +10,9 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
     metadata: {
       namespace: opts.namespace,
       name: "prometheus-ui",
+      labels: {
+        app: "prometheus"
+      },
       annotations: {
         // "kubernetes.io/ingress.class": "nginx",
         // "nginx.ingress.kubernetes.io/rewrite-target": "/$1",
@@ -36,12 +39,12 @@ export const ingress = (c: Construct, opts: PrometheusOptions) => {
           },
         },
       ],
-      tls: [
-        {
-          hosts: [host, "prometheus-service.monitoring"],
-          secretName: `prometheus-secret`,
-        },
-      ],
+      // tls: [
+      //   {
+      //     hosts: [host, "prometheus-service.monitoring"],
+      //     secretName: `prometheus-secret`,
+      //   },
+      // ],
     },
   });
 };

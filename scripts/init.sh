@@ -29,8 +29,4 @@ cat << EOF > /etc/hosts
 #End of section
 EOF
 
-k3d cluster create lux --port 9000:80@loadbalancer -v $HOME/k3d-registries.yaml:/etc/rancher/k3s/registries.yaml 2>/dev/null
-
-docker network connect k3d-lux registry.localhost 2>/dev/null
-
 npm run init
