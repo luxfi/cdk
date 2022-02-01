@@ -18,10 +18,16 @@ export const configMap = (c: Construct, opts: GrafanaOptions) => {
     data,
   });
 
-    data = {
-    ...fileMap(path.join(grafanaConfigsDirectory, "prom.yaml")),
-    ...fileMap(path.join(grafanaConfigsDirectory, "avalanche.yaml"))
-  };
+  data = fileMap(path.join(grafanaConfigsDirectory, "avalanche.yaml"))
+  new k.KubeConfigMap(c, "grafana-avalanche-config", {
+    metadata: {
+      name: "grafana-avalanche-config",
+      namespace: opts.namespace,
+    },
+    data,
+  });
+
+    data = fileMap(path.join(grafanaConfigsDirectory, "prom.yaml"))
   new k.KubeConfigMap(c, "grafana-provision-datasources", {
     metadata: {
       name: "grafana-provision-datasources",
@@ -42,23 +48,23 @@ export const configMap = (c: Construct, opts: GrafanaOptions) => {
     data: pluginsData,
   });
 
-  const dashboardsDir = path.join(grafanaConfigsDirectory, "dashboards");
-  const dashboardFiles = directoryMap(dashboardsDir);
-  let dashboardsData = Object.keys(dashboardFiles).reduce((acc: any, key: any) => {
-    const k = key.replace(dashboardsDir, "");
-    return { ...acc, [k]: jsonminify(dashboardFiles[k]) };
-  }, {});
-  new k.KubeConfigMap(c, "grafana-dashboards", {
-    metadata: {
-      name: "grafana-dashboards",
-      labels: { app: "grafana", "grafana_dashboard": "1" },
-      namespace: opts.namespace,
-    },
-    data: dashboardsData,
-  });
+  // const dashboardsDir = path.join(grafanaConfigsDirectory, "dashboards");
+  // const dashboardFiles = directoryMap(dashboardsDir);
+  // let dashboardsData = Object.keys(dashboardFiles).reduce((acc: any, key: any) => {
+  //   const k = key.replace(dashboardsDir, "");
+  //   return { ...acc, [k]: jsonminify(dashboardFiles[k]) };
+  // }, {});
+  // new k.KubeConfigMap(c, "grafana-dashboards", {
+  //   metadata: {
+  //     name: "grafana-dashboards",
+  //     labels: { app: "grafana", "grafana_dashboard": "1" },
+  //     namespace: opts.namespace,
+  //   },
+  //   data: dashboardsData,
+  // });
 
   const avaDir = path.join(grafanaConfigsDirectory, "ava");
-  const avaFiles = directoryMap(dashboardsDir);
+  const avaFiles = directoryMap(avaDir);
   let avaData = Object.keys(avaFiles).reduce((acc: any, key: any) => {
     const k = key.replace(avaDir, "");
     return { ...acc, [k]: jsonminify(avaFiles[k]) };
@@ -66,7 +72,7 @@ export const configMap = (c: Construct, opts: GrafanaOptions) => {
   new k.KubeConfigMap(c, "ava-dashboards", {
     metadata: {
       name: "ava-dashboards",
-      labels: { app: "grafana", "grafana_dashboard": "1" },
+      labels: { app: "grafana" },
       namespace: opts.namespace,
     },
     data: avaData,

@@ -2,7 +2,7 @@
   "__inputs": [
     {
       "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
+      "label": "prometheus",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -32,7 +32,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "3.1.0"
+      "version": "3.1.1"
     },
     {
       "type": "datasource",
@@ -43,6 +43,7 @@
   ],
   "id": null,
   "title": "Prometheus Stats",
+  "description": "The  official, pre-built Prometheus Stats Dashboard.",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -69,9 +70,27 @@
           "editable": true,
           "error": false,
           "format": "s",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "id": 5,
           "interval": null,
           "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
           "maxDataPoints": 100,
           "nullPointMode": "connected",
           "nullText": null,
@@ -79,6 +98,13 @@
           "postfixFontSize": "50%",
           "prefix": "",
           "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
           "span": 3,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
@@ -105,32 +131,7 @@
               "value": "null"
             }
           ],
-          "valueName": "current",
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "rangeMaps": [
-            {
-              "from": "null",
-              "to": "null",
-              "text": "N/A"
-            }
-          ],
-          "mappingType": 1,
-          "gauge": {
-            "show": false,
-            "minValue": 0,
-            "maxValue": 100,
-            "thresholdMarkers": true,
-            "thresholdLabels": false
-          }
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -145,9 +146,27 @@
           "editable": true,
           "error": false,
           "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "id": 6,
           "interval": null,
           "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
           "maxDataPoints": 100,
           "nullPointMode": "connected",
           "nullText": null,
@@ -155,6 +174,13 @@
           "postfixFontSize": "50%",
           "prefix": "",
           "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
           "span": 3,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
@@ -175,32 +201,7 @@
           "type": "singlestat",
           "valueFontSize": "70%",
           "valueMaps": [],
-          "valueName": "current",
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "rangeMaps": [
-            {
-              "from": "null",
-              "to": "null",
-              "text": "N/A"
-            }
-          ],
-          "mappingType": 1,
-          "gauge": {
-            "show": false,
-            "minValue": 0,
-            "maxValue": 100,
-            "thresholdMarkers": true,
-            "thresholdLabels": false
-          }
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -215,9 +216,27 @@
           "editable": true,
           "error": false,
           "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "id": 7,
           "interval": null,
           "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
           "maxDataPoints": 100,
           "nullPointMode": "connected",
           "nullText": null,
@@ -225,6 +244,13 @@
           "postfixFontSize": "50%",
           "prefix": "",
           "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
           "span": 3,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
@@ -241,7 +267,7 @@
             }
           ],
           "thresholds": "500,4000",
-          "title": "Internal Storage Queue Length",
+          "title": "Interal Storage Queue Length",
           "type": "singlestat",
           "valueFontSize": "70%",
           "valueMaps": [
@@ -251,32 +277,7 @@
               "value": "0"
             }
           ],
-          "valueName": "current",
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "rangeMaps": [
-            {
-              "from": "null",
-              "to": "null",
-              "text": "N/A"
-            }
-          ],
-          "mappingType": 1,
-          "gauge": {
-            "show": false,
-            "minValue": 0,
-            "maxValue": 100,
-            "thresholdMarkers": true,
-            "thresholdLabels": false
-          }
+          "valueName": "current"
         },
         {
           "content": "<img src=\"http://prometheus.io/assets/prometheus_logo_grey.svg\" alt=\"Prometheus logo\" style=\"height: 40px;\">\n<span style=\"font-family: 'Open Sans', 'Helvetica Neue', Helvetica; font-size: 25px;vertical-align: text-top;color: #bbbfc2;margin-left: 10px;\">Prometheus</span>\n\n<p style=\"margin-top: 10px;\">You're using Prometheus, an open-source systems monitoring and alerting toolkit originally built at SoundCloud. For more information, check out the <a href=\"http://www.grafana.org/\">Grafana</a> and <a href=\"http://prometheus.io/\">Prometheus</a> projects.</p>",
@@ -352,31 +353,32 @@
           "timeShift": null,
           "title": "Samples ingested (rate-5m)",
           "tooltip": {
+            "msResolution": false,
+            "ordering": "alphabetical",
             "shared": true,
             "value_type": "cumulative",
-            "ordering": "alphabetical",
-            "msResolution": false
+            "sort": 0
           },
           "type": "graph",
-          "yaxes": [
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
-            },
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
-            }
-          ],
           "xaxis": {
             "show": true
-          }
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
         },
         {
           "content": "#### Samples Ingested\nThis graph displays the count of samples ingested by the Prometheus server, as measured over the last 5 minutes, per time series in the range vector. When troubleshooting an issue on IRC or Github, this is often the first stat requested by the Prometheus team. ",
@@ -450,31 +452,32 @@
           "timeShift": null,
           "title": "Target Scrapes (last 5m)",
           "tooltip": {
+            "msResolution": false,
+            "ordering": "alphabetical",
             "shared": true,
             "value_type": "cumulative",
-            "ordering": "alphabetical",
-            "msResolution": false
+            "sort": 0
           },
           "type": "graph",
-          "yaxes": [
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
-            },
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
-            }
-          ],
           "xaxis": {
             "show": true
-          }
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
         },
         {
           "aliasColors": {},
@@ -526,31 +529,32 @@
           "timeShift": null,
           "title": "Scrape Duration",
           "tooltip": {
+            "msResolution": false,
+            "ordering": "alphabetical",
             "shared": true,
             "value_type": "cumulative",
-            "ordering": "alphabetical",
-            "msResolution": false
+            "sort": 0
           },
           "type": "graph",
-          "yaxes": [
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
-            },
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
-            }
-          ],
           "xaxis": {
             "show": true
-          }
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
         },
         {
           "content": "#### Scrapes\nPrometheus scrapes metrics from instrumented jobs, either directly or via an intermediary push gateway for short-lived jobs. Target scrapes will show how frequently targets are scraped, as measured over the last 5 minutes, per time series in the range vector. Scrape Duration will show how long the scrapes are taking, with percentiles available as series. ",
@@ -625,32 +629,33 @@
           "timeShift": null,
           "title": "Rule Eval Duration",
           "tooltip": {
+            "msResolution": false,
+            "ordering": "alphabetical",
             "shared": true,
             "value_type": "cumulative",
-            "ordering": "alphabetical",
-            "msResolution": false
+            "sort": 0
           },
           "type": "graph",
-          "yaxes": [
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "percentunit",
-              "label": ""
-            },
-            {
-              "show": true,
-              "min": null,
-              "max": null,
-              "logBase": 1,
-              "format": "short"
-            }
-          ],
           "xaxis": {
             "show": true
-          }
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
         },
         {
           "content": "#### Rule Evaluation Duration\nThis graph panel plots the duration for all evaluations to execute. The 50th percentile, 90th percentile and 99th percentile are shown as three separate series to help identify outliers that may be skewing the data.",
@@ -670,7 +675,7 @@
     }
   ],
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -687,7 +692,17 @@
       "2h",
       "1d"
     ],
-    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
   },
   "templating": {
     "list": []
@@ -695,7 +710,7 @@
   "annotations": {
     "list": []
   },
-  "refresh": false,
+  "refresh": "1m",
   "schemaVersion": 12,
   "version": 0,
   "links": [
@@ -717,6 +732,5 @@
       "url": "http://prometheus.io/docs/introduction/overview/"
     }
   ],
-  "gnetId": 2,
-  "description": "The  official, pre-built Prometheus Stats Dashboard."
+  "gnetId": 2
 }

@@ -104,6 +104,10 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
                   name: "config-volume",
                   mountPath: "/opt/grafana-import-dashboards",
                 },
+                                {
+                  name: "config-volume",
+                  mountPath: "/opt/ava-import-dashboards",
+                },
               ],
             },
           ],
@@ -112,6 +116,10 @@ export const job = (c: Construct, opts: GrafanaOptions) => {
             {
               name: "config-volume",
               configMap: { name: "grafana-dashboards" },
+            },
+                        {
+              name: "ava-config-volume",
+              configMap: { name: "ava-dashboards" },
             },
           ],
         },

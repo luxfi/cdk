@@ -12,11 +12,11 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
       image: opts.deployment.image,
       name: "grafana",
       imagePullPolicy: "IfNotPresent",
-      workingDir: "/var/local/grafana",
+      workingDir: "/usr/share/grafana",
       command: ["/usr/sbin/grafana-server"],
       args: [
-        "-homepath=/usr/share/grafana",
-        "-config=/usr/share/grafana/conf/defaults.ini",
+        "--homepath=/usr/share/grafana",
+        "--config=/etc/grafana/grafana.ini",
       ],
       securityContext: {
         runAsUser: 100,
@@ -67,22 +67,18 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
       volumeMounts: [
         {
           name: "grafana-data-storage",
-          mountPath: "/var/local/grafana",
-        },
-        {
-          name: "grafana-dashboards",
-          mountPath: "/usr/share/grafana/conf/provisioning/dashboards",
+          mountPath: "/usr/share/grafana/data",
         },
         {
           name: "ava-dashboards",
-          mountPath: "/usr/share/grafana/conf/provisioning/dashboards/avalanche"
+          mountPath: "/usr/share/grafana/conf/dashboards",
         },
-        // {
-        //   name: "grafana-provision-avalanche",
-        //   // mountPath: "/etc/grafana/dashboards",
-        //   mountPath:
-        //     "/usr/share/grafana/conf/provisioning/dashboards/avalanche",
-        // },
+        {
+          name: "grafana-avalanche-config",
+          // mountPath: "/usr/share/grafana/dashboards",
+          mountPath:
+            "/usr/share/grafana/conf/provisioning/dashboards",
+        },
         {
           name: "grafana-plugins",
           mountPath: "/usr/share/grafana/conf/provisioning/plugins",
@@ -102,7 +98,7 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
         },
         {
           name: "grafana-config-volume",
-          mountPath: "/usr/share/grafana/conf/",
+          mountPath: "/etc/grafana",
         },
       ],
     },
@@ -138,9 +134,13 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
             emptyDir: {},
             // claim: { claimName: storageVolumeClaimName },
           },
+          // {
+          //   name: "grafana-dashboards",
+          //   configMap: { name: "grafana-dashboards" },
+          // },
           {
-            name: "grafana-dashboards",
-            configMap: { name: "grafana-dashboards" },
+            name: "grafana-avalanche-config",
+            configMap: { name: "grafana-avalanche-config"}
           },
           {
             name: "ava-dashboards",
@@ -154,10 +154,10 @@ export const deployment = (c: Construct, opts: GrafanaOptions) => {
             name: "grafana-notifiers",
             configMap: { name: "grafana-notifiers" },
           },
-          // {
-          //   name: "grafana-provision-avalanche",
-          //   configMap: { name: "grafana-provision-avalanche" },
-          // },
+          {
+            name: "grafana-avalanche-dashboards",
+            configMap: { name: "grafana-avalanche-dashboards" },
+          },
           {
             name: "grafana-provision-datasources",
             configMap: { name: "grafana-provision-datasources" },

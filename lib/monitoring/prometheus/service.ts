@@ -25,6 +25,10 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
       name: "prometheus-service",
       namespace: opts.namespace,
       labels: { app: "prometheus" },
+      annotations: {
+        "prometheus.io/scrape": "true",
+        "prometheus.io/port": "9090"
+      }
     },
     spec: {
       selector: { app: "prometheus" },
@@ -39,26 +43,26 @@ export const service = (c: Construct, opts: PrometheusOptions) => {
     },
   });
 
-    // Outside
-  new k.KubeService(c, "prometheus-lb-service", {
-    metadata: {
-      name: "prometheus-lb-service",
-      namespace: opts.namespace,
-      labels: { app: "prometheus" },
-    },
-    spec: {
-      selector: { app: "prometheus" },
-      type: "LoadBalancer",
-      externalTrafficPolicy: "Cluster",
-      ports: [
-        {
-          name: "prometheus",
-          port: 8443,
-          targetPort: k.IntOrString.fromNumber(9090),
-        },
-      ],
-    },
-  });
+  //   // Outside
+  // new k.KubeService(c, "prometheus-lb-service", {
+  //   metadata: {
+  //     name: "prometheus-lb-service",
+  //     namespace: opts.namespace,
+  //     labels: { app: "prometheus" },
+  //   },
+  //   spec: {
+  //     selector: { app: "prometheus" },
+  //     type: "LoadBalancer",
+  //     externalTrafficPolicy: "Cluster",
+  //     ports: [
+  //       {
+  //         name: "prometheus",
+  //         port: 8443,
+  //         targetPort: k.IntOrString.fromNumber(9090),
+  //       },
+  //     ],
+  //   },
+  // });
 
   return { prometheusService }; // changeService
 };
