@@ -1,5 +1,15 @@
 import {avm} from "../../src/lib/ava";
 
+jest.mock('../../src/lib/ava', () => {
+    const originalModule = jest.requireActual('../../src/lib/ava');
+
+    return {
+        __esModule: true,
+        ...originalModule,
+        avm: {createAddress: jest.fn(() => { return {exitStatus: {status: 'Success'}}})},
+    };
+});
+
 test('address create cli command', async () => {
     const args = {
         "_": [ 'address', 'create' ],
@@ -21,6 +31,5 @@ test('address create cli command', async () => {
     });
 
     const resp = await avm.createAddress(opts);
-    const exitStatus = JSON.parse(resp.exitStatus);
-    expect(exitStatus.status).toEqual("Success");
+    expect(resp.exitStatus.status).toEqual("Success");
 })

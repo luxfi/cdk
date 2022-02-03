@@ -1,5 +1,15 @@
 import {platform} from "../../src/lib/ava";
 
+jest.mock('../../src/lib/ava', () => {
+    const originalModule = jest.requireActual('../../src/lib/ava');
+
+    return {
+        __esModule: true,
+        ...originalModule,
+        platform: {getBlockchains: jest.fn(() => { return {exitStatus: {status: 'Success'}, data: {blockchains: [{}]}}})},
+    };
+});
+
 test('address create cli command', async () => {
     const args = {
         _: ['blockchain', 'list'],
@@ -14,7 +24,7 @@ test('address create cli command', async () => {
     }
 
     const resp = await platform.getBlockchains(args);
-    const exitStatus = JSON.parse(resp.exitStatus);
+    const exitStatus = resp.exitStatus;
     expect(exitStatus.status).toEqual("Success");
     expect(resp.data.blockchains).toEqual(expect.arrayContaining([expect.any(Object)]));
 })
