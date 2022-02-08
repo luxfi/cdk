@@ -63,10 +63,6 @@ export function exec(
             const errStream = new WritableStream().setEncoding("utf8");
             const isStream = new ReadableStream().setEncoding("utf8");
 
-            let body = "";
-            let data: any;
-            let exitStatus = {};
-
             let payloadParams = Object.assign({}, params, requestParams);
 
             // Supply a function to manipulate the path if necessary
@@ -82,6 +78,7 @@ export function exec(
             if (opts.headers) {
                 headers = {...headers, ...opts.headers};
             }
+
             if (opts.token || process.env.MONITOR_TOKEN) {
                 const token = opts.token || process.env.MONITOR_TOKEN;
                 headers["Authorization"] = `Bearer ${token}`;
@@ -107,6 +104,7 @@ export function exec(
                 },
                 ""
             );
+
             // -H 'accept:application/json' -H 'content-type:application/json;'
             let cmd = [
                 "/bin/bash",
@@ -118,6 +116,8 @@ export function exec(
             debug(`Sending command: ${cmd}`);
 
             try {
+                let exitStatus = {};
+
                 const resp = await exec.exec(
                     namespace,
                     podName!,
@@ -131,39 +131,36 @@ export function exec(
                         exitStatus = JSON.stringify(status);
                     }
                 );
-                resp.on("message", (message: string) => {
-                    body += message.toString();
-                });
+
+                // resp.on("message", (message: string) => {
+                //     body += message.toString();
+                // });
+
                 resp.on("close", (code: number) => {
-                    body = osStream.body().trim();
+                    const body = osStream.body().trim();
 
                     try {
-                        data = JSON.parse(body);
-                    } catch (e) {
-                        console.error(`Error occurred while parsing the response`);
-                        console.error(e);
-                        console.log(code);
-                        console.log("Body close", body);
-                        process.exit(1);
-                    }
-                    if (data.result) {
-                        data = data.result;
-                    }
+                        let data = JSON.parse(body);
+                        data = data.result ? data.result : data;
 
-                    let ret = {
-                        body,
-                        data,
-                        exitStatus,
-                        streams: {
-                            osStream,
-                            errStream,
-                            isStream,
-                        },
-                    };
-                    return resolve(ret);
+                        const ret = {
+                            body,
+                            data,
+                            exitStatus,
+                            streams: {
+                                osStream,
+                                errStream,
+                                isStream,
+                            },
+                        };
+                        resolve(ret);
+                    } catch (e) {
+                        console.log("Error parsing data", e, code, body);
+                        reject(e);
+                    }
                 });
             } catch (e) {
-                console.error("Error", e, body);
+                console.log("Error", e, errStream.body().trim());
                 reject(e);
             }
         });
