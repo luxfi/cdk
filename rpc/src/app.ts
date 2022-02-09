@@ -7,7 +7,6 @@ import mkdirp from "mkdirp";
 import RoutesV1 from "./api/routes/v1";
 import Logger from "./core/Logger";
 import { environment, port as EnvPort } from "./config";
-// import { connectDatabase } from "./config/database";
 import { ApiError, InternalError, NotFoundError } from "./core/ApiError";
 
 
@@ -37,15 +36,11 @@ mkdirp.sync(galleryDir);
 //middleware for serving images from the server
 app.use("/images/gallery", express.static(galleryDir));
 
-// connect the mongodb database
-// connectDatabase();
-//Run seeder after connect database
-
 // Index route
 app.get("/", (req: Request, res: Response) => {
   return res.status(200).json({
     environment,
-    message: `Welcome to ETH Server`
+    message: `Welcome to LUX Server`
   });
 });
 

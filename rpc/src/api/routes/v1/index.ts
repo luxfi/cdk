@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import HelloRouter from "./hello";
+import HelloRouter from "./info";
 
 const router = Router();
 
