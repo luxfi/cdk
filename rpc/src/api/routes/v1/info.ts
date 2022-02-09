@@ -1,9 +1,9 @@
 import express from "express";
 
-import {infoCtrl} from "../../controllers/info";
+import {getBlockchainIDCtrl} from "../../controllers/info";
 
 const InfoRouter: express.Router = express.Router();
 
-InfoRouter.get("/", infoCtrl);
+InfoRouter.get("/blockchain-id/:alias", getBlockchainIDCtrl);
 
 export default InfoRouter;

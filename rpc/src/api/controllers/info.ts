@@ -1,11 +1,11 @@
 import asyncHandler from "../../helpers/asyncHandler";
 import { Request, Response } from "express";
-import LuxService from "../../services/lux";
+import InfoService from "../../services/info";
 import { SuccessResponse } from "../../core/ApiResponse";
 
-export const infoCtrl = asyncHandler(
+export const getBlockchainIDCtrl = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
-    const data = await LuxService.helloWorld();
-    return new SuccessResponse("Hello", data).send(res);
+    const data = await InfoService.getBlockchainID(req.params.alias);
+    return new SuccessResponse("Blockchain ID", data).send(res);
   }
 );
