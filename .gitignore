@@ -10,3 +10,4 @@ dist
 __snapshots__/
 docker/avalanchego/avalanche-config.json
 docker/avalanchego/genesis.json
+.idea
