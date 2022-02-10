@@ -30,8 +30,8 @@ export const builder = (yargs: Argv) =>
       choices: ["cb58", "hex"],
       default: "cb58",
     },
-    n: {
-      alias: "user",
+    user: {
+      alias: "n",
       description: "User to import",
       required: true,
     },
@@ -45,7 +45,7 @@ export async function handler(args: ArgShape) {
 
   console.log(`Importing ${chalk.yellow(username)} from the blockchain`);
 
-  const resp = await keystore.importUser({ username, password, encoding });
+  const resp = await keystore.importUser({ username, password, encoding, user });
   console.log(resp);
 
   if (resp.data.user) {
