@@ -6,6 +6,7 @@ import HealthRouter from "./health";
 import KeystoreRouter from "./keystore";
 import AuthRouter from "./auth";
 import AdminRouter from "./admin";
+import WalletRouter from "./wallet";
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use("/health", HealthRouter);
 router.use("/keystore", KeystoreRouter);
 router.use("/auth", AuthRouter);
 router.use("/admin", AdminRouter);
+router.use("/wallet", WalletRouter);
 
 export default router;

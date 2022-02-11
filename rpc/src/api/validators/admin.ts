@@ -1,4 +1,4 @@
-import {body, check, oneOf, ValidationChain} from "express-validator";
+import {body, ValidationChain} from "express-validator";
 
 export const aliasValidation: ValidationChain[] = [
     body("endpoint")
