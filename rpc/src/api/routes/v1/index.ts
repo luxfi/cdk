@@ -8,6 +8,7 @@ import AuthRouter from "./auth";
 import AdminRouter from "./admin";
 import WalletRouter from "./wallet";
 import AvaxRouter from "./avax";
+import AvmRouter from "./avm";
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use("/auth", AuthRouter);
 router.use("/admin", AdminRouter);
 router.use("/wallet", WalletRouter);
 router.use("/avax", AvaxRouter);
+router.use("/avm", AvmRouter);
 
 export default router;

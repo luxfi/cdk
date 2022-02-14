@@ -2,12 +2,14 @@ import express from "express";
 
 import {executeMethodCtrl} from "../../controllers/common";
 import {assignMethod} from "../../../helpers/middlewares";
+import {issueTXValidation} from "../../validators/avax";
 import {
+    exportKeyValidation,
+    exportValidation,
     importKeyValidation,
-    issueTXValidation,
+    importValidation,
     UTXOValidation
-} from "../../validators/avax";
-import {exportKeyValidation, exportValidation, importValidation} from "../../validators/common";
+} from "../../validators/common";
 
 const AvaxRouter: express.Router = express.Router();
 
