@@ -7,6 +7,7 @@ import KeystoreRouter from "./keystore";
 import AuthRouter from "./auth";
 import AdminRouter from "./admin";
 import WalletRouter from "./wallet";
+import AvaxRouter from "./avax";
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.use("/keystore", KeystoreRouter);
 router.use("/auth", AuthRouter);
 router.use("/admin", AdminRouter);
 router.use("/wallet", WalletRouter);
+router.use("/avax", AvaxRouter);
 
 export default router;
